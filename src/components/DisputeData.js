@@ -6,7 +6,7 @@ const DisputeData = () => {
 
   useEffect(() => {
     axios
-      .get("/api/GetDispute")
+      .get("http://10.1.66.25:8082/api/Dispute/GetDisputesByAccountNum?AccountNum=000604089357")
       .then((response) => {
         setDisputes(response.data);
       })
@@ -30,16 +30,18 @@ const DisputeData = () => {
                     <thead>
                       <tr>
                         <th>ID</th>
-                        <th>Account Number</th>
-                        <th>Description</th>
+                        <th>Account Num</th>
+                        <th>Dispute Seq</th>
+                        <th>Bill Seq</th>
                       </tr>
                     </thead>
                     <tbody>
                       {disputes.map((dispute, index) => (
                         <tr key={index}>
-                          <td>{dispute.id}</td>
-                          <td>{dispute.accountNumber}</td>
-                          <td>{dispute.description}</td>
+                          <td>{(index+1)}</td>
+                          <td>{dispute.accountNum}</td>
+                          <td>{dispute.disputeSeq}</td>
+                          <td>{dispute.billSeq}</td>
                         </tr>
                       ))}
                     </tbody>
