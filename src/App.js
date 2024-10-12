@@ -1,46 +1,42 @@
 import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
 import Footer from "./components/Footer";
+import Dashboard from "./pages/Dashboard";
+import Home from "./pages/Home";
+import DisputeData from "./components/DisputeData";
 
 function App() {
   return (
-    <div className="wrapper">
-      {/* Navbar */}
+    <Router>
+      <div className="wrapper">
+        {/* Navbar */}
 
-      <Navbar />
+        <Navbar />
 
-      {/* Sidebar */}
-      <Sidebar />
+        {/* Sidebar */}
+        <Sidebar />
 
-      {/* Content Wrapper */}
-      <div className="content-wrapper">
-        <section className="content">
-          <div className="container-fluid">
-            <div className="row">
-              <div className="col-12">
-                <div className="card">
-                  <div className="card-header">
-                    <h3 className="card-title">Welcome to AdminLTE</h3>
-                  </div>
-                  <div className="card-body">
-                    <p>
-                      This is a simple example of integrating AdminLTE with
-                      React.
-                    </p>
-                  </div>
-                </div>
-              </div>
+        {/* Content Wrapper */}
+        <div className="content-wrapper">
+          <section className="content">
+            <div className="container-fluid">
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/disputedata" element={<DisputeData />} />
+              </Routes>
             </div>
-          </div>
-        </section>
+          </section>
+        </div>
+
+        {/* Footer */}
+
+        <Footer />
       </div>
-
-      {/* Footer */}
-
-      <Footer />
-    </div>
+    </Router>
   );
 }
 

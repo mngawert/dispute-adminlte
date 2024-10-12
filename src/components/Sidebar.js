@@ -12,7 +12,19 @@ export default function Sidebar() {
             <li className="nav-item">
               <a href="/" className="nav-link">
                 <i className="nav-icon fas fa-tachometer-alt"></i>
+                <p>Home</p>
+              </a>
+            </li>
+            <li className="nav-item">
+              <a href="/Dashboard" className="nav-link">
+                <i className="nav-icon fas fa-tachometer-alt"></i>
                 <p>Dashboard</p>
+              </a>
+            </li>
+            <li className="nav-item">
+              <a href="/DisputeData" className="nav-link">
+                <i className="nav-icon fas fa-tachometer-alt"></i>
+                <p>DisputeData</p>
               </a>
             </li>
           </ul>
