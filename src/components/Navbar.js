@@ -2,7 +2,6 @@ import React from "react";
 
 export default function Navbar() {
 
-
   const handleLogout = () => {
     localStorage.removeItem("authToken");
     window.location.href = "/login"; // Redirect to login page

@@ -7,9 +7,7 @@ const DisputeData = () => {
 
   useEffect(() => {
     axios
-      .get(
-        `${config.apiBaseUrl}/api/Dispute/GetDisputesByAccountNum?AccountNum=000604089357`
-      )
+      .get(`${config.apiBaseUrl}/api/Dispute/GetDisputesByAccountNum?AccountNum=000604089357`)
       .then((response) => {
         setDisputes(response.data);
       })

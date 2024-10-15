@@ -31,10 +31,7 @@ function App() {
                 <Route path="/home" element={<Home />} />
                 <Route path="/test" element={<Test />} />
                 <Route path="/login" element={<Login />} />
-                <Route
-                  path="/dashboard"
-                  element={<PrivateRoute element={<Dashboard />} />}
-                />
+                <Route path="/dashboard" element={<PrivateRoute element={<Dashboard />} />} />
                 <Route path="/disputedata" element={<DisputeData />} />
               </Routes>
             </div>
