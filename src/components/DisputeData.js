@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import config from "../config";
 
 const DisputeData = () => {
   const [disputes, setDisputes] = useState([]);
 
   useEffect(() => {
     axios
-      .get("http://10.1.66.25:8082/api/Dispute/GetDisputesByAccountNum?AccountNum=000604089357")
+      .get(
+        `${config.apiBaseUrl}/api/Dispute/GetDisputesByAccountNum?AccountNum=000604089357`
+      )
       .then((response) => {
         setDisputes(response.data);
       })
@@ -38,7 +41,7 @@ const DisputeData = () => {
                     <tbody>
                       {disputes.map((dispute, index) => (
                         <tr key={index}>
-                          <td>{(index+1)}</td>
+                          <td>{index + 1}</td>
                           <td>{dispute.accountNum}</td>
                           <td>{dispute.disputeSeq}</td>
                           <td>{dispute.billSeq}</td>

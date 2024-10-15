@@ -7,6 +7,9 @@ import Dashboard from "./pages/Dashboard";
 import Home from "./pages/Home";
 import DisputeData from "./components/DisputeData";
 import Sidebar from "./components/SideBar";
+import Login from "./pages/Login";
+import Test from "./pages/Test";
+import PrivateRoute from "./components/PrivateRoute";
 
 function App() {
   return (
@@ -25,7 +28,13 @@ function App() {
             <div className="container-fluid">
               <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/home" element={<Home />} />
+                <Route path="/test" element={<Test />} />
+                <Route path="/login" element={<Login />} />
+                <Route
+                  path="/dashboard"
+                  element={<PrivateRoute element={<Dashboard />} />}
+                />
                 <Route path="/disputedata" element={<DisputeData />} />
               </Routes>
             </div>

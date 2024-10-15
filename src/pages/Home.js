@@ -1,6 +1,9 @@
 import React from "react";
+import config from "../config";
 
 export default function Home() {
+  console.log("TEST", config.apiBaseUrl);
+
   return (
     <div className="row">
       <div className="col-12">
