@@ -6,6 +6,7 @@ import Footer from "./components/Footer";
 import Dashboard from "./pages/Dashboard";
 import Home from "./pages/Home";
 import DisputeData from "./components/DisputeData";
+import Sidebar from "./components/SideBar";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Navbar />
 
         {/* Sidebar */}
+        <Sidebar />
 
         {/* Content Wrapper */}
         <div className="content-wrapper">
