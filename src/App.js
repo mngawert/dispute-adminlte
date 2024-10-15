@@ -2,7 +2,6 @@ import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Navbar from "./components/Navbar";
-import Sidebar from "./components/Sidebar";
 import Footer from "./components/Footer";
 import Dashboard from "./pages/Dashboard";
 import Home from "./pages/Home";
@@ -17,7 +16,6 @@ function App() {
         <Navbar />
 
         {/* Sidebar */}
-        <Sidebar />
 
         {/* Content Wrapper */}
         <div className="content-wrapper">
