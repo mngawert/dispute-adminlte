@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import axios from "axios";
 import config from "../config";
+import api from "../api";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -10,7 +10,7 @@ const Login = () => {
     event.preventDefault();
     // Handle login logic here
     try {
-      const response = await axios.post(`${config.apiBaseUrl}/api/User/Login`, {
+      const response = await api.post(`${config.apiBaseUrl}/api/User/Login`, {
         username,
         password,
       });
@@ -28,19 +28,11 @@ const Login = () => {
       <form onSubmit={handleSubmit}>
         <label>
           Username:
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
+          <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
         </label>
         <label>
           Password:
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
         </label>
         <button type="submit">Login</button>
       </form>

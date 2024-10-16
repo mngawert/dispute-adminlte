@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import config from "../config";
+import api from "../api";
 
 export default function Dashboard() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
     console.log("test ", config.apiBaseUrl);
-    axios
+    api
       .get(`${config.apiBaseUrl}/api/User/GetProtectedData`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("authToken")}`,

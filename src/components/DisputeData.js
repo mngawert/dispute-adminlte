@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import config from "../config";
+import api from "../api";
 
 const DisputeData = () => {
   const [disputes, setDisputes] = useState([]);
 
   useEffect(() => {
-    axios
-      .get(`${config.apiBaseUrl}/api/Dispute/GetDisputesByAccountNum?AccountNum=000604089357`)
+    api
+      .get(`${config.apiBaseUrl}/api/Dispute/GetDisputesByAccountNum?AccountNum=000105537463`)
       .then((response) => {
         setDisputes(response.data);
       })
