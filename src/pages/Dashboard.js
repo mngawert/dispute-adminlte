@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from "react";
-import config from "../config";
 import api from "../api";
 
 export default function Dashboard() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    console.log("test ", config.apiBaseUrl);
     api
-      .get(`${config.apiBaseUrl}/api/User/GetProtectedData`, {
+      .get("/api/User/GetProtectedData", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("authToken")}`,
         },

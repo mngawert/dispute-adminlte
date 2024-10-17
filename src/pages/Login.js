@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import config from "../config";
 import api from "../api";
 
 const Login = () => {
@@ -10,7 +9,7 @@ const Login = () => {
     event.preventDefault();
     // Handle login logic here
     try {
-      const response = await api.post(`${config.apiBaseUrl}/api/User/Login`, {
+      const response = await api.post("/api/User/Login", {
         username,
         password,
       });

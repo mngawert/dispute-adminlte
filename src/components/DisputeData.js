@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import config from "../config";
 import api from "../api";
 
 const DisputeData = () => {
@@ -7,7 +6,7 @@ const DisputeData = () => {
 
   useEffect(() => {
     api
-      .get(`${config.apiBaseUrl}/api/Dispute/GetDisputesByAccountNum?AccountNum=000105537463`)
+      .get("/api/Dispute/GetDisputesByAccountNum?AccountNum=000105537463")
       .then((response) => {
         setDisputes(response.data);
       })

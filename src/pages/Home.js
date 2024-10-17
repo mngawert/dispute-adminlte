@@ -1,8 +1,7 @@
 import React from "react";
-import config from "../config";
 
 export default function Home() {
-  console.log("TEST", config.apiBaseUrl);
+  console.log("process.env.REACT_APP_API_URL", process.env);
 
   return (
     <div className="row">
