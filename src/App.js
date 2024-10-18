@@ -10,6 +10,7 @@ import Sidebar from "./components/SideBar";
 import Login from "./pages/Login";
 import Test from "./pages/Test";
 import PrivateRoute from "./components/PrivateRoute";
+import Dispute from "./pages/Dispute";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/home" element={<Home />} />
+                <Route path="/dispute" element={<Dispute />} />
                 <Route path="/test" element={<Test />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/dashboard" element={<PrivateRoute element={<Dashboard />} />} />
