@@ -5,6 +5,7 @@ export default function Dispute() {
   const [accountNum, setAccountNum] = useState("");
   const [accounts, setAccounts] = useState([]);
   const [selectedAccount, setSelectedAccount] = useState(null);
+  const [billsummary, setBillsummary] = useState([]);
 
   const handleSearch = async () => {
     console.log("accountNum: ", accountNum);
@@ -18,10 +19,20 @@ export default function Dispute() {
     }
   };
 
-  const handleSelect = (account) => {
+  const handleSelect = async (account) => {
     setSelectedAccount(account);
-
     console.log("selectedAccount:", selectedAccount);
+
+
+try {
+  const response = await api.get(`/api/BillSummary/GetBillSummaryByAccountNum?accountNum=${accountNum}`);
+  setBillsummary(response.data);
+
+} catch (error) {
+  console.error(error);
+  
+}
+
   };
 
   return (
@@ -87,6 +98,37 @@ export default function Dispute() {
                 </div>
               )}
             </div>
+
+            { billsummary.length > 0 && (
+              <div>
+              <table className="table table-bordered table-striped">
+              <thead>
+                <tr>
+                  <th>AccountNum</th>
+                  <th>BillSeq</th>
+                  <th>BillAmount</th>
+                </tr>
+              </thead>
+              <tbody>
+                {billsummary.map((bs, index) => (
+                  <tr
+                    key={index}
+                    onClick={() => {
+                      handleSelect(bs);
+                    }}
+                  >
+                    <td>{bs.accountNum}</td>
+                    <td>{bs.billSeq}</td>
+                    <td>{bs.invoiceNetMny}</td>
+                  </tr>
+                ))}
+              </tbody>
+              </table>
+              </div>
+
+            ) }
+
+
           </div>
         </div>
       </div>

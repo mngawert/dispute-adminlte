@@ -13,9 +13,9 @@ export default function Navbar() {
         <li className="nav-item">
           <a className="nav-link" data-widget="pushmenu" href="#" role="button">
             <i className="fas fa-bars"></i>
-            <button onClick={() => handleLogout()}>logout</button>
           </a>
-        </li>
+          <button className="btn-xs info" onClick={() => handleLogout()}>logout</button>
+          </li>
       </ul>
     </nav>
   );
