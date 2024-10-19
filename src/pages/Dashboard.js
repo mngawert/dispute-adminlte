@@ -6,11 +6,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     api
-      .get("/api/User/GetProtectedData", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-        },
-      })
+      .get("/api/User/GetProtectedData")
       .then((response) => {
         // Handle user data
         console.log(response.data);
