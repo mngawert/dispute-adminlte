@@ -6,6 +6,7 @@ export default function Dispute() {
   const [accounts, setAccounts] = useState([]);
   const [selectedAccount, setSelectedAccount] = useState(null);
   const [billsummary, setBillsummary] = useState([]);
+  const [invoiceFeedData, setInvoiceFeedData] = useState([]);
 
   const handleSearch = async () => {
     console.log("accountNum: ", accountNum);
@@ -19,21 +20,32 @@ export default function Dispute() {
     }
   };
 
-  const handleSelect = async (account) => {
+  const handleSelectAccount = async (account) => {
     setSelectedAccount(account);
     console.log("selectedAccount:", selectedAccount);
+    try {
+      const response = await api.get(`/api/BillSummary/GetBillSummaryByAccountNum?accountNum=${account.accountNum}`);
+      setBillsummary(response.data);
 
-
-try {
-  const response = await api.get(`/api/BillSummary/GetBillSummaryByAccountNum?accountNum=${accountNum}`);
-  setBillsummary(response.data);
-
-} catch (error) {
-  console.error(error);
-  
-}
-
+    } catch (error) {
+      console.error(error);      
+    }
   };
+
+  const handleSelectBill = async (bill) => {
+    try {
+      const response = await api.get(`/api/SAPInvoiceFeedData/GetSAPInvoiceFeedData`, {
+        params: {
+          accountNum: bill.accountNum,
+          billSeq: bill.billSeq
+        }
+      });
+      setInvoiceFeedData(response.data);
+    } catch (error) {
+      console.error(error);      
+    }
+  };
+
 
   return (
     <div className="row">
@@ -69,7 +81,7 @@ try {
                     <tr
                       key={index}
                       onClick={() => {
-                        handleSelect(account);
+                        handleSelectAccount(account);
                       }}
                     >
                       <td>{account.accountNum}</td>
@@ -110,23 +122,47 @@ try {
                 </tr>
               </thead>
               <tbody>
-                {billsummary.map((bs, index) => (
+                {billsummary.map((bill, index) => (
                   <tr
                     key={index}
                     onClick={() => {
-                      handleSelect(bs);
+                      handleSelectBill(bill);
                     }}
                   >
-                    <td>{bs.accountNum}</td>
-                    <td>{bs.billSeq}</td>
-                    <td>{bs.invoiceNetMny}</td>
+                    <td>{bill.accountNum}</td>
+                    <td>{bill.billSeq}</td>
+                    <td>{bill.invoiceNetMny}</td>
                   </tr>
                 ))}
               </tbody>
               </table>
               </div>
+            )}
 
-            ) }
+
+      {invoiceFeedData.length > 0 && (
+        <div>
+          <h3>Invoice Feed Data</h3>
+          <table className="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th>Charge Flag</th>
+                <th>Product Seq</th>
+                <th>AGG Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              {invoiceFeedData.map((invoice, idx) => (
+                <tr key={idx}>
+                  <td>{invoice.chargeFlag}</td>
+                  <td>{invoice.productSeq}</td>
+                  <td>{invoice.aggAmount}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
 
           </div>
