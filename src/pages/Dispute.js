@@ -1,5 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import api from "../api";
+
+import $ from 'jquery';
+import 'datatables.net-dt/css/dataTables.dataTables.css';
+import 'datatables.net';
+
 
 export default function Dispute() {
   const [accountNum, setAccountNum] = useState("");
@@ -7,6 +12,16 @@ export default function Dispute() {
   const [selectedAccount, setSelectedAccount] = useState(null);
   const [billsummary, setBillsummary] = useState([]);
   const [invoiceFeedData, setInvoiceFeedData] = useState([]);
+
+
+  useEffect(() => {
+    if (billsummary.length > 0) {
+      $('#billSummaryTable').DataTable({
+        lengthChange: false,
+        searching: false
+      });
+    }
+  }, [billsummary]);
 
   const handleSearch = async () => {
     console.log("accountNum: ", accountNum);
@@ -113,7 +128,7 @@ export default function Dispute() {
 
             { billsummary.length > 0 && (
               <div>
-              <table className="table table-bordered table-striped">
+              <table id="billSummaryTable" className="table table-bordered table-striped">
               <thead>
                 <tr>
                   <th>AccountNum</th>
