@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import api from "../api";
 
-import $ from 'jquery';
-import 'datatables.net-dt/css/dataTables.dataTables.css';
-import 'datatables.net';
+// import $ from 'jquery';
+// import 'datatables.net-dt/css/dataTables.dataTables.css';
+// import 'datatables.net';
 
 
 export default function Dispute() {
@@ -14,14 +14,15 @@ export default function Dispute() {
   const [invoiceFeedData, setInvoiceFeedData] = useState([]);
 
 
-  useEffect(() => {
-    if (billsummary.length > 0) {
-      $('#billSummaryTable').DataTable({
-        lengthChange: false,
-        searching: false
-      });
-    }
-  }, [billsummary]);
+  // useEffect(() => {
+  //   if (billsummary.length > 0) {
+  //     $('#billSummaryTable').DataTable({
+  //       destroy: true,
+  //       lengthChange: false,
+  //       searching: false
+  //     });
+  //   }
+  // }, [billsummary]);
 
   const handleSearch = async () => {
     console.log("accountNum: ", accountNum);
@@ -127,7 +128,7 @@ export default function Dispute() {
             </div>
 
             { billsummary.length > 0 && (
-              <div>
+              <div style={{ maxHeight: '400px', overflowY: 'scroll' }}>
               <table id="billSummaryTable" className="table table-bordered table-striped">
               <thead>
                 <tr>
