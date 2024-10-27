@@ -12,6 +12,23 @@ export default function Dispute() {
   const [selectedAccount, setSelectedAccount] = useState(null);
   const [billsummary, setBillsummary] = useState([]);
   const [invoiceFeedData, setInvoiceFeedData] = useState([]);
+  const [adjustmentTypes, setAdjustmentTypes] = useState([]);
+  const [selectedAdjustmentType, setSelectedAdjustmentType] = useState('');
+  const [amount, setAmount] = useState('');
+
+
+  useEffect(() => {
+    const fetchAdjustmentTypes = async () => {
+      try {
+        const response = await api.get('/api/AdjustmentType/GetAdjustmentTypes');
+        setAdjustmentTypes(response.data);
+      } catch (error) {
+        console.error('Error fetching adjustment types', error);
+      }
+    };
+
+    fetchAdjustmentTypes();
+  }, []);
 
 
   // useEffect(() => {
@@ -62,6 +79,21 @@ export default function Dispute() {
     }
   };
 
+  const handleCreateDispute = async () => {
+    try {
+      const response = await api.post('/api/CreateDispute', {
+        // accountNum: selectedTransaction.accountNum,
+        // billSeq: selectedTransaction.billSeq,
+        // amount: amount,
+        // adjustmentType: selectedAdjustmentType,
+      });
+      console.log('Dispute created:', response.data);
+      alert('Dispute created successfully!');
+    } catch (error) {
+      console.error('Error creating dispute', error);
+      alert('Failed to create dispute.');
+    }
+  };
 
   return (
     <div className="row">
@@ -179,6 +211,36 @@ export default function Dispute() {
           </table>
         </div>
       )}
+
+
+
+
+          <div>
+            <h3>Create Dispute</h3>
+            <div>
+              <label>Amount:</label>
+              <input
+                type="text"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+              />
+            </div>
+            <div>
+              <label>Adjustment Type:</label>
+              <select
+                value={selectedAdjustmentType}
+                onChange={(e) => setSelectedAdjustmentType(e.target.value)}
+              >
+                <option value="">Select Adjustment Type</option>
+                {adjustmentTypes.map((adjType) => (
+                  <option key={adjType.adjustmentTypeId} value={adjType.adjustmentTypeId}>
+                    {adjType.adjustmentTypeName}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <button onClick={handleCreateDispute}>Create Dispute</button>
+          </div>
 
 
           </div>
