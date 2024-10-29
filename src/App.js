@@ -11,40 +11,31 @@ import Login from "./pages/Login";
 import Test from "./pages/Test";
 import PrivateRoute from "./components/PrivateRoute";
 import Dispute from "./pages/Dispute";
+import MainLayout from './MainLayout';
+import AuthLayout from './AuthLayout';
 
 function App() {
   return (
+
     <Router>
-      <div className="wrapper">
-        {/* Navbar */}
+      <Routes>
+        <Route element={ <AuthLayout /> }>
+          <Route path="/login" element={<Login />} />
+        </Route>
 
-        <Navbar />
-
-        {/* Sidebar */}
-        <Sidebar />
-
-        {/* Content Wrapper */}
-        <div className="content-wrapper">
-          <section className="content">
-            <div className="container-fluid">
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/home" element={<Home />} />
-                <Route path="/dispute" element={<Dispute />} />
-                <Route path="/test" element={<Test />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/dashboard" element={<PrivateRoute element={<Dashboard />} />} />
-                <Route path="/disputedata" element={<DisputeData />} />
-              </Routes>
-            </div>
-          </section>
-        </div>
-
-        {/* Footer */}
-
-        <Footer />
-      </div>
+        <Route element={ <MainLayout /> }>
+          <Route path="/" element={<Home />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/dispute" element={<Dispute />} />
+          <Route path="/test" element={<Test />} />
+          <Route path="/dashboard" element={<PrivateRoute element={<Dashboard />} />} />
+          <Route path="/disputedata" element={<DisputeData />} />
+        </Route>
+      </Routes>
     </Router>
+
+
+
   );
 }
 

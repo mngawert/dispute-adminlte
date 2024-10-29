@@ -22,20 +22,74 @@ const Login = () => {
   };
 
   return (
-    <div>
-      <h1>Login</h1>
+    // <div>
+    //   <h1>Login</h1>
+    //   <form onSubmit={handleSubmit}>
+    //     <label>
+    //       Username:
+    //       <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
+    //     </label>
+    //     <label>
+    //       Password:
+    //       <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+    //     </label>
+    //     <button type="submit">Login</button>
+    //   </form>
+    // </div>
+  
+<div className="hold-transition login-page">
+
+
+
+<div className="login-box">
+  {/* /.login-logo */}
+  <div className="card card-outline card-primary">
+    <div className="card-header text-center">
+      <a href="../../index2.html" className="h1"><b>Adjustor</b> TOT</a>
+    </div>
+    <div className="card-body">
+      <p className="login-box-msg">Sign in to start</p>
       <form onSubmit={handleSubmit}>
-        <label>
-          Username:
-          <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
-        </label>
-        <label>
-          Password:
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-        </label>
-        <button type="submit">Login</button>
+        <div className="input-group mb-3">
+          <input type="text" value={username} className="form-control" placeholder="User" onChange={(e) => setUsername(e.target.value)} />
+          <div className="input-group-append">
+            <div className="input-group-text">
+              <span className="fas fa-envelope" />
+            </div>
+          </div>
+        </div>
+        <div className="input-group mb-3">
+          <input type="password" className="form-control" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <div className="input-group-append">
+            <div className="input-group-text">
+              <span className="fas fa-lock" />
+            </div>
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-8">
+            <div className="icheck-primary">
+              <input type="checkbox" id="remember" />
+              <label htmlFor="remember">
+                Remember Me
+              </label>
+            </div>
+          </div>
+          {/* /.col */}
+          <div className="col-4">
+            <button type="submit" className="btn btn-primary btn-block">Sign In</button>
+          </div>
+          {/* /.col */}
+        </div>
       </form>
     </div>
+    {/* /.card-body */}
+  </div>
+  {/* /.card */}
+</div>
+
+</div>
+
   );
 };
 
