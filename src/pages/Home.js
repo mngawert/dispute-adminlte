@@ -4,17 +4,49 @@ export default function Home() {
   console.log("process.env.REACT_APP_API_URL", process.env);
 
   return (
-    <div className="row">
-      <div className="col-12">
-        <div className="card">
-          <div className="card-header">
-            <h3 className="card-title">Welcome to AdminLTE</h3>
-          </div>
-          <div className="card-body">
-            <p>This is a simple example of integrating AdminLTE with React.</p>
+    <>
+      <section className="content-header">
+        <div className="container-fluid">
+          <div className="row mb-2">
+            <div className="col-sm-6">
+              <h1>Invoice</h1>
+            </div>
+            <div className="col-sm-6">
+              <ol className="breadcrumb float-sm-right">
+                <li className="breadcrumb-item"><a href="#">Home</a></li>
+                <li className="breadcrumb-item active">Invoice</li>
+              </ol>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
+      </section>
+      <section class="content">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-12">
+              <div class="callout callout-info">
+                <h5><i class="fas fa-info"></i> Note:</h5>
+                This page has been enhanced for printing. Click the print button at the bottom of the invoice to test.
+              </div>
+              <div className="invoice p-3 mb-3">
+                <div className="row">
+                  <div className="col-12">
+                    <h4>
+                      <i className="fas fa-globe" /> AdminLTE, Inc.
+                      <small className="float-right">Date: 2/10/2014</small>
+                    </h4>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-12">
+                    <p>This is a simple example of integrating AdminLTE with React.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </>
   );
 }

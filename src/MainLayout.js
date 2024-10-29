@@ -10,11 +10,7 @@ const MainLayout = () => {
       <Navbar />
       <Sidebar />
       <div className="content-wrapper">
-        <section className="content">
-          <div className="container-fluid">
-            <Outlet />
-          </div>
-        </section>
+        <Outlet />
       </div>
       <Footer />
     </div>
