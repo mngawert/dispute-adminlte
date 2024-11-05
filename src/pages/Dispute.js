@@ -15,6 +15,7 @@ export default function Dispute() {
   const [adjustmentTypes, setAdjustmentTypes] = useState([]);
   const [selectedAdjustmentType, setSelectedAdjustmentType] = useState('');
   const [amount, setAmount] = useState('');
+  const [selectedBill, setSelectedBill] = useState(null);
 
 
   useEffect(() => {
@@ -66,6 +67,8 @@ export default function Dispute() {
   };
 
   const handleSelectBill = async (bill) => {
+    console.log('Selected Bill:', bill); // Debugging log
+    setSelectedBill(bill);
     try {
       const response = await api.get(`/api/SAPInvoiceFeedData/GetSAPInvoiceFeedData`, {
         params: {
@@ -78,6 +81,10 @@ export default function Dispute() {
       console.error(error);      
     }
   };
+
+  useEffect(() => {
+    console.log('Selected Bill State:', selectedBill); // Debugging log for selectedBill state
+  }, [selectedBill]);
 
   const handleCreateDispute = async () => {
     try {
@@ -113,10 +120,10 @@ export default function Dispute() {
         </div>
       </div>
     </section>
-    <section class="content">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-12">
+    <section className="content">
+      <div className="container-fluid">
+        <div className="row">
+          <div className="col-12">
             <div className="invoice p-3 mb-3">
               <div className="row">
                 <div className="col-12">
@@ -170,8 +177,8 @@ export default function Dispute() {
 
 
 
-        <div class="row">
-          <div class="col-12">
+        <div className="row">
+          <div className="col-12">
             <div className="invoice p-3 mb-3">
               <div className="row">
                 <div className="col-12">
@@ -193,6 +200,7 @@ export default function Dispute() {
                           <tr
                             key={index}
                             onClick={() => {
+                              console.log('Row clicked:', bill); // Debugging log for row click
                               handleSelectBill(bill);
                             }}
                           >
@@ -214,8 +222,8 @@ export default function Dispute() {
         </div>
 
 
-        <div class="row">
-          <div class="col-12">
+        <div className="row">
+          <div className="col-12">
             <div className="invoice p-3 mb-3">
               <div className="row">
                 <div className="col-12">
@@ -252,28 +260,28 @@ export default function Dispute() {
           </div>
         </div>
 
-        <div class="row">
-          <div class="col-12">
+        <div className="row">
+          <div className="col-12">
             <div className="invoice p-3 mb-3">
               <div className="row">
                 <div className="col-12">
                   <p>4) Create Dispute</p>
                   <div className="xxx">
 
-                  <div class="card card-secondary">
-                    <div class="card-header">
-                      <h3 class="card-title">Dispute</h3>
+                  <div className="card card-secondary">
+                    <div className="card-header">
+                      <h3 className="card-title">Dispute</h3>
                     </div>
 
                     <form>
                       <div className="card-body">
                         <div className="form-group">
                           <label htmlFor="txtAccountNum">Account Num</label>
-                          <input type="text" className="form-control" id="txtAccountNum" placeholder="Account Num" />
+                          <input type="text" className="form-control" id="txtAccountNum" placeholder="Account Num" value={selectedBill ? selectedBill.accountNum : ''} readOnly />
                         </div>
                         <div className="form-group">
                           <label htmlFor="txtBillSeq">Bill Seq</label>
-                          <input type="text" className="form-control" id="txtBillSeq" placeholder="Bill Seq" />
+                          <input type="text" className="form-control" id="txtBillSeq" placeholder="Bill Seq" value={selectedBill ? selectedBill.billSeq : ''} readOnly />
                         </div>
                         <div className="form-group">
                           <label htmlFor="txtAmount">Amount</label>
@@ -281,7 +289,7 @@ export default function Dispute() {
                         </div>
                         <div className="form-group">
                           <label>Adjustment Type</label>
-                          <select class="form-control" value={selectedAdjustmentType} onChange={(e) => setSelectedAdjustmentType(e.target.value)} >
+                          <select className="form-control" value={selectedAdjustmentType} onChange={(e) => setSelectedAdjustmentType(e.target.value)} >
                             <option value="">Select Adjustment Type</option>
                             {adjustmentTypes.map((adjType) => (
                             <option key={adjType.adjustmentTypeId} value={adjType.adjustmentTypeId}>
