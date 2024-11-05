@@ -18,29 +18,18 @@ export default function Dispute() {
   const [selectedBill, setSelectedBill] = useState(null);
 
 
-  useEffect(() => {
-    const fetchAdjustmentTypes = async () => {
-      try {
-        const response = await api.get('/api/AdjustmentType/GetAdjustmentTypes');
-        setAdjustmentTypes(response.data);
-      } catch (error) {
-        console.error('Error fetching adjustment types', error);
-      }
-    };
-
-    fetchAdjustmentTypes();
-  }, []);
-
-
   // useEffect(() => {
-  //   if (billsummary.length > 0) {
-  //     $('#billSummaryTable').DataTable({
-  //       destroy: true,
-  //       lengthChange: false,
-  //       searching: false
-  //     });
-  //   }
-  // }, [billsummary]);
+  //   const fetchAdjustmentTypes = async () => {
+  //     try {
+  //       const response = await api.get('/api/AdjustmentType/GetAdjustmentTypes');
+  //       setAdjustmentTypes(response.data);
+  //     } catch (error) {
+  //       console.error('Error fetching adjustment types', error);
+  //     }
+  //   };
+
+  //   fetchAdjustmentTypes();
+  // }, []);
 
   const handleSearch = async () => {
     console.log("accountNum: ", accountNum);
@@ -79,6 +68,19 @@ export default function Dispute() {
       setInvoiceFeedData(response.data);
     } catch (error) {
       console.error(error);      
+    }
+  };
+
+  const handleSelectInvoice = async (invoice) => {
+    try {
+      const response = await api.get(`/api/AdjustmentType/GetAdjustmentTypesByProductCode`, {
+        params: {
+          productCode: invoice.productCode
+        }
+      });
+      setAdjustmentTypes(response.data);
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -238,14 +240,21 @@ export default function Dispute() {
                               <th>Charge Flag</th>
                               <th>Product Seq</th>
                               <th>AGG Amount</th>
+                              <th>Product Code</th> {/* New column for Product Code */}
                             </tr>
                           </thead>
                           <tbody>
                             {invoiceFeedData.map((invoice, idx) => (
-                              <tr key={idx}>
+                              <tr
+                                key={idx}
+                                onClick={() => {
+                                  handleSelectInvoice(invoice);
+                                }}
+                              >
                                 <td>{invoice.chargeFlag}</td>
                                 <td>{invoice.productSeq}</td>
                                 <td>{invoice.aggAmount}</td>
+                                <td>{invoice.productCode}</td> {/* Display Product Code */}
                               </tr>
                             ))}
                           </tbody>
@@ -330,7 +339,6 @@ export default function Dispute() {
             </div>
           </div>
         </div>
-
 
 
 
