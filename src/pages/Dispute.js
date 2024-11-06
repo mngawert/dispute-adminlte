@@ -16,6 +16,7 @@ export default function Dispute() {
   const [selectedAdjustmentType, setSelectedAdjustmentType] = useState('');
   const [amount, setAmount] = useState('');
   const [selectedBill, setSelectedBill] = useState(null);
+  const [successMessage, setSuccessMessage] = useState('');
 
 
   // useEffect(() => {
@@ -51,7 +52,7 @@ export default function Dispute() {
       setBillsummary(response.data);
 
     } catch (error) {
-      console.error(error);      
+      console.error(error);
     }
   };
 
@@ -67,7 +68,7 @@ export default function Dispute() {
       });
       setInvoiceFeedData(response.data);
     } catch (error) {
-      console.error(error);      
+      console.error(error);
     }
   };
 
@@ -84,271 +85,263 @@ export default function Dispute() {
     }
   };
 
-  useEffect(() => {
-    console.log('Selected Bill State:', selectedBill); // Debugging log for selectedBill state
-  }, [selectedBill]);
-
   const handleCreateDispute = async () => {
     try {
-      const response = await api.post('/api/CreateDispute', {
-        // accountNum: selectedTransaction.accountNum,
-        // billSeq: selectedTransaction.billSeq,
-        // amount: amount,
-        // adjustmentType: selectedAdjustmentType,
+      const response = await api.post('/api/Dispute/CreateDispute', {
+        accountNumber: selectedBill.accountNum,
+        disputeDtm: new Date().toISOString(),
+        billSeq: selectedBill.billSeq,
+        disputeTxt: "test",
+        disputeMny: parseFloat(amount),
+        productId: 0,
+        eventTypeId: 0,
+        disputeTypeId: 0,
+        cpsID: 0,
+        productSeq: 0,
+        chargeType: 0,
+        eventRef: "string",
+        receivableClassId: 0,
+        otcSeq: 0,
+        disputeStatus: "P",
+        outcomeDesc: "-",
+        genevaUserOra: "-",
+        disputeClass: 0,
+        taxOverrideId: 0,
+        ustCategoryId: 0,
+        ustCodeId: 0,
+        decisionDtm: new Date().toISOString()
       });
       console.log('Dispute created:', response.data);
-      alert('Dispute created successfully!');
+      setSuccessMessage('Dispute created successfully!');
     } catch (error) {
       console.error('Error creating dispute', error);
-      alert('Failed to create dispute.');
+      setSuccessMessage('Failed to create dispute.');
     }
   };
 
   return (
 
     <>
-    <section className="content-header">
-      <div className="container-fluid">
-        <div className="row mb-2">
-          <div className="col-sm-6">
-            <h1>Dispute</h1>
-          </div>
-          <div className="col-sm-6">
-            <ol className="breadcrumb float-sm-right">
-              <li className="breadcrumb-item"><a href="#">Home</a></li>
-              <li className="breadcrumb-item active">Dispute</li>
-            </ol>
-          </div>
-        </div>
-      </div>
-    </section>
-    <section className="content">
-      <div className="container-fluid">
-        <div className="row">
-          <div className="col-12">
-            <div className="invoice p-3 mb-3">
-              <div className="row">
-                <div className="col-12">
-                  <p>1) Search Account Num</p>
-                  <div className="xxx">
-                    <div>
-                      <input
-                        type="text"
-                        value={accountNum}
-                        onChange={(e) => setAccountNum(e.target.value)}
-                        placeholder="Enter account number"
-                      />
-                      <button onClick={handleSearch}>Search</button>
-                    </div>
-                  
-                    <br />
-
-                    <div>
-                      <table className="table table-bordered table-striped">
-                        <thead>
-                          <tr>
-                            <th>Account Num</th>
-                            <th>Customer Ref</th>
-                            <th>Bill Cycle</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {accounts.map((account, index) => (
-                            <tr
-                              key={index}
-                              onClick={() => {
-                                handleSelectAccount(account);
-                              }}
-                            >
-                              <td>{account.accountNum}</td>
-                              <td>{account.customerRef}</td>
-                              <td>{account.billCycle}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                      
-                    </div>
-
-                  </div>
-                </div>
-              </div>
+      <section className="content-header">
+        <div className="container-fluid">
+          <div className="row mb-2">
+            <div className="col-sm-6">
+              <h1>Dispute</h1>
+            </div>
+            <div className="col-sm-6">
+              <ol className="breadcrumb float-sm-right">
+                <li className="breadcrumb-item"><a href="#">Home</a></li>
+                <li className="breadcrumb-item active">Dispute</li>
+              </ol>
             </div>
           </div>
         </div>
-
-
-
-        <div className="row">
-          <div className="col-12">
-            <div className="invoice p-3 mb-3">
-              <div className="row">
-                <div className="col-12">
-                  <p>2) Select Invoice Num</p>
-                  <div className="xxx">
-
-                    { billsummary.length > 0 && (
-                      <div style={{ maxHeight: '400px', overflowY: 'scroll' }}>
-                      <table id="billSummaryTable" className="table table-bordered table-striped">
-                      <thead>
-                        <tr>
-                          <th>AccountNum</th>
-                          <th>BillSeq</th>
-                          <th>BillAmount</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {billsummary.map((bill, index) => (
-                          <tr
-                            key={index}
-                            onClick={() => {
-                              console.log('Row clicked:', bill); // Debugging log for row click
-                              handleSelectBill(bill);
-                            }}
-                          >
-                            <td>{bill.accountNum}</td>
-                            <td>{bill.billSeq}</td>
-                            <td>{bill.invoiceNetMny}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                      </table>
+      </section>
+      <section className="content">
+        <div className="container-fluid">
+          <div className="row">
+            <div className="col-12">
+              <div className="invoice p-3 mb-3">
+                <div className="row">
+                  <div className="col-12">
+                    <p>1) Search Account Num</p>
+                    <div className="xxx">
+                      <div>
+                        <input
+                          type="text"
+                          value={accountNum}
+                          onChange={(e) => setAccountNum(e.target.value)}
+                          placeholder="Enter account number"
+                        />
+                        <button onClick={handleSearch}>Search</button>
                       </div>
-                    )}
 
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+                      <br />
 
-
-        <div className="row">
-          <div className="col-12">
-            <div className="invoice p-3 mb-3">
-              <div className="row">
-                <div className="col-12">
-                  <p>3) Select Charge (Invoice Feed Data)</p>
-                  <div className="xxx">
-
-                    {invoiceFeedData.length > 0 && (
                       <div>
                         <table className="table table-bordered table-striped">
                           <thead>
                             <tr>
-                              <th>Charge Flag</th>
-                              <th>Product Seq</th>
-                              <th>AGG Amount</th>
-                              <th>Product Code</th> {/* New column for Product Code */}
+                              <th>Account Num</th>
+                              <th>Customer Ref</th>
+                              <th>Bill Cycle</th>
                             </tr>
                           </thead>
                           <tbody>
-                            {invoiceFeedData.map((invoice, idx) => (
+                            {accounts.map((account, index) => (
                               <tr
-                                key={idx}
+                                key={index}
                                 onClick={() => {
-                                  handleSelectInvoice(invoice);
+                                  handleSelectAccount(account);
                                 }}
                               >
-                                <td>{invoice.chargeFlag}</td>
-                                <td>{invoice.productSeq}</td>
-                                <td>{invoice.aggAmount}</td>
-                                <td>{invoice.productCode}</td> {/* Display Product Code */}
+                                <td>{account.accountNum}</td>
+                                <td>{account.customerRef}</td>
+                                <td>{account.billCycle}</td>
                               </tr>
                             ))}
                           </tbody>
                         </table>
+
                       </div>
-                    )}
 
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="row">
-          <div className="col-12">
-            <div className="invoice p-3 mb-3">
-              <div className="row">
-                <div className="col-12">
-                  <p>4) Create Dispute</p>
-                  <div className="xxx">
-
-                  <div className="card card-secondary">
-                    <div className="card-header">
-                      <h3 className="card-title">Dispute</h3>
                     </div>
-
-                    <form>
-                      <div className="card-body">
-                        <div className="form-group">
-                          <label htmlFor="txtAccountNum">Account Num</label>
-                          <input type="text" className="form-control" id="txtAccountNum" placeholder="Account Num" value={selectedBill ? selectedBill.accountNum : ''} readOnly />
-                        </div>
-                        <div className="form-group">
-                          <label htmlFor="txtBillSeq">Bill Seq</label>
-                          <input type="text" className="form-control" id="txtBillSeq" placeholder="Bill Seq" value={selectedBill ? selectedBill.billSeq : ''} readOnly />
-                        </div>
-                        <div className="form-group">
-                          <label htmlFor="txtAmount">Amount</label>
-                          <input type="text" className="form-control" id="txtAmount" placeholder="Amount" value={amount} onChange={(e) => setAmount(e.target.value) } />
-                        </div>
-                        <div className="form-group">
-                          <label>Adjustment Type</label>
-                          <select className="form-control" value={selectedAdjustmentType} onChange={(e) => setSelectedAdjustmentType(e.target.value)} >
-                            <option value="">Select Adjustment Type</option>
-                            {adjustmentTypes.map((adjType) => (
-                            <option key={adjType.adjustmentTypeId} value={adjType.adjustmentTypeId}>
-                              {adjType.adjustmentTypeName}
-                            </option>
-                          ))}
-                          </select>
-                        </div>
-                      </div>
-                      <div className="card-footer">
-                        <button onClick={handleCreateDispute} className="btn btn-secondary">Create Dispute</button>
-                      </div>
-                    </form>
                   </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
 
 
-                    {/* <div>
-                      <h3>Create Dispute</h3>
-                      <div>
-                        <label>Amount:</label>
-                        <input
-                          type="text"
-                          value={amount}
-                          onChange={(e) => setAmount(e.target.value)}
-                        />
+          <div className="row">
+            <div className="col-12">
+              <div className="invoice p-3 mb-3">
+                <div className="row">
+                  <div className="col-12">
+                    <p>2) Select Invoice Num</p>
+                    <div className="xxx">
+
+                      {billsummary.length > 0 && (
+                        <div style={{ maxHeight: '400px', overflowY: 'scroll' }}>
+                          <table id="billSummaryTable" className="table table-bordered table-striped">
+                            <thead>
+                              <tr>
+                                <th>AccountNum</th>
+                                <th>BillSeq</th>
+                                <th>BillAmount</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {billsummary.map((bill, index) => (
+                                <tr
+                                  key={index}
+                                  onClick={() => {
+                                    console.log('Row clicked:', bill); // Debugging log for row click
+                                    handleSelectBill(bill);
+                                  }}
+                                >
+                                  <td>{bill.accountNum}</td>
+                                  <td>{bill.billSeq}</td>
+                                  <td>{bill.invoiceNetMny}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <div className="row">
+            <div className="col-12">
+              <div className="invoice p-3 mb-3">
+                <div className="row">
+                  <div className="col-12">
+                    <p>3) Select Charge (Invoice Feed Data)</p>
+                    <div className="xxx">
+
+                      {invoiceFeedData.length > 0 && (
+                        <div>
+                          <table className="table table-bordered table-striped">
+                            <thead>
+                              <tr>
+                                <th>Charge Flag</th>
+                                <th>Product Seq</th>
+                                <th>AGG Amount</th>
+                                <th>Product Code</th> {/* New column for Product Code */}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {invoiceFeedData.map((invoice, idx) => (
+                                <tr
+                                  key={idx}
+                                  onClick={() => {
+                                    handleSelectInvoice(invoice);
+                                  }}
+                                >
+                                  <td>{invoice.chargeFlag}</td>
+                                  <td>{invoice.productSeq}</td>
+                                  <td>{invoice.aggAmount}</td>
+                                  <td>{invoice.productCode}</td> {/* Display Product Code */}
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="row">
+            <div className="col-12">
+              <div className="invoice p-3 mb-3">
+                <div className="row">
+                  <div className="col-12">
+                    <p>4) Create Dispute</p>
+                    <div className="xxx">
+
+                      <div className="card card-secondary">
+                        <div className="card-header">
+                          <h3 className="card-title">Dispute</h3>
+                        </div>
+
+                        <form>
+                          <div className="card-body">
+                            <div className="form-group">
+                              <label htmlFor="txtAccountNum">Account Num</label>
+                              <input type="text" className="form-control" id="txtAccountNum" placeholder="Account Num" value={selectedBill ? selectedBill.accountNum : ''} readOnly />
+                            </div>
+                            <div className="form-group">
+                              <label htmlFor="txtBillSeq">Bill Seq</label>
+                              <input type="text" className="form-control" id="txtBillSeq" placeholder="Bill Seq" value={selectedBill ? selectedBill.billSeq : ''} readOnly />
+                            </div>
+                            <div className="form-group">
+                              <label htmlFor="txtAmount">Amount</label>
+                              <input type="text" className="form-control" id="txtAmount" placeholder="Amount" value={amount} onChange={(e) => setAmount(e.target.value)} />
+                            </div>
+                            <div className="form-group">
+                              <label>Adjustment Type</label>
+                              <select className="form-control" value={selectedAdjustmentType} onChange={(e) => setSelectedAdjustmentType(e.target.value)} >
+                                <option value="">Select Adjustment Type</option>
+                                {adjustmentTypes.map((adjType) => (
+                                  <option key={adjType.adjustmentTypeId} value={adjType.adjustmentTypeId}>
+                                    {adjType.adjustmentTypeName}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                          </div>
+                          <div className="card-footer">
+                            <button type="button" onClick={handleCreateDispute} className="btn btn-secondary">Create Dispute</button>
+                          </div>
+                        </form>
+
+                        {successMessage && (
+                          <div className="alert alert-success mt-3">
+                            {successMessage}
+                          </div>
+                        )}
                       </div>
-                      <div>
-                        <label>Adjustment Type:</label>
-
-                      </div>
-                      <button onClick={handleCreateDispute}>Create Dispute</button>
-                    </div> */}
-
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-
-
-
-      </div>
-    </section>
-  </>
-
-
-
-
-
+      </section>
+    </>
   );
 }
