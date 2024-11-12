@@ -1,36 +1,19 @@
 import React, { useState, useEffect } from "react";
 import api from "../api";
 
-// import $ from 'jquery';
-// import 'datatables.net-dt/css/dataTables.dataTables.css';
-// import 'datatables.net';
-
-
 export default function Dispute() {
   const [accountNum, setAccountNum] = useState("");
   const [accounts, setAccounts] = useState([]);
   const [selectedAccount, setSelectedAccount] = useState(null);
   const [billsummary, setBillsummary] = useState([]);
-  const [invoiceFeedData, setInvoiceFeedData] = useState([]);
+  const [invoiceFeedDataRC, setInvoiceFeedDataRC] = useState([]);
+  const [invoiceFeedDataUsage, setInvoiceFeedDataUsage] = useState([]);
+  const [invoiceFeedDataServices, setInvoiceFeedDataServices] = useState([]);
   const [adjustmentTypes, setAdjustmentTypes] = useState([]);
   const [selectedAdjustmentType, setSelectedAdjustmentType] = useState('');
   const [amount, setAmount] = useState('');
   const [selectedBill, setSelectedBill] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
-
-
-  // useEffect(() => {
-  //   const fetchAdjustmentTypes = async () => {
-  //     try {
-  //       const response = await api.get('/api/AdjustmentType/GetAdjustmentTypes');
-  //       setAdjustmentTypes(response.data);
-  //     } catch (error) {
-  //       console.error('Error fetching adjustment types', error);
-  //     }
-  //   };
-
-  //   fetchAdjustmentTypes();
-  // }, []);
 
   const handleSearch = async () => {
     console.log("accountNum: ", accountNum);
@@ -60,19 +43,59 @@ export default function Dispute() {
     console.log('Selected Bill:', bill); // Debugging log
     setSelectedBill(bill);
     try {
-      const response = await api.get(`/api/SAPInvoiceFeedData/GetSAPInvoiceFeedData`, {
+      const response = await api.get(`/api/SAPInvoiceFeedData/GetSAPInvoiceFeedDataServiceNumbers`, {
         params: {
           accountNum: bill.accountNum,
           billSeq: bill.billSeq
         }
       });
-      setInvoiceFeedData(response.data);
+      setInvoiceFeedDataServices(response.data);
+      setInvoiceFeedDataRC([]);
+      setInvoiceFeedDataUsage([]);
     } catch (error) {
       console.error(error);
     }
   };
 
-  const handleSelectInvoice = async (invoice) => {
+  const handleSelectInvoiceServices = async (bill) => {
+    try {
+      const response1 = await api.get(`/api/SAPInvoiceFeedData/GetSAPInvoiceFeedDataRC`, {
+        params: {
+          accountNum: bill.accountNum,
+          billSeq: bill.billSeq,
+          serviceNumber: bill.serviceNumber
+        }
+      });
+      setInvoiceFeedDataRC(response1.data);
+
+      const response2 = await api.get(`/api/SAPInvoiceFeedData/GetSAPInvoiceFeedDataUsage`, {
+        params: {
+          accountNum: bill.accountNum,
+          billSeq: bill.billSeq,
+          serviceNumber: bill.serviceNumber
+        }
+      });
+
+      setInvoiceFeedDataUsage(response2.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleSelectInvoiceFeedDataRC = async (invoice) => {
+    try {
+      const response = await api.get(`/api/AdjustmentType/GetAdjustmentTypesByProductCode`, {
+        params: {
+          productCode: invoice.productCode
+        }
+      });
+      setAdjustmentTypes(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleSelectInvoiceFeedDataUsage = async (invoice) => {
     try {
       const response = await api.get(`/api/AdjustmentType/GetAdjustmentTypesByProductCode`, {
         params: {
@@ -144,7 +167,7 @@ export default function Dispute() {
               <div className="invoice p-3 mb-3">
                 <div className="row">
                   <div className="col-12">
-                    <p>1) Search Account Num</p>
+                    <p>1) Search Account Num (000350000103)</p>
                     <div className="xxx">
                       <div>
                         <input
@@ -203,7 +226,7 @@ export default function Dispute() {
                     <div className="xxx">
 
                       {billsummary.length > 0 && (
-                        <div style={{ maxHeight: '400px', overflowY: 'scroll' }}>
+                        <div className="table-container">
                           <table id="billSummaryTable" className="table table-bordered table-striped">
                             <thead>
                               <tr>
@@ -243,33 +266,28 @@ export default function Dispute() {
             <div className="col-12">
               <div className="invoice p-3 mb-3">
                 <div className="row">
-                  <div className="col-12">
+                  <div className="col-3">
                     <p>3) Select Charge (Invoice Feed Data)</p>
+
                     <div className="xxx">
 
-                      {invoiceFeedData.length > 0 && (
-                        <div>
+                      {invoiceFeedDataServices.length > 0 && (
+                        <div className="table-container">
                           <table className="table table-bordered table-striped">
                             <thead>
                               <tr>
-                                <th>Charge Flag</th>
-                                <th>Product Seq</th>
-                                <th>AGG Amount</th>
-                                <th>Product Code</th> {/* New column for Product Code */}
+                                <th>Service Number</th>
                               </tr>
                             </thead>
                             <tbody>
-                              {invoiceFeedData.map((invoice, idx) => (
+                              {invoiceFeedDataServices.map((data, idx) => (
                                 <tr
                                   key={idx}
                                   onClick={() => {
-                                    handleSelectInvoice(invoice);
+                                    handleSelectInvoiceServices(data);
                                   }}
                                 >
-                                  <td>{invoice.chargeFlag}</td>
-                                  <td>{invoice.productSeq}</td>
-                                  <td>{invoice.aggAmount}</td>
-                                  <td>{invoice.productCode}</td> {/* Display Product Code */}
+                                  <td>{data.serviceNumber}</td>
                                 </tr>
                               ))}
                             </tbody>
@@ -278,6 +296,91 @@ export default function Dispute() {
                       )}
 
                     </div>
+                  </div>
+
+                  <div className="col-9">
+                  <div className="row" style={{ minHeight: '200px'}}>
+                      <div className="col-12">
+                        <p>RC:</p>
+                        <div className="xxx">
+                          {invoiceFeedDataRC.length > 0 && (
+                            <div>
+                              <table className="table table-bordered table-striped">
+                                <thead>
+                                  <tr>
+                                    <th>Service Number</th>
+                                    <th>Product Name</th>
+                                    <th>Price Plan</th>
+                                    <th>Amount</th>
+                                    <th>Product Code</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {invoiceFeedDataRC.map((invoice, idx) => (
+                                    <tr
+                                      key={idx}
+                                      onClick={() => {
+                                        handleSelectInvoiceFeedDataRC(invoice);
+                                      }}
+                                    >
+                                      <td>{invoice.serviceNumber}</td>
+                                      <td>{invoice.productId}</td>
+                                      <td>{invoice.tariffName}</td>
+                                      <td>{invoice.aggAmount}</td>
+                                      <td>{invoice.productCode}</td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="row">
+                      <div className="col-12">
+                        <p>USAGE:</p>
+                        <div className="xxx">
+                          {invoiceFeedDataUsage.length > 0 && (
+                            <div>
+                              <table className="table table-bordered table-striped">
+                                <thead>
+                                  <tr>
+                                    <th>Service Number</th>
+                                    <th>Product Name</th>
+                                    <th>Call Type</th>
+                                    <th>Amount</th>
+                                    <th>Product Code</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {invoiceFeedDataUsage.map((invoice, idx) => (
+                                    <tr
+                                      key={idx}
+                                      onClick={() => {
+                                        handleSelectInvoiceFeedDataUsage(invoice);
+                                      }}
+                                    >
+                                      <td>{invoice.serviceNumber}</td>
+                                      <td>{invoice.productId}</td>
+                                      <td>{invoice.callType}</td>
+                                      <td>{invoice.aggAmount}</td>
+                                      <td>{invoice.productCode}</td>
+                                    </tr>
+                                  ))}
+                                </tbody>
+                              </table>
+                            </div>
+                          )}
+                        </div>
+
+
+
+                      </div>
+                    </div>
+
+
+
                   </div>
                 </div>
               </div>
