@@ -9,6 +9,7 @@ export default function Dispute() {
   const [invoiceFeedDataRC, setInvoiceFeedDataRC] = useState([]);
   const [invoiceFeedDataUsage, setInvoiceFeedDataUsage] = useState([]);
   const [invoiceFeedDataServices, setInvoiceFeedDataServices] = useState([]);
+  const [selectedinvoiceFeedData, setSelectedinvoiceFeedData] = useState(null);
   const [adjustmentTypes, setAdjustmentTypes] = useState([]);
   const [selectedAdjustmentType, setSelectedAdjustmentType] = useState('');
   const [amount, setAmount] = useState('');
@@ -83,10 +84,12 @@ export default function Dispute() {
   };
 
   const handleSelectInvoiceFeedDataRC = async (invoice) => {
+    setSelectedinvoiceFeedData(invoice);
     try {
-      const response = await api.get(`/api/AdjustmentType/GetAdjustmentTypesByProductCode`, {
+      const response = await api.get(`/api/AdjustmentType/GetAdjustmentTypesByProductCodeAndRevenueCode`, {
         params: {
-          productCode: invoice.productCode
+          productCode: invoice.productCode,
+          revenueCodeId: invoice.revenueCodeId
         }
       });
       setAdjustmentTypes(response.data);
@@ -96,10 +99,12 @@ export default function Dispute() {
   };
 
   const handleSelectInvoiceFeedDataUsage = async (invoice) => {
+    setSelectedinvoiceFeedData(invoice);
     try {
-      const response = await api.get(`/api/AdjustmentType/GetAdjustmentTypesByProductCode`, {
+      const response = await api.get(`/api/AdjustmentType/GetAdjustmentTypesByProductCodeAndRevenueCode`, {
         params: {
-          productCode: invoice.productCode
+          productCode: invoice.productCode,
+          revenueCodeId: invoice.revenueCodeId
         }
       });
       setAdjustmentTypes(response.data);
@@ -108,31 +113,24 @@ export default function Dispute() {
     }
   };
 
+  
   const handleCreateDispute = async () => {
     try {
-      const response = await api.post('/api/Dispute/CreateDispute', {
-        accountNumber: selectedBill.accountNum,
+      const response = await api.post('/api/Dispute/CreateAdjustmentRequest', {
+        accountNum: selectedinvoiceFeedData.accountNum,
         disputeDtm: new Date().toISOString(),
-        billSeq: selectedBill.billSeq,
-        disputeTxt: "test",
+        billSeq: selectedinvoiceFeedData.billSeq,
         disputeMny: parseFloat(amount),
-        productId: 0,
-        eventTypeId: 0,
-        disputeTypeId: 0,
-        cpsID: 0,
-        productSeq: 0,
-        chargeType: 0,
-        eventRef: "string",
-        receivableClassId: 0,
-        otcSeq: 0,
-        disputeStatus: "P",
-        outcomeDesc: "-",
-        genevaUserOra: "-",
-        disputeClass: 0,
-        taxOverrideId: 0,
-        ustCategoryId: 0,
-        ustCodeId: 0,
-        decisionDtm: new Date().toISOString()
+        productId: selectedinvoiceFeedData.productId,
+        cpsId: selectedAccount.cpsId,
+        productSeq: selectedinvoiceFeedData.productSeq,
+        eventRef: "",
+        adjustmentTypeId: selectedAdjustmentType,
+        serviceNum: selectedinvoiceFeedData.serviceNumber,
+        invoiceNum: selectedBill.invoiceNum,
+        disputeSeq: null,
+        adjustmentSeq: null,
+        requestStatus: "I"
       });
       console.log('Dispute created:', response.data);
       setSuccessMessage('Dispute created successfully!');
@@ -231,7 +229,9 @@ export default function Dispute() {
                             <thead>
                               <tr>
                                 <th>AccountNum</th>
-                                <th>BillSeq</th>
+                                <th>Bill</th>
+                                <th>Invoice Number</th>
+                                <th>Bill Month</th>
                                 <th>BillAmount</th>
                               </tr>
                             </thead>
@@ -242,48 +242,50 @@ export default function Dispute() {
                                   onClick={() => {
                                     console.log('Row clicked:', bill); // Debugging log for row click
                                     handleSelectBill(bill);
-                                  }}
-                                >
-                                  <td>{bill.accountNum}</td>
-                                  <td>{bill.billSeq}</td>
-                                  <td>{bill.invoiceNetMny}</td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
+                                    }}
+                                  >
+                                    <td>{bill.accountNum}</td>
+                                    <td>{bill.billSeq}</td>
+                                    <td>{bill.invoiceNum}</td>
+                                    <td>{new Date(bill.billDtm).toLocaleDateString()}</td>
+                                    <td>{bill.invoiceNetMny}</td>
+                                  </tr>
+                                  ))}
+                                </tbody>
+                                </table>
+                              </div>
+                              )}
+
+                            </div>
+                            </div>
+                          </div>
+                          </div>
                         </div>
-                      )}
-
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+                        </div>
 
 
-          <div className="row">
-            <div className="col-12">
-              <div className="invoice p-3 mb-3">
-                <div className="row">
-                  <div className="col-3">
-                    <p>3) Select Charge (Invoice Feed Data)</p>
+                        <div className="row">
+                        <div className="col-12">
+                          <div className="invoice p-3 mb-3">
+                          <div className="row">
+                            <div className="col-3">
+                            <p>3) Select Charge (Invoice Feed Data)</p>
 
-                    <div className="xxx">
+                            <div className="xxx">
 
-                      {invoiceFeedDataServices.length > 0 && (
-                        <div className="table-container">
-                          <table className="table table-bordered table-striped">
-                            <thead>
-                              <tr>
-                                <th>Service Number</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {invoiceFeedDataServices.map((data, idx) => (
-                                <tr
-                                  key={idx}
-                                  onClick={() => {
+                              {invoiceFeedDataServices.length > 0 && (
+                              <div className="table-container">
+                                <table className="table table-bordered table-striped">
+                                <thead>
+                                  <tr>
+                                  <th>Service Number</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {invoiceFeedDataServices.map((data, idx) => (
+                                  <tr
+                                    key={idx}
+                                    onClick={() => {
                                     handleSelectInvoiceServices(data);
                                   }}
                                 >
@@ -432,7 +434,7 @@ export default function Dispute() {
                         </form>
 
                         {successMessage && (
-                          <div className="alert alert-success mt-3">
+                          <div className="alert alert-secondary mt-3">
                             {successMessage}
                           </div>
                         )}
