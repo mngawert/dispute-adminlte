@@ -13,6 +13,7 @@ import PrivateRoute from "./components/PrivateRoute";
 import Dispute from "./pages/Dispute";
 import MainLayout from './MainLayout';
 import AuthLayout from './AuthLayout';
+import Review from "./pages/Review";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/home" element={<Home />} />
           <Route path="/dispute" element={<Dispute />} />
+          <Route path="/review" element={<Review />} />
           <Route path="/test" element={<Test />} />
           <Route path="/dashboard" element={<PrivateRoute element={<Dashboard />} />} />
           <Route path="/disputedata" element={<DisputeData />} />

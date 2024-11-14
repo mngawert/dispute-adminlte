@@ -21,7 +21,7 @@ export default function Sidebar() {
                 <p>Home</p>
               </a>
             </li>
-            <li className="nav-item menu-is-opening menu-open">
+            {/* <li className="nav-item menu-is-opening menu-open">
               <a href="/Dashboard" className="nav-link">
                 <i className="nav-icon fas fa-tachometer-alt"></i>
                 <p>Dashboard</p>
@@ -54,13 +54,7 @@ export default function Sidebar() {
                 <i className="far fa-circle nav-icon"></i>
                 <p>DisputeData</p>
               </a>
-            </li>
-            <li className="nav-item">
-              <a href="#" className="nav-link" onClick={() => { handleLogout() }} >
-                <i className="far fa-circle nav-icon"></i>
-                <p>Logout</p>
-              </a>
-            </li>
+            </li> */}
 
             {/* Creation Tasks */}
             <li className="nav-item menu-is-opening menu-open">
@@ -94,7 +88,7 @@ export default function Sidebar() {
               </a>
               <ul className="nav nav-treeview">
                 <li className="nav-item">
-                  <a href="#" className="nav-link">
+                  <a href="/Review" className="nav-link">
                     <i className="far fa-circle nav-icon" />
                     <p>Review Adjustments </p>
                   </a>
@@ -137,6 +131,30 @@ export default function Sidebar() {
             </li>
 
 
+            {/* User Management */}
+            <li className="nav-item menu-is-opening menu-open">
+              <a href="#" className="nav-link">
+                <p>
+                  User Management
+                </p>
+              </a>
+
+              <ul className="nav nav-treeview">
+                <li className="nav-item">
+                  <a href="#" className="nav-link">
+                    <i className="far fa-circle nav-icon" />
+                    <p>Users</p>
+                  </a>
+                </li>
+                <li className="nav-item">
+                  <a href="#" className="nav-link" onClick={() => { handleLogout() }} >
+                    <i className="far fa-circle nav-icon"></i>
+                    <p>Logout</p>
+                  </a>
+                </li>
+              </ul>
+
+            </li>
 
           </ul>
         </nav>

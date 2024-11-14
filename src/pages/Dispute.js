@@ -9,6 +9,7 @@ export default function Dispute() {
   const [invoiceFeedDataRC, setInvoiceFeedDataRC] = useState([]);
   const [invoiceFeedDataUsage, setInvoiceFeedDataUsage] = useState([]);
   const [invoiceFeedDataServices, setInvoiceFeedDataServices] = useState([]);
+  const [selectedInvoiceFeedDataService, setSelectedInvoiceFeedDataService] = useState(null);
   const [selectedinvoiceFeedData, setSelectedinvoiceFeedData] = useState(null);
   const [adjustmentTypes, setAdjustmentTypes] = useState([]);
   const [selectedAdjustmentType, setSelectedAdjustmentType] = useState('');
@@ -16,8 +17,30 @@ export default function Dispute() {
   const [selectedBill, setSelectedBill] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
 
+  useEffect(() => {
+    if (selectedinvoiceFeedData) {
+      console.log("selectedinvoiceFeedData changed:", selectedinvoiceFeedData);
+    }
+  }, [selectedinvoiceFeedData]);
+  
   const handleSearch = async () => {
     console.log("accountNum: ", accountNum);
+
+    /** Clear all states */
+    setAccounts([]);
+    setSelectedAccount(null);
+    setBillsummary([]);
+    setInvoiceFeedDataRC([]);
+    setInvoiceFeedDataUsage([]);
+    setInvoiceFeedDataServices([]);
+    setSelectedInvoiceFeedDataService(null);
+    setSelectedinvoiceFeedData(null);
+    setAdjustmentTypes([]);
+    setSelectedAdjustmentType('');
+    setAmount('');
+    setSelectedBill(null);
+    setSuccessMessage('');
+
     try {
       const response = await api.get(`/api/Account/GetAccountsByAccountNum?accountNum=${accountNum}`);
       setAccounts(response.data);
@@ -53,12 +76,16 @@ export default function Dispute() {
       setInvoiceFeedDataServices(response.data);
       setInvoiceFeedDataRC([]);
       setInvoiceFeedDataUsage([]);
+      setSelectedInvoiceFeedDataService(null);
     } catch (error) {
       console.error(error);
     }
   };
 
   const handleSelectInvoiceServices = async (bill) => {
+    setSelectedInvoiceFeedDataService(bill);
+    setSelectedinvoiceFeedData(null);
+
     try {
       const response1 = await api.get(`/api/SAPInvoiceFeedData/GetSAPInvoiceFeedDataRC`, {
         params: {
@@ -147,7 +174,7 @@ export default function Dispute() {
         <div className="container-fluid">
           <div className="row mb-2">
             <div className="col-sm-6">
-              <h1>Dispute</h1>
+              <h1>Adjust -</h1>
             </div>
             <div className="col-sm-6">
               <ol className="breadcrumb float-sm-right">
@@ -195,6 +222,7 @@ export default function Dispute() {
                                 onClick={() => {
                                   handleSelectAccount(account);
                                 }}
+                                className={selectedAccount?.accountNum === account.accountNum ? 'selected' : ''}
                               >
                                 <td>{account.accountNum}</td>
                                 <td>{account.customerRef}</td>
@@ -242,7 +270,8 @@ export default function Dispute() {
                                   onClick={() => {
                                     console.log('Row clicked:', bill); // Debugging log for row click
                                     handleSelectBill(bill);
-                                    }}
+                                    }} 
+                                  className={selectedBill?.invoiceNum === bill.invoiceNum ? 'selected' : ''}
                                   >
                                     <td>{bill.accountNum}</td>
                                     <td>{bill.billSeq}</td>
@@ -283,16 +312,15 @@ export default function Dispute() {
                                 </thead>
                                 <tbody>
                                   {invoiceFeedDataServices.map((data, idx) => (
-                                  <tr
-                                    key={idx}
-                                    onClick={() => {
-                                    handleSelectInvoiceServices(data);
-                                  }}
-                                >
-                                  <td>{data.serviceNumber}</td>
-                                </tr>
-                              ))}
-                            </tbody>
+                                    <tr
+                                      key={idx}
+                                      onClick={() => { handleSelectInvoiceServices(data); }}
+                                      className={selectedInvoiceFeedDataService?.serviceNumber === data.serviceNumber ? 'selected' : ''}
+                                    >
+                                      <td>{data.serviceNumber}</td>
+                                    </tr>
+                                  ))}
+                                </tbody>
                           </table>
                         </div>
                       )}
@@ -324,6 +352,7 @@ export default function Dispute() {
                                       onClick={() => {
                                         handleSelectInvoiceFeedDataRC(invoice);
                                       }}
+                                      className={(selectedinvoiceFeedData?.tariffName === invoice.tariffName && selectedinvoiceFeedData?.productSeq === invoice.productSeq && selectedinvoiceFeedData?.callType === invoice.callType) ? 'selected' : ''}
                                     >
                                       <td>{invoice.serviceNumber}</td>
                                       <td>{invoice.productId}</td>
@@ -362,6 +391,7 @@ export default function Dispute() {
                                       onClick={() => {
                                         handleSelectInvoiceFeedDataUsage(invoice);
                                       }}
+                                      className={(selectedinvoiceFeedData?.tariffName === invoice.tariffName && selectedinvoiceFeedData?.productSeq === invoice.productSeq && selectedinvoiceFeedData?.callType === invoice.callType) ? 'selected' : ''}
                                     >
                                       <td>{invoice.serviceNumber}</td>
                                       <td>{invoice.productId}</td>
