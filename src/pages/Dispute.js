@@ -350,7 +350,7 @@ export default function Dispute() {
                                     className={(selectedinvoiceFeedData?.tariffName === invoice.tariffName && selectedinvoiceFeedData?.productSeq === invoice.productSeq && selectedinvoiceFeedData?.callType === invoice.callType) ? 'selected' : ''}
                                   >
                                     <td>{invoice.serviceNumber}</td>
-                                    <td>{invoice.productId}</td>
+                                    <td>{invoice.productName}</td>
                                     <td>{invoice.tariffName}</td>
                                     <td>{invoice.aggAmount}</td>
                                     <td>{invoice.productCode}</td>
@@ -390,7 +390,7 @@ export default function Dispute() {
                                     className={(selectedinvoiceFeedData?.tariffName === invoice.tariffName && selectedinvoiceFeedData?.productSeq === invoice.productSeq && selectedinvoiceFeedData?.callType === invoice.callType) ? 'selected' : ''}
                                   >
                                     <td>{invoice.serviceNumber}</td>
-                                    <td>{invoice.productId}</td>
+                                    <td>{invoice.productName}</td>
                                     <td>{invoice.callType}</td>
                                     <td>{invoice.aggAmount}</td>
                                     <td>{invoice.productCode}</td>
