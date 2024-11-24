@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import api from "../api";
+import { event } from "jquery";
 
 export default function Dispute() {
   const [accountNum, setAccountNum] = useState("");
@@ -11,6 +12,8 @@ export default function Dispute() {
   const [invoiceFeedDataServices, setInvoiceFeedDataServices] = useState([]);
   const [selectedInvoiceFeedDataService, setSelectedInvoiceFeedDataService] = useState(null);
   const [selectedinvoiceFeedData, setSelectedinvoiceFeedData] = useState(null);
+  const [costedEvents, setCostedEvents] = useState([]);
+  const [selectedCostedEvent, setSelectedCostedEvent] = useState(null);
   const [adjustmentTypes, setAdjustmentTypes] = useState([]);
   const [selectedAdjustmentType, setSelectedAdjustmentType] = useState('');
   const [amount, setAmount] = useState('');
@@ -77,6 +80,8 @@ export default function Dispute() {
       setInvoiceFeedDataRC([]);
       setInvoiceFeedDataUsage([]);
       setSelectedInvoiceFeedDataService(null);
+      setCostedEvents([]);
+      setSelectedCostedEvent(null);
     } catch (error) {
       console.error(error);
     }
@@ -85,6 +90,8 @@ export default function Dispute() {
   const handleSelectInvoiceServices = async (bill) => {
     setSelectedInvoiceFeedDataService(bill);
     setSelectedinvoiceFeedData(null);
+    setCostedEvents([]);
+    setSelectedCostedEvent(null);
 
     try {
       const response1 = await api.get(`/api/SAPInvoiceFeedData/GetSAPInvoiceFeedDataRC`, {
@@ -112,6 +119,9 @@ export default function Dispute() {
 
   const handleSelectInvoiceFeedDataRC = async (invoice) => {
     setSelectedinvoiceFeedData(invoice);
+    setAmount(invoice.aggAmount);
+    setCostedEvents([]);
+    setSelectedCostedEvent(null);
     try {
       const response = await api.get(`/api/AdjustmentType/GetAdjustmentTypesByProductCodeAndRevenueCode`, {
         params: {
@@ -127,19 +137,37 @@ export default function Dispute() {
 
   const handleSelectInvoiceFeedDataUsage = async (invoice) => {
     setSelectedinvoiceFeedData(invoice);
+    setAmount(invoice.aggAmount);
     try {
-      const response = await api.get(`/api/AdjustmentType/GetAdjustmentTypesByProductCodeAndRevenueCode`, {
+      const response1 = await api.get(`/api/AdjustmentType/GetAdjustmentTypesByProductCodeAndRevenueCode`, {
         params: {
           productCode: invoice.productCode,
           revenueCodeId: invoice.revenueCodeId
         }
       });
-      setAdjustmentTypes(response.data);
+      setAdjustmentTypes(response1.data);
+
+      const response2 = await api.get(`/api/CostedEvent/GetCostedEvents`, {
+        params: {
+          accountNum: invoice.accountNum,
+          billSeq: invoice.billSeq,
+          eventSource: invoice.serviceNumber,
+          eventTypeId: invoice.eventTypeId,
+          callType: invoice.callType
+        }
+      });
+      console.log('Costed Events:', response2.data);
+      setCostedEvents(response2.data);
+
     } catch (error) {
       console.error(error);
     }
   };
 
+  const handleSelectCostedEvent = (costedEvent) => {
+    setSelectedCostedEvent(costedEvent);
+    setAmount(costedEvent.eventCostMny);
+  };
 
   const handleCreateDispute = async () => {
     try {
@@ -151,7 +179,8 @@ export default function Dispute() {
         productId: selectedinvoiceFeedData.productId,
         cpsId: selectedAccount.cpsId,
         productSeq: selectedinvoiceFeedData.productSeq,
-        eventRef: "",
+        eventRef: selectedCostedEvent?.eventRef,
+        eventTypeId: selectedCostedEvent?.eventTypeId,
         adjustmentTypeId: selectedAdjustmentType,
         serviceNum: selectedinvoiceFeedData.serviceNumber,
         invoiceNum: selectedBill.invoiceNum,
@@ -192,7 +221,7 @@ export default function Dispute() {
               <div className="card p-3">
                 <div className="row">
                   <div className="col-12">
-                    <p>1) Search Account Num (000350000103)</p>
+                    <p>1) Search Account Num (000350000103, 000102931589)</p>
                     <div className="xxx">
                       <div>
                         <input
@@ -403,6 +432,52 @@ export default function Dispute() {
                       </div>
                     </div>
                   </div>
+
+
+                  <div className="row">
+                    <div className="col-12">
+                      { /** 3.4 Select CostedEvent */}
+                      <div className="card p-3">
+                        <p>CostedEvent:</p>
+                        {costedEvents.length > 0 && (
+                          <div>
+                            <table className="table table-bordered table-striped">
+                              <thead>
+                                <tr>
+                                  <th>Service Number</th>
+                                  <th>Event Date</th>
+                                  <th>Call Type</th>
+                                  <th>Amount</th>
+                                  <th>Event Ref</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {costedEvents.map((data, idx) => (
+                                  <tr
+                                    key={idx}
+                                    onClick={() => {
+                                      handleSelectCostedEvent(data);
+                                    }}
+                                    className={(selectedCostedEvent?.eventRef === data.eventRef) ? 'selected' : ''}
+                                  >
+                                    <td>{data.eventSource}</td>
+                                    <td>{new Date(data.eventDtm).toLocaleString()}</td> {/* Convert to short date with time */}
+                                    <td>{data.eventAttr4}</td>
+                                    <td>{data.eventCostMny}</td>
+                                    <td>{data.eventRef}</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+
+
+
                 </div>
               </div>
             </div>
