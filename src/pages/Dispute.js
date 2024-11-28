@@ -19,6 +19,7 @@ export default function Dispute() {
   const [amount, setAmount] = useState('');
   const [selectedBill, setSelectedBill] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
+  const [selectedType, setSelectedType] = useState('');
 
   useEffect(() => {
     if (selectedinvoiceFeedData) {
@@ -118,6 +119,7 @@ export default function Dispute() {
   };
 
   const handleSelectInvoiceFeedDataRC = async (invoice) => {
+    setSelectedType('RC');
     setSelectedinvoiceFeedData(invoice);
     setAmount(invoice.aggAmount);
     setCostedEvents([]);
@@ -136,6 +138,7 @@ export default function Dispute() {
   };
 
   const handleSelectInvoiceFeedDataUsage = async (invoice) => {
+    selectedType('Usage');
     setSelectedinvoiceFeedData(invoice);
     setAmount(invoice.aggAmount);
     try {
@@ -165,11 +168,43 @@ export default function Dispute() {
   };
 
   const handleSelectCostedEvent = (costedEvent) => {
+    setSelectedType('CostedEvent');
     setSelectedCostedEvent(costedEvent);
     setAmount(costedEvent.eventCostMny);
   };
 
+  const validateDispute = () => {
+    if (!selectedAccount) {
+      setSuccessMessage('Please select an account.');
+      return false;
+    }
+    if (!selectedBill) {
+      setSuccessMessage('Please select a bill.');
+      return false;
+    }
+    if (!selectedinvoiceFeedData) {
+      setSuccessMessage('Please select an invoice feed data.');
+      return false;
+    }
+    if (!selectedAdjustmentType) {
+      setSuccessMessage('Please select an adjustment type.');
+      return false;
+    }
+    if (!amount) {
+      setSuccessMessage('Please enter an amount.');
+      return false;
+    }
+    if (parseFloat(amount) > parseFloat(selectedinvoiceFeedData.aggAmount)) {
+      setSuccessMessage('Amount cannot be greater than the aggregated amount.');
+      return false;
+    }
+    return true;
+  }
+
   const handleCreateDispute = async () => {
+
+    if (!validateDispute()) { return; }
+
     try {
       const response = await api.post('/api/Dispute/CreateAdjustmentRequest', {
         accountNum: selectedinvoiceFeedData.accountNum,
