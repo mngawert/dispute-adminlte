@@ -37,6 +37,7 @@ export default function Navbar() {
   <ul className="navbar-nav ml-auto">
     {/* Navbar Search */}
     <li className="nav-item">
+    <a href="#" className="nav-link">User</a>
     </li>
     {/* Messages Dropdown Menu */}
   </ul>

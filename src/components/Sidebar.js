@@ -10,7 +10,8 @@ export default function Sidebar() {
   return (
     <aside className="main-sidebar sidebar-dark-primary elevation-4">
       <a href="/" className="brand-link">
-        <span className="brand-text font-weight-light"> ADJUSTOR NT</span>
+        <img src="dist/img/logo_nt.svg" alt="NT" className="brand-image" />
+        <span className="brand-text font-weight-light"> Adjustor Online</span>
       </a>
       <div className="sidebar">
         <nav className="mt-2">
