@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from "react";
 import api from "../api";
 import { event } from "jquery";
+import SearchAccount from "../components/SearchAccount";
+import BillSummary from "../components/BillSummary";
+import InvoiceFeedDataService from "../components/InvoiceFeedDataService";
+import InvoiceFeedDataRC from "../components/invoiceFeedDataRC";
+import InvoiceFeedDataUsage from "../components/InvoiceFeedDataUsage";
+import CostedEvent from "../components/CostedEvent";
+import CreateDisputeForm from "../components/CreateDisputeForm";
 
 export default function Dispute() {
   const [accountNum, setAccountNum] = useState("");
@@ -138,7 +145,7 @@ export default function Dispute() {
   };
 
   const handleSelectInvoiceFeedDataUsage = async (invoice) => {
-    selectedType('Usage');
+    setSelectedType('Usage');
     setSelectedinvoiceFeedData(invoice);
     setAmount(invoice.aggAmount);
     try {
@@ -257,48 +264,14 @@ export default function Dispute() {
                 <div className="row">
                   <div className="col-12">
                     <p>1) Search Account Num (000350000103, 000102931589)</p>
-                    <div className="xxx">
-                      <div>
-                        <input
-                          type="text"
-                          value={accountNum}
-                          onChange={(e) => setAccountNum(e.target.value)}
-                          placeholder="Enter account number"
-                        />
-                        <button onClick={handleSearch} >Search</button>
-                      </div>
-
-                      <br />
-                      {accounts.length > 0 && (
-                        <div>
-                          <table className="table table-bordered table-striped">
-                            <thead>
-                              <tr>
-                                <th>Account Num</th>
-                                <th>Customer Ref</th>
-                                <th>Bill Cycle</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {accounts.map((account, index) => (
-                                <tr
-                                  key={index}
-                                  onClick={() => {
-                                    handleSelectAccount(account);
-                                  }}
-                                  className={selectedAccount?.accountNum === account.accountNum ? 'selected' : ''}
-                                >
-                                  <td>{account.accountNum}</td>
-                                  <td>{account.customerRef}</td>
-                                  <td>{account.billCycle}</td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-
-                        </div>
-                      )}
-                    </div>
+                    <SearchAccount
+                      accountNum={accountNum}
+                      setAccountNum={setAccountNum}
+                      handleSearch={handleSearch}
+                      accounts={accounts}
+                      handleSelectAccount={handleSelectAccount}
+                      selectedAccount={selectedAccount}
+                    />
                   </div>
                 </div>
               </div>
@@ -311,41 +284,7 @@ export default function Dispute() {
                 <div className="row">
                   <div className="col-12">
                     <p>2) Select Invoice Num</p>
-                    <div className="xxx">
-                      {billsummary.length > 0 && (
-                        <div className="table-container">
-                          <table id="billSummaryTable" className="table table-bordered table-striped">
-                            <thead>
-                              <tr>
-                                <th>AccountNum</th>
-                                <th>Bill</th>
-                                <th>Invoice Number</th>
-                                <th>Bill Month</th>
-                                <th>BillAmount</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {billsummary.map((bill, index) => (
-                                <tr
-                                  key={index}
-                                  onClick={() => {
-                                    console.log('Row clicked:', bill); // Debugging log for row click
-                                    handleSelectBill(bill);
-                                  }}
-                                  className={selectedBill?.invoiceNum === bill.invoiceNum ? 'selected' : ''}
-                                >
-                                  <td>{bill.accountNum}</td>
-                                  <td>{bill.billSeq}</td>
-                                  <td>{bill.invoiceNum}</td>
-                                  <td>{new Date(bill.billDtm).toLocaleDateString()}</td>
-                                  <td>{bill.invoiceNetMny}</td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
-                      )}
-                    </div>
+                    <BillSummary billsummary={billsummary} handleSelectBill={handleSelectBill} selectedBill={selectedBill}  />
                   </div>
                 </div>
               </div>
@@ -359,30 +298,10 @@ export default function Dispute() {
                   { /** 3.1 Select Services */}
                   <div className="card p-3" style={{ minHeight: '300px' }}>
                     <p>3) Select Service Number</p>
-
-                    {invoiceFeedDataServices.length > 0 && (
-                      <div className="table-container">
-                        <table className="table table-bordered table-striped">
-                          <thead>
-                            <tr>
-                              <th>Service Number</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {invoiceFeedDataServices.map((data, idx) => (
-                              <tr
-                                key={idx}
-                                onClick={() => { handleSelectInvoiceServices(data); }}
-                                className={selectedInvoiceFeedDataService?.serviceNumber === data.serviceNumber ? 'selected' : ''}
-                              >
-                                <td>{data.serviceNumber}</td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    )}
-
+                    <InvoiceFeedDataService
+                      invoiceFeedDataServices={invoiceFeedDataServices}
+                      handleSelectInvoiceServices={handleSelectInvoiceServices}
+                      selectedInvoiceFeedDataService={selectedInvoiceFeedDataService} />
                   </div>
                 </div>
 
@@ -392,38 +311,8 @@ export default function Dispute() {
                       { /** 3.2 Select RC */}
                       <div className="card p-3">
                         <p>RC:</p>
-                        {invoiceFeedDataRC.length > 0 && (
-                          <div>
-                            <table className="table table-bordered table-striped">
-                              <thead>
-                                <tr>
-                                  <th>Service Number</th>
-                                  <th>Product Name</th>
-                                  <th>Price Plan</th>
-                                  <th>Amount</th>
-                                  <th>Product Code</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {invoiceFeedDataRC.map((invoice, idx) => (
-                                  <tr
-                                    key={idx}
-                                    onClick={() => {
-                                      handleSelectInvoiceFeedDataRC(invoice);
-                                    }}
-                                    className={(selectedinvoiceFeedData?.tariffName === invoice.tariffName && selectedinvoiceFeedData?.productSeq === invoice.productSeq && selectedinvoiceFeedData?.callType === invoice.callType) ? 'selected' : ''}
-                                  >
-                                    <td>{invoice.serviceNumber}</td>
-                                    <td>{invoice.productName}</td>
-                                    <td>{invoice.tariffName}</td>
-                                    <td>{invoice.aggAmount}</td>
-                                    <td>{invoice.productCode}</td>
-                                  </tr>
-                                ))}
-                              </tbody>
-                            </table>
-                          </div>
-                        )}
+                        <InvoiceFeedDataRC invoiceFeedDataRC={invoiceFeedDataRC} handleSelectInvoiceFeedDataRC={handleSelectInvoiceFeedDataRC} selectedinvoiceFeedData={selectedinvoiceFeedData} />
+
                       </div>
                     </div>
                   </div>
@@ -432,38 +321,8 @@ export default function Dispute() {
                       { /** 3.3 Select USAGE */}
                       <div className="card p-3">
                         <p>USAGE:</p>
-                        {invoiceFeedDataUsage.length > 0 && (
-                          <div>
-                            <table className="table table-bordered table-striped">
-                              <thead>
-                                <tr>
-                                  <th>Service Number</th>
-                                  <th>Product Name</th>
-                                  <th>Call Type</th>
-                                  <th>Amount</th>
-                                  <th>Product Code</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {invoiceFeedDataUsage.map((invoice, idx) => (
-                                  <tr
-                                    key={idx}
-                                    onClick={() => {
-                                      handleSelectInvoiceFeedDataUsage(invoice);
-                                    }}
-                                    className={(selectedinvoiceFeedData?.tariffName === invoice.tariffName && selectedinvoiceFeedData?.productSeq === invoice.productSeq && selectedinvoiceFeedData?.callType === invoice.callType) ? 'selected' : ''}
-                                  >
-                                    <td>{invoice.serviceNumber}</td>
-                                    <td>{invoice.productName}</td>
-                                    <td>{invoice.callType}</td>
-                                    <td>{invoice.aggAmount}</td>
-                                    <td>{invoice.productCode}</td>
-                                  </tr>
-                                ))}
-                              </tbody>
-                            </table>
-                          </div>
-                        )}
+                        <InvoiceFeedDataUsage invoiceFeedDataUsage={invoiceFeedDataUsage} handleSelectInvoiceFeedDataUsage={handleSelectInvoiceFeedDataUsage} selectedinvoiceFeedData={selectedinvoiceFeedData} />
+
                       </div>
                     </div>
                   </div>
@@ -474,38 +333,7 @@ export default function Dispute() {
                       { /** 3.4 Select CostedEvent */}
                       <div className="card p-3">
                         <p>CostedEvent:</p>
-                        {costedEvents.length > 0 && (
-                          <div>
-                            <table className="table table-bordered table-striped">
-                              <thead>
-                                <tr>
-                                  <th>Service Number</th>
-                                  <th>Event Date</th>
-                                  <th>Call Type</th>
-                                  <th>Amount</th>
-                                  <th>Event Ref</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {costedEvents.map((data, idx) => (
-                                  <tr
-                                    key={idx}
-                                    onClick={() => {
-                                      handleSelectCostedEvent(data);
-                                    }}
-                                    className={(selectedCostedEvent?.eventRef === data.eventRef) ? 'selected' : ''}
-                                  >
-                                    <td>{data.eventSource}</td>
-                                    <td>{new Date(data.eventDtm).toLocaleString()}</td> {/* Convert to short date with time */}
-                                    <td>{data.eventAttr4}</td>
-                                    <td>{data.eventCostMny}</td>
-                                    <td>{data.eventRef}</td>
-                                  </tr>
-                                ))}
-                              </tbody>
-                            </table>
-                          </div>
-                        )}
+                        <CostedEvent costedEvents={costedEvents} handleSelectCostedEvent={handleSelectCostedEvent} selectedCostedEvent={selectedCostedEvent} />
                       </div>
                     </div>
                   </div>
@@ -524,51 +352,16 @@ export default function Dispute() {
                 <div className="row">
                   <div className="col-12">
                     <p>4) Create Dispute</p>
-                    <div className="xxx">
+                    <CreateDisputeForm
+                      adjustmentTypes={adjustmentTypes}
+                      selectedAdjustmentType={selectedAdjustmentType}
+                      setSelectedAdjustmentType={setSelectedAdjustmentType}
+                      amount={amount}
+                      setAmount={setAmount}
+                      handleCreateDispute={handleCreateDispute}
+                      successMessage={successMessage}
+                      />
 
-                      <div className="card card-secondary">
-                        <div className="card-header">
-                          <h3 className="card-title">Dispute</h3>
-                        </div>
-
-                        <form>
-                          <div className="card-body">
-                            <div className="form-group">
-                              <label htmlFor="txtAccountNum">Account Num</label>
-                              <input type="text" className="form-control" id="txtAccountNum" placeholder="Account Num" value={selectedBill ? selectedBill.accountNum : ''} readOnly />
-                            </div>
-                            <div className="form-group">
-                              <label htmlFor="txtBillSeq">Bill Seq</label>
-                              <input type="text" className="form-control" id="txtBillSeq" placeholder="Bill Seq" value={selectedBill ? selectedBill.billSeq : ''} readOnly />
-                            </div>
-                            <div className="form-group">
-                              <label htmlFor="txtAmount">Amount</label>
-                              <input type="text" className="form-control" id="txtAmount" placeholder="Amount" value={amount} onChange={(e) => setAmount(e.target.value)} />
-                            </div>
-                            <div className="form-group">
-                              <label>Adjustment Type</label>
-                              <select className="form-control" value={selectedAdjustmentType} onChange={(e) => setSelectedAdjustmentType(e.target.value)} >
-                                <option value="">Select Adjustment Type</option>
-                                {adjustmentTypes.map((adjType) => (
-                                  <option key={adjType.adjustmentTypeId} value={adjType.adjustmentTypeId}>
-                                    {adjType.adjustmentTypeName}
-                                  </option>
-                                ))}
-                              </select>
-                            </div>
-                          </div>
-                          <div className="card-footer">
-                            <button type="button" onClick={handleCreateDispute} className="btn btn-secondary">Create Dispute</button>
-                          </div>
-                        </form>
-
-                        {successMessage && (
-                          <div className="alert alert-secondary mt-3">
-                            {successMessage}
-                          </div>
-                        )}
-                      </div>
-                    </div>
                   </div>
                 </div>
               </div>
