@@ -212,8 +212,14 @@ export default function Dispute() {
 
     if (!validateDispute()) { return; }
 
+    // Retrieve userId from local storage
+    const userLogin = JSON.parse(localStorage.getItem('userLogin'));
+    const userId = userLogin ? userLogin.userId : null;
+
     try {
       const response = await api.post('/api/Adjustment/CreateAdjustmentRequest', {
+        documentType: '31',
+        createdBy: userId,
         accountNum: selectedinvoiceFeedData.accountNum,
         disputeDtm: new Date().toISOString(),
         billSeq: selectedinvoiceFeedData.billSeq,
@@ -228,7 +234,7 @@ export default function Dispute() {
         invoiceNum: selectedBill.invoiceNum,
         disputeSeq: null,
         adjustmentSeq: null,
-        requestStatus: "Create-Accept"
+        requestStatus: "Create-Pending"
       });
       console.log('Dispute created:', response.data);
       setSuccessMessage('Dispute created successfully!');
