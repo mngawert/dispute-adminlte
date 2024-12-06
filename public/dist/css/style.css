@@ -1,0 +1,27 @@
+a { color: #ffd004; }
+a:hover { color: #55595a; }
+.login-box a { color: #666; }
+.login-box a:hover { color: #ffd004; }
+.nav-item { color: #c2c7d0; }
+.navbar { padding-bottom: 0; }
+.table.table-head-fixed thead tr:nth-child(1) th { box-shadow: none; }
+.table.table-as-list tr:hover { cursor: pointer; }
+.table.table-as-list td { border: none; padding: .25rem .75rem; }
+/*
+[class*=sidebar-dark-] .nav-sidebar>.nav-item.menu-open>.nav-link,
+[class*=sidebar-dark-] .nav-sidebar>.nav-item:hover>.nav-link,
+[class*=sidebar-dark-] .nav-sidebar>.nav-item>.nav-link:focus { background-color: #ffd004; }
+*/
+[class*=sidebar-dark-] .nav-treeview>.nav-item>.nav-link.active,
+[class*=sidebar-dark-] .nav-treeview>.nav-item>.nav-link.active:focus,
+[class*=sidebar-dark-] .nav-treeview>.nav-item>.nav-link.active:hover { background-color: #fefefe; }
+.btn-primary { background-color: #ffd004; border-color: #ffd004; }
+.btn-primary:hover { background-color: #666; border-color: #666; color: #fff; }
+.form-check-input { margin-top: 0.4rem; }
+.card-primary:not(.card-outline)>.card-header { background-color: #ffd004; }
+.table.table-head-fixed thead tr:nth-child(1) th { background-color: #ffd004; }
+.nav-tabs .nav-link:focus,
+.nav-tabs .nav-link:hover { border-color: transparent; background: #fff; color: #666 !important; }
+@media only screen and (min-width:992px) {
+  .main-header.navbar { display: none; }
+}

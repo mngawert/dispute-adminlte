@@ -213,7 +213,7 @@ export default function Dispute() {
     if (!validateDispute()) { return; }
 
     try {
-      const response = await api.post('/api/Dispute/CreateAdjustmentRequest', {
+      const response = await api.post('/api/Adjustment/CreateAdjustmentRequest', {
         accountNum: selectedinvoiceFeedData.accountNum,
         disputeDtm: new Date().toISOString(),
         billSeq: selectedinvoiceFeedData.billSeq,
@@ -228,7 +228,7 @@ export default function Dispute() {
         invoiceNum: selectedBill.invoiceNum,
         disputeSeq: null,
         adjustmentSeq: null,
-        requestStatus: "I"
+        requestStatus: "Create-Accept"
       });
       console.log('Dispute created:', response.data);
       setSuccessMessage('Dispute created successfully!');

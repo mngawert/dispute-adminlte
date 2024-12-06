@@ -15,6 +15,8 @@ import DisputeBak from "./pages/DisputeBak";
 import MainLayout from './MainLayout';
 import AuthLayout from './AuthLayout';
 import Review from "./pages/Review";
+import ReviewBak from "./pages/ReviewBak";
+import AdjustPlus from "./pages/AdjustPlus";
 
 function App() {
   return (
@@ -31,6 +33,8 @@ function App() {
           <Route path="/dispute" element={<Dispute />} />
           <Route path="/disputeBak" element={<DisputeBak />} />
           <Route path="/review" element={<Review />} />
+          <Route path="/reviewBak" element={<ReviewBak />} />
+          <Route path="/adjustplus" element={<AdjustPlus />} />
           <Route path="/test" element={<Test />} />
           <Route path="/dashboard" element={<PrivateRoute element={<Dashboard />} />} />
           <Route path="/disputedata" element={<DisputeData />} />
