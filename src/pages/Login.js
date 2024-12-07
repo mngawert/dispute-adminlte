@@ -15,7 +15,7 @@ const Login = () => {
       });
       console.log(response.data);
       localStorage.setItem("authToken", response.data.token);
-      localStorage.setItem("userLogin", response.data.user);
+      //localStorage.setItem("userLogin", response.data.user);
       localStorage.setItem("userLogin", JSON.stringify(response.data.user));
       window.location.href = "/home"; // Redirect to login page
     } catch (error) {

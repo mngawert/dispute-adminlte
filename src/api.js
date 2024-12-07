@@ -1,5 +1,4 @@
 import axios from "axios";
-import { useHistory } from 'react-router-dom';
 import isTokenExpired from "./components/isTokenExpired";
 
 const api = axios.create({
@@ -15,6 +14,16 @@ api.interceptors.request.use((config) => {
   config.headers.Authorization = token ? `Bearer ${token}` : '';
   return config;
 }, (error) => {
+  return Promise.reject(error);
+});
+
+api.interceptors.response.use((response) => {
+  return response;
+}, (error) => {
+  if (error.response && error.response.status === 401) {
+    localStorage.removeItem('authToken');
+    window.location.href = '/login';
+  }
   return Promise.reject(error);
 });
 
