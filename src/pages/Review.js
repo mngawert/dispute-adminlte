@@ -4,27 +4,58 @@ import api from '../api';
 
 const Review = () => {
 
-    const [accountNum, setAccountNum] = useState('');
-    const [data, setData] = useState([]);
-  
+    const [documentNum, setDocumentNum] = useState('');
+    const [documents, setDocuments] = useState([]);
+    const [selectedDocument, setSelectedDocument] = useState(null);
+    const [adjustmentRequests, setAdjustmentRequests] = useState([]);
+
     const handleInputChange = (e) => {
-        setAccountNum(e.target.value);
-      };
-    
+        setDocumentNum(e.target.value);
+    };
 
-      const handleSearch = async () => {
+    const handleSearch = async () => {
         try {
-          const response = await api.get(`/api/Adjustment/GetAdjustmentRequestesByAccountNum`, {
-            params: {
-              accountNum: accountNum
-            }
-          });
-          setData(response.data);
+            const response = await api.get(`/api/Document/GetAllDocuments`, {
+                params: {
+                    documentStatus: 'Create-Accept',
+                    documentNum: documentNum
+                }
+            });
+            setDocuments(response.data);
         } catch (error) {
-          console.error('Error fetching data', error);
+            console.error('Error fetching data', error);
         }
-      };
+    };
 
+    const handleSelectDocument = async (doc) => {
+        setSelectedDocument(doc);
+
+        try {
+            const response = await api.get(`/api/Adjustment/GetAdjustmentRequests`, {
+                params: {
+                    documentNum: doc.documentNum
+                }
+            });
+            console.log(response.data);
+            setAdjustmentRequests(response.data);
+        } catch (error) {
+            console.error('Error fetching adjustment requests', error);
+        }
+    }
+
+    const handleUpdateDocumentStatus = async (doc, _documentStatus) => {
+        try {
+            const response = await api.put(`/api/Document/UpdateDocumentReviewStatus/${doc.documentNum}`, {
+                documentNum: doc.documentNum,
+                documentStatus: _documentStatus,
+                updatedBy: JSON.parse(localStorage.getItem('userLogin'))?.userId
+            });
+            console.log(response.data);
+            setDocuments(documents.map(d => d.documentNum === doc.documentNum ? {...d, documentStatus: _documentStatus} : d));
+        } catch (error) {
+            console.error('Error updating document status', error);
+        }
+    }
 
     return(
         <div className="content-wrapper-x">
@@ -53,7 +84,7 @@ const Review = () => {
                 {/* START CONTENT */}
                 <div className="form-inline">
                     <p className="ml-auto flex-column text-right">
-                    <input type="text" className="form-control" placeholder="Account Number" onChange={handleInputChange} value={accountNum} />
+                    <input type="text" className="form-control" placeholder="Document Number" onChange={handleInputChange} value={documentNum} />
                     <button type="button" className="btn btn-primary" onClick={handleSearch} >Search</button>
                     <button type="button" className="btn btn-default">Get more</button>
                     </p>
@@ -100,12 +131,11 @@ const Review = () => {
                             <div className="table-responsive" style={{height: 400, border: '1px solid #dee2e6'}}>
                                 <table className="table table-as-list text-nowrap table-hover">
                                 <tbody>
-                                    <tr>
-                                    <td>1232313123</td>
-                                    </tr>
-                                    <tr>
-                                    <td>1232313123</td>
-                                    </tr>
+                                    {documents.map((doc, index) => (
+                                        <tr key={index} onClick={ () => {handleSelectDocument(doc)} } className={ selectedDocument?.documentNum === doc.documentNum ? 'selected': '' } >
+                                            <td>{doc.documentNum}</td>
+                                        </tr>
+                                    ))}
                                 </tbody>
                                 </table>
                             </div>
@@ -115,21 +145,21 @@ const Review = () => {
                                 <div className="col-sm-6">
                                 <div className="form-group">
                                     <label>Document Number</label>
-                                    <input type="text" className="form-control" defaultValue readOnly />
+                                    <input type="text" className="form-control" defaultValue readOnly value={selectedDocument?.documentNum} />
                                 </div>
                                 <div className="form-group">
                                     <label>Adjustment Location Code</label>
-                                    <input type="text" className="form-control" defaultValue readOnly />
+                                    <input type="text" className="form-control" defaultValue readOnly value={selectedDocument?.homeLocationCode} />
                                 </div>
                                 </div>
                                 <div className="col-sm-6">
                                 <div className="form-group">
                                     <label>Created By</label>
-                                    <input type="text" className="form-control" defaultValue readOnly />
+                                    <input type="text" className="form-control" defaultValue readOnly value={selectedDocument?.createdBy} />
                                 </div>
                                 <div className="form-group">
                                     <label>Created On</label>
-                                    <input type="text" className="form-control" defaultValue readOnly />
+                                    <input type="text" className="form-control" defaultValue readOnly value={selectedDocument?.createdDtm} />
                                 </div>
                                 </div>
                             </div>
@@ -146,14 +176,16 @@ const Review = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                    <td />
-                                    <td />
-                                    <td />
-                                    <td />
-                                    <td />
-                                    <td />
-                                    </tr>
+                                    {adjustmentRequests.map((adj, index) => (
+                                        <tr key={index}>
+                                            <td>{adj.accountNum}</td>
+                                            <td>{adj.serviceNum}</td>
+                                            <td>{adj.adjustmentName}</td>
+                                            <td>{adj.disputeMny}</td>
+                                            <td>{adj.vat}</td>
+                                            <td>{adj.total}</td>
+                                        </tr>
+                                    ))}
                                 </tbody>
                                 </table>
                             </div>
@@ -177,8 +209,8 @@ const Review = () => {
                             <div className="col-12">
                             <div className="form-inline mt-4">
                                 <p className="ml-auto mr-auto flex-column">
-                                <button type="button" className="btn btn-primary">Accept Selected</button>
-                                <button type="button" className="btn btn-default">Reject Selected</button>
+                                <button type="button" className="btn btn-primary" onClick={() => { handleUpdateDocumentStatus(selectedDocument, 'Review-Accept') }} >Accept Selected</button>
+                                <button type="button" className="btn btn-default" onClick={() => { handleUpdateDocumentStatus(selectedDocument, 'Review-Reject') }} >Reject Selected</button>
                                 </p>
                             </div>
                             </div>

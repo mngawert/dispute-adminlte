@@ -64,7 +64,7 @@ table thead th {
   z-index: 1000;
 }
 
-.table-striped tbody tr.selected {
+table tbody tr.selected {
   background-color: #edf2c1 !important;
 }
 
