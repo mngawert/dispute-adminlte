@@ -15,9 +15,12 @@ const Login = () => {
       });
       console.log(response.data);
       localStorage.setItem("authToken", response.data.token);
-      //localStorage.setItem("userLogin", response.data.user);
       localStorage.setItem("userLogin", JSON.stringify(response.data.user));
-      window.location.href = "/home"; // Redirect to login page
+
+      // Redirect to the earlier wanted URL or default to "/home"
+      const redirectUrl = localStorage.getItem('redirectUrl') || '/home';
+      localStorage.removeItem('redirectUrl');
+      window.location.href = redirectUrl;      
     } catch (error) {
       console.error("There was an error!", error);
     }
