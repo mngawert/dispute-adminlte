@@ -6,14 +6,14 @@ const Review = () => {
 
     const [documentNum, setDocumentNum] = useState('');
     const [documents, setDocuments] = useState([]);
-    const [selectedDocument, setSelectedDocument] = useState(null);
+    const [selectedDocument, setSelectedDocument] = useState({});
     const [adjustmentRequests, setAdjustmentRequests] = useState([]);
 
     const handleInputChange = (e) => {
         setDocumentNum(e.target.value);
     };
 
-    const handleSearch = async () => {
+    const getAllDocuments = async () => {
         try {
             const response = await api.get(`/api/Document/GetAllDocuments`, {
                 params: {
@@ -26,6 +26,10 @@ const Review = () => {
             console.error('Error fetching data', error);
         }
     };
+
+    const handleSearch = async () => {
+        getAllDocuments();
+    };   
 
     const handleSelectDocument = async (doc) => {
         setSelectedDocument(doc);
@@ -51,11 +55,20 @@ const Review = () => {
                 updatedBy: JSON.parse(localStorage.getItem('userLogin'))?.userId
             });
             console.log(response.data);
-            setDocuments(documents.map(d => d.documentNum === doc.documentNum ? {...d, documentStatus: _documentStatus} : d));
+            //setDocuments(documents.map(d => d.documentNum === doc.documentNum ? {...d, documentStatus: _documentStatus} : d));
+            resetPage();
+            getAllDocuments();
         } catch (error) {
             console.error('Error updating document status', error);
         }
     }
+
+    const resetPage = () => {
+        setDocumentNum('');
+        setDocuments([]);
+        setSelectedDocument({});
+        setAdjustmentRequests([]);
+      };
 
     return(
         <div className="content-wrapper-x">
@@ -145,21 +158,21 @@ const Review = () => {
                                 <div className="col-sm-6">
                                 <div className="form-group">
                                     <label>Document Number</label>
-                                    <input type="text" className="form-control" defaultValue readOnly value={selectedDocument?.documentNum} />
+                                    <input type="text" className="form-control" readOnly value={selectedDocument?.documentNum ?? ''} />
                                 </div>
                                 <div className="form-group">
                                     <label>Adjustment Location Code</label>
-                                    <input type="text" className="form-control" defaultValue readOnly value={selectedDocument?.homeLocationCode} />
+                                    <input type="text" className="form-control" readOnly value={selectedDocument?.homeLocationCode ?? ''} />
                                 </div>
                                 </div>
                                 <div className="col-sm-6">
                                 <div className="form-group">
                                     <label>Created By</label>
-                                    <input type="text" className="form-control" defaultValue readOnly value={selectedDocument?.createdBy} />
+                                    <input type="text" className="form-control" readOnly value={selectedDocument?.createdBy ?? ''} />
                                 </div>
                                 <div className="form-group">
                                     <label>Created On</label>
-                                    <input type="text" className="form-control" defaultValue readOnly value={selectedDocument?.createdDtm} />
+                                    <input type="text" className="form-control" readOnly value={selectedDocument?.createdDtm ?? ''} />
                                 </div>
                                 </div>
                             </div>
