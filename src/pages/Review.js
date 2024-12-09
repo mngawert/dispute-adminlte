@@ -53,7 +53,7 @@ const Review = ({reviewType, prevDocumentStatus}) => {
 
     const handleUpdateDocumentStatus = async (doc, _documentStatus) => {
         try {
-            const response = await api.put(`/api/Document/UpdateDocumentReviewStatus/${doc.documentNum}`, {
+            const response = await api.put(`/api/Document/UpdateDocument${reviewType}Status/${doc.documentNum}`, {
                 documentNum: doc.documentNum,
                 documentStatus: _documentStatus,
                 updatedBy: JSON.parse(localStorage.getItem('userLogin'))?.userId

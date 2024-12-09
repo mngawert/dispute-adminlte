@@ -218,7 +218,7 @@ export default function Dispute() {
 
     try {
       const response = await api.post('/api/Adjustment/CreateAdjustmentRequest', {
-        documentType: '31',
+        documentType: '01',
         createdBy: userId,
         accountNum: selectedinvoiceFeedData.accountNum,
         disputeDtm: new Date().toISOString(),
