@@ -20,7 +20,6 @@ import AdjustPlus from "./pages/AdjustPlus";
 
 function App() {
   return (
-
     <Router>
       <Routes>
         <Route element={ <AuthLayout /> }>
@@ -32,7 +31,7 @@ function App() {
           <Route path="/home" element={<Home />} />
           <Route path="/dispute" element={<Dispute />} />
           <Route path="/disputeBak" element={<DisputeBak />} />
-          <Route path="/review" element={<Review />} />
+          <Route path="/review" element={<Review reviewType="Review" prevDocumentStatus='Create-Accept' />} />
           <Route path="/reviewBak" element={<ReviewBak />} />
           <Route path="/adjustplus" element={<AdjustPlus />} />
           <Route path="/test" element={<Test />} />
@@ -41,9 +40,6 @@ function App() {
         </Route>
       </Routes>
     </Router>
-
-
-
   );
 }
 

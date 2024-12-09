@@ -68,3 +68,34 @@ table tbody tr.selected {
   background-color: #edf2c1 !important;
 }
 
+
+
+
+/* Adjust layout and font smaller */
+
+.content-wrapper-x {
+  font-size: 0.875rem; /* Adjust font size */
+}
+
+.table-responsive {
+  padding: 0.5rem; /* Adjust padding */
+}
+
+.table-as-list td, .table-as-list th {
+  padding: 0.25rem; /* Adjust cell padding */
+}
+
+.btn {
+  padding: 0.25rem 0.5rem; /* Adjust button padding */
+  font-size: 0.875rem; /* Adjust button font size */
+}
+
+input.form-control {
+  font-size: 0.875rem; /* Adjust input font size */
+  padding: 0.25rem 0.5rem; /* Adjust input padding */
+}
+
+textarea.form-control {
+  font-size: 0.875rem; /* Adjust textarea font size */
+  padding: 0.25rem 0.5rem; /* Adjust textarea padding */
+}
