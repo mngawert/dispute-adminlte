@@ -31,7 +31,10 @@ function App() {
           <Route path="/home" element={<Home />} />
           <Route path="/dispute" element={<Dispute />} />
           <Route path="/disputeBak" element={<DisputeBak />} />
+          <Route path="/create" element={<Review reviewType="Create" prevDocumentStatus='Create-Pending' />} />
           <Route path="/review" element={<Review reviewType="Review" prevDocumentStatus='Create-Accept' />} />
+          <Route path="/approve" element={<Review reviewType="Approve" prevDocumentStatus='Review-Accept' />} />
+          <Route path="/finance" element={<Review reviewType="Finance" prevDocumentStatus='Approve-Accept' />} />
           <Route path="/reviewBak" element={<ReviewBak />} />
           <Route path="/adjustplus" element={<AdjustPlus />} />
           <Route path="/test" element={<Test />} />

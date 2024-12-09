@@ -77,6 +77,12 @@ export default function Sidebar() {
                     <p>Adjust + </p>
                   </a>
                 </li>
+                <li className="nav-item">
+                  <a href="/Create" className="nav-link">
+                    <i className="far fa-circle nav-icon" />
+                    <p>Create Adjustments </p>
+                  </a>
+                </li>
               </ul>
             </li>
 
@@ -106,7 +112,7 @@ export default function Sidebar() {
               </a>
               <ul className="nav nav-treeview">
                 <li className="nav-item">
-                  <a href="#" className="nav-link">
+                  <a href="/Approve" className="nav-link">
                     <i className="far fa-circle nav-icon" />
                     <p>Approve Adjustments</p>
                   </a>
@@ -123,7 +129,7 @@ export default function Sidebar() {
               </a>
               <ul className="nav nav-treeview">
                 <li className="nav-item">
-                  <a href="#" className="nav-link">
+                  <a href="/Finance" className="nav-link">
                     <i className="far fa-circle nav-icon" />
                     <p>Review Financially</p>
                   </a>

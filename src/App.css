@@ -77,9 +77,10 @@ table tbody tr.selected {
   font-size: 0.875rem; /* Adjust font size */
 }
 
-.table-responsive {
-  padding: 0.5rem; /* Adjust padding */
-}
+/* Adjust padding */
+/* .table-responsive {
+  padding: 0.5rem; 
+} */
 
 .table-as-list td, .table-as-list th {
   padding: 0.25rem; /* Adjust cell padding */

@@ -85,8 +85,7 @@ const Review = ({reviewType, prevDocumentStatus}) => {
                 </div>{/* /.col */}
                 <div className="col-sm-6">
                 <ol className="breadcrumb float-sm-right">
-                    <li className="breadcrumb-item"><a href="#">Home</a></li>
-                    <li className="breadcrumb-item active">Page Title</li>
+                    <li className="breadcrumb-item active"> [ { JSON.parse(localStorage.getItem('userLogin'))?.username } ] </li>
                 </ol>
                 </div>{/* /.col */}
             </div>{/* /.row */}
@@ -226,8 +225,8 @@ const Review = ({reviewType, prevDocumentStatus}) => {
                                 <div className="col-12">
                                 <div className="form-inline mt-4">
                                     <p className="ml-auto mr-auto flex-column">
-                                    <button type="button" className="btn btn-primary mr-1" onClick={() => { handleUpdateDocumentStatus(selectedDocument, 'Review-Accept') }} >Accept Selected</button>
-                                    <button type="button" className="btn btn-default" onClick={() => { handleUpdateDocumentStatus(selectedDocument, 'Review-Reject') }} >Reject Selected</button>
+                                    <button type="button" className="btn btn-primary mr-1" onClick={() => { handleUpdateDocumentStatus(selectedDocument, `${reviewType}-Accept`) }} >Accept Selected</button>
+                                    <button type="button" className="btn btn-default" onClick={() => { handleUpdateDocumentStatus(selectedDocument, `${reviewType}-Reject`) }} >Reject Selected</button>
                                     </p>
                                 </div>
                                 </div>

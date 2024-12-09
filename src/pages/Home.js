@@ -9,12 +9,11 @@ export default function Home() {
         <div className="container-fluid">
           <div className="row mb-2">
             <div className="col-sm-6">
-              <h1>Invoice</h1>
+              <h1>Home</h1>
             </div>
             <div className="col-sm-6">
               <ol className="breadcrumb float-sm-right">
-                <li className="breadcrumb-item"><a href="#">Home</a></li>
-                <li className="breadcrumb-item active">Invoice</li>
+              <li className="breadcrumb-item active"> [ { JSON.parse(localStorage.getItem('userLogin'))?.username } ] </li>
               </ol>
             </div>
           </div>
@@ -24,22 +23,22 @@ export default function Home() {
         <div className="container-fluid">
           <div className="row">
             <div className="col-12">
-              <div className="callout callout-info">
+              {/* <div className="callout callout-info">
                 <h5><i className="fas fa-info"></i> Note:</h5>
                 This page has been enhanced for printing. Click the print button at the bottom of the invoice to test.
-              </div>
+              </div> */}
               <div className="invoice p-3 mb-3">
                 <div className="row">
                   <div className="col-12">
                     <h4>
-                      <i className="fas fa-globe" /> AdminLTE, Inc.
-                      <small className="float-right">Date: 2/10/2014</small>
+                      <i className="fas fa-globe" /> NT Corporation
+                      <small className="float-right">Date: {new Date().toLocaleDateString()}</small>
                     </h4>
                   </div>
                 </div>
                 <div className="row">
                   <div className="col-12">
-                    <p>This is a simple example of integrating AdminLTE with React.</p>
+                    <p>This is home content..</p>
                   </div>
                 </div>
               </div>
