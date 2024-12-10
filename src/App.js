@@ -17,6 +17,7 @@ import AuthLayout from './AuthLayout';
 import Review from "./pages/Review";
 import ReviewBak from "./pages/ReviewBak";
 import AdjustPlus from "./pages/AdjustPlus";
+import AdjustMinus from "./pages/AdjustMinus";
 
 function App() {
   return (
@@ -36,7 +37,8 @@ function App() {
           <Route path="/approve" element={<Review reviewType="Approve" prevDocumentStatus='Review-Accept' />} />
           <Route path="/finance" element={<Review reviewType="Finance" prevDocumentStatus='Approve-Accept' />} />
           <Route path="/reviewBak" element={<ReviewBak />} />
-          <Route path="/adjustplus" element={<AdjustPlus />} />
+          <Route path="/adjustPlus" element={<AdjustPlus />} />
+          <Route path="/adjustMinus" element={<AdjustMinus />} />
           <Route path="/test" element={<Test />} />
           <Route path="/dashboard" element={<PrivateRoute element={<Dashboard />} />} />
           <Route path="/disputedata" element={<DisputeData />} />

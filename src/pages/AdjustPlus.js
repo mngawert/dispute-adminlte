@@ -8,12 +8,11 @@ const AdjustPlus = () => {
         <div className="container-fluid">
         <div className="row mb-2">
             <div className="col-sm-6">
-            <h1 className="m-0">Page Title</h1>
+            <h1 className="m-0">Adjust +</h1>
             </div>{/* /.col */}
             <div className="col-sm-6">
             <ol className="breadcrumb float-sm-right">
-                <li className="breadcrumb-item"><a href="#">Home</a></li>
-                <li className="breadcrumb-item active">Page Title</li>
+                <li className="breadcrumb-item active"> [ { JSON.parse(localStorage.getItem('userLogin'))?.username } ] </li>
             </ol>
             </div>{/* /.col */}
         </div>{/* /.row */}
@@ -32,7 +31,7 @@ const AdjustPlus = () => {
                     <div className="col-sm-4">
                     <div className="form-group">
                         <label>Search for:</label>
-                        <input type="text" className="form-control" placeholder />
+                        <input type="text" className="form-control" placeholder="" />
                     </div>
                     <div className="form-group">
                         <button type="submit" className="btn btn-default">Service Num</button>

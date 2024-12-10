@@ -65,14 +65,20 @@ export default function Sidebar() {
                 </p>
               </a>
               <ul className="nav nav-treeview">
-                <li className="nav-item">
+              <li className="nav-item">
                   <a href="/Dispute" className="nav-link">
+                    <i className="far fa-circle nav-icon" />
+                    <p>Dispute</p>
+                  </a>
+                </li>
+                <li className="nav-item">
+                  <a href="/AdjustMinus" className="nav-link">
                     <i className="far fa-circle nav-icon" />
                     <p>Adjust - </p>
                   </a>
                 </li>
                 <li className="nav-item">
-                  <a href="#" className="nav-link">
+                  <a href="/AdjustPlus" className="nav-link">
                     <i className="far fa-circle nav-icon" />
                     <p>Adjust + </p>
                   </a>
