@@ -18,33 +18,37 @@ import Review from "./pages/Review";
 import ReviewBak from "./pages/ReviewBak";
 import AdjustPlus from "./pages/AdjustPlus";
 import AdjustMinus from "./pages/AdjustMinus";
+import { DocumentProvider } from "./components/DocumentContext";
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route element={ <AuthLayout /> }>
-          <Route path="/login" element={<Login />} />
-        </Route>
 
-        <Route element={ <MainLayout /> }>
-          <Route path="/" element={<Home />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/dispute" element={<Dispute />} />
-          <Route path="/disputeBak" element={<DisputeBak />} />
-          <Route path="/create" element={<Review reviewType="Create" prevDocumentStatus='Create-Pending' />} />
-          <Route path="/review" element={<Review reviewType="Review" prevDocumentStatus='Create-Accept' />} />
-          <Route path="/approve" element={<Review reviewType="Approve" prevDocumentStatus='Review-Accept' />} />
-          <Route path="/finance" element={<Review reviewType="Finance" prevDocumentStatus='Approve-Accept' />} />
-          <Route path="/reviewBak" element={<ReviewBak />} />
-          <Route path="/adjustPlus" element={<AdjustPlus />} />
-          <Route path="/adjustMinus" element={<AdjustMinus />} />
-          <Route path="/test" element={<Test />} />
-          <Route path="/dashboard" element={<PrivateRoute element={<Dashboard />} />} />
-          <Route path="/disputedata" element={<DisputeData />} />
-        </Route>
-      </Routes>
-    </Router>
+    <DocumentProvider>
+      <Router>
+        <Routes>
+          <Route element={ <AuthLayout /> }>
+            <Route path="/login" element={<Login />} />
+          </Route>
+
+          <Route element={ <MainLayout /> }>
+            <Route path="/" element={<Home />} />
+            <Route path="/home" element={<Home />} />
+            <Route path="/dispute" element={<Dispute />} />
+            <Route path="/disputeBak" element={<DisputeBak />} />
+            <Route path="/create" element={<Review reviewType="Create" prevDocumentStatus='Create-Pending' />} />
+            <Route path="/review" element={<Review reviewType="Review" prevDocumentStatus='Create-Accept' />} />
+            <Route path="/approve" element={<Review reviewType="Approve" prevDocumentStatus='Review-Accept' />} />
+            <Route path="/finance" element={<Review reviewType="Finance" prevDocumentStatus='Approve-Accept' />} />
+            <Route path="/reviewBak" element={<ReviewBak />} />
+            <Route path="/adjustPlus" element={<AdjustPlus />} />
+            <Route path="/adjustMinus" element={<AdjustMinus />} />
+            <Route path="/test" element={<Test />} />
+            <Route path="/dashboard" element={<PrivateRoute element={<Dashboard />} />} />
+            <Route path="/disputedata" element={<DisputeData />} />
+          </Route>
+        </Routes>
+      </Router>
+    </DocumentProvider>
   );
 }
 

@@ -1,6 +1,17 @@
-
+import { useEffect, useState } from 'react';
+import api from '../api';
+import { useDocumentContext } from '../components/DocumentContext';
+import PendingDocument from '../components/PendingDocument';
 
 const AdjustMinus = () => {
+
+    const { pendingDocumentNum, adjustmentRequests, fetchPendingDocumentNumAndRequests } = useDocumentContext();
+
+    useEffect(() => {
+        fetchPendingDocumentNumAndRequests();
+    }, []);
+
+
     return (
     <div className="content-wrapper-x">
     {/* Content Header (Page header) */}
@@ -8,7 +19,7 @@ const AdjustMinus = () => {
         <div className="container-fluid">
         <div className="row mb-2">
             <div className="col-sm-6">
-            <h1 className="m-0">Adjust +</h1>
+            <h1 className="m-0">Adjust -</h1>
             </div>{/* /.col */}
             <div className="col-sm-6">
             <ol className="breadcrumb float-sm-right">
@@ -289,57 +300,8 @@ const AdjustMinus = () => {
                     </div>
                     </div>
                 </div>
-                <div className="card">
-                    <div className="card-header border-0">
-                    <h3 className="card-title">Document Sequence</h3>
-                    </div>
-                    <div className="card-body">
-                    <div className="row">
-                        <div className="form-group col-sm-4">
-                        <strong>Adjustment type:</strong> Adjustment -
-                        </div>
-                        <div className="form-group col-sm-4">
-                        <strong>Current sequence:</strong> 2024860204042
-                        </div>
-                        <div className="form-group col-sm-4">
-                        <button type="submit" className="btn btn-default">Remove Adjustment</button>
-                        <button type="submit" className="btn btn-default">Submit document</button>
-                        </div>
-                    </div>
-                    <div className="table-responsive" style={{height: 300}}>
-                        <table className="table table-head-fixed text-nowrap table-bordered table-hover">
-                        <thead>
-                            <tr>
-                            <th>Adjustment Type</th>
-                            <th>Account Number</th>
-                            <th>Invoice Number</th>
-                            <th>Service Number</th>
-                            <th>Amount</th>
-                            <th>VAT</th>
-                            <th>Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                            <td />
-                            <td />
-                            <td />
-                            <td />
-                            <td />
-                            <td />
-                            <td />
-                            </tr>
-                        </tbody>
-                        </table>
-                    </div>
-                    </div>
-                </div>
 
-
-
-
-
-
+                <PendingDocument pendingDocumentNum={pendingDocumentNum} adjustmentRequests={adjustmentRequests} fetchPendingDocumentNumAndRequests={fetchPendingDocumentNumAndRequests} />
 
             {/* END CONTENT */}
             </div>
