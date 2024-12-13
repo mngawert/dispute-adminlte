@@ -9,18 +9,18 @@ export const useDocumentContext = () => {
 
 export const DocumentProvider = ({ children }) => {
 
-    const [pendingDocumentNum, setPendingDocumentNum] = useState(null);
+    const [pendingDocument, setPendingDocument] = useState({});
     const [adjustmentRequests, setAdjustmentRequests] = useState([]);
 
-    const fetchPendingDocumentNumAndRequests = async () => {
+    const fetchPendingDocumentAndRequests = async (documentType) => {
         try {
-            const response = await api.get('/api/Document/GetPendingDocumentNum', {
+            const response = await api.get('/api/Document/GetPendingDocument', {
                 params: {
-                    documentType: '01',
+                    documentType: documentType,
                     createdBy: JSON.parse(localStorage.getItem('userLogin'))?.userId
                 }
             });
-            setPendingDocumentNum(response.data);
+            setPendingDocument(response.data);
 
             const adjustmentResponse = await api.get('/api/Adjustment/GetAdjustmentRequests', {
                 params: {
@@ -35,7 +35,7 @@ export const DocumentProvider = ({ children }) => {
     };
 
     return (
-        <DocumentContext.Provider value={{ pendingDocumentNum, adjustmentRequests, fetchPendingDocumentNumAndRequests }}>
+        <DocumentContext.Provider value={{ pendingDocument, adjustmentRequests, fetchPendingDocumentAndRequests }}>
             {children}
         </DocumentContext.Provider>
     );
