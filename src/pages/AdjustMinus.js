@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import api from '../api';
-import { useDocumentContext } from '../components/DocumentContext';
+import { useDocumentContext } from '../contexts/DocumentContext';
 import PendingDocument from '../components/PendingDocument';
-import { DOCUMENT_TYPE } from '../components/Constants';
+import { DOCUMENT_TYPE } from '../contexts/Constants';
 
 const AdjustMinus = () => {
 

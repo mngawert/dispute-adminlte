@@ -18,7 +18,7 @@ import Review from "./pages/Review";
 import ReviewBak from "./pages/ReviewBak";
 import AdjustPlus from "./pages/AdjustPlus";
 import AdjustMinus from "./pages/AdjustMinus";
-import { DocumentProvider } from "./components/DocumentContext";
+import { DocumentProvider } from "./contexts/DocumentContext";
 
 function App() {
   return (
