@@ -6,7 +6,7 @@ import { DOCUMENT_TYPE } from '../components/Constants';
 
 const AdjustMinus = () => {
 
-    const { pendingDocument, adjustmentRequests, fetchPendingDocumentAndRequests } = useDocumentContext();
+    const { pendingDocument, adjustmentRequests, fetchPendingDocumentAndRequests, deleteAdjustmentRequest, updateDocumentStatus } = useDocumentContext();
 
     useEffect(() => {
         fetchPendingDocumentAndRequests(DOCUMENT_TYPE.ADJUST_MINUS);
@@ -302,7 +302,7 @@ const AdjustMinus = () => {
                     </div>
                 </div>
 
-                <PendingDocument pendingDocument={pendingDocument} adjustmentRequests={adjustmentRequests} fetchPendingDocumentAndRequests={fetchPendingDocumentAndRequests} />
+                <PendingDocument pendingDocument={pendingDocument} adjustmentRequests={adjustmentRequests} fetchPendingDocumentAndRequests={fetchPendingDocumentAndRequests} deleteAdjustmentRequest={deleteAdjustmentRequest} updateDocumentStatus={updateDocumentStatus} />
 
             {/* END CONTENT */}
             </div>

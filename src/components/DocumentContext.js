@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import api from '../api';
 
 const DocumentContext = React.createContext();
@@ -24,7 +24,7 @@ export const DocumentProvider = ({ children }) => {
 
             const adjustmentResponse = await api.get('/api/Adjustment/GetAdjustmentRequests', {
                 params: {
-                    documentNum: response.data
+                    documentNum: response.data?.documentNum
                 }
             });
             setAdjustmentRequests(adjustmentResponse.data);
@@ -34,8 +34,33 @@ export const DocumentProvider = ({ children }) => {
         }
     };
 
+    const deleteAdjustmentRequest = async (documentSeq) => {
+        try {
+            const response = await api.delete('/api/Adjustment/DeleteAdjustmentRequestByDocumentSeq', {
+                params: {
+                    documentSeq: documentSeq
+                }
+            });
+            setAdjustmentRequests(adjustmentRequests.filter(request => request.documentSeq !== documentSeq));
+        } catch (error) {
+            console.error('Error deleting adjustment request:', error);
+        }
+    };
+    
+    const updateDocumentStatus = async (documentNum, reviewType, documentStatus) => {
+        try {
+            const response = await api.put(`/api/Document/UpdateDocument${reviewType}Status/${documentNum}`, {
+                documentNum: documentNum,
+                documentStatus: documentStatus,
+                updatedBy: JSON.parse(localStorage.getItem('userLogin'))?.userId
+            });
+        } catch (error) {
+            console.error('Error updating document status', error);
+        }
+    }
+
     return (
-        <DocumentContext.Provider value={{ pendingDocument, adjustmentRequests, fetchPendingDocumentAndRequests }}>
+        <DocumentContext.Provider value={{ pendingDocument, adjustmentRequests, fetchPendingDocumentAndRequests, deleteAdjustmentRequest, updateDocumentStatus }}>
             {children}
         </DocumentContext.Provider>
     );
