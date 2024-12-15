@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import api from "../api";
 import { event } from "jquery";
-import SearchAccount from "../components/SearchAccount";
-import BillSummary from "../components/BillSummary";
+import DisputeSearchAccount from "../components/DisputeSearchAccount";
+import DisputeBillSummary from "../components/DisputeBillSummary";
 import InvoiceFeedDataService from "../components/InvoiceFeedDataService";
 import InvoiceFeedDataRC from "../components/invoiceFeedDataRC";
 import InvoiceFeedDataUsage from "../components/InvoiceFeedDataUsage";
@@ -269,7 +269,7 @@ export default function Dispute() {
                 <div className="row">
                   <div className="col-12">
                     <p>1) Search Account Num (000350000103, 000102931589)</p>
-                    <SearchAccount
+                    <DisputeSearchAccount
                       accountNum={accountNum}
                       setAccountNum={setAccountNum}
                       handleSearch={handleSearch}
@@ -289,7 +289,7 @@ export default function Dispute() {
                 <div className="row">
                   <div className="col-12">
                     <p>2) Select Invoice Num</p>
-                    <BillSummary billsummary={billsummary} handleSelectBill={handleSelectBill} selectedBill={selectedBill}  />
+                    <DisputeBillSummary billsummary={billsummary} handleSelectBill={handleSelectBill} selectedBill={selectedBill}  />
                   </div>
                 </div>
               </div>

@@ -1,6 +1,6 @@
 import React from 'react';
 
-const SearchAccount = ({ accountNum, setAccountNum, handleSearch, accounts, handleSelectAccount, selectedAccount }) => {
+const DisputeSearchAccount = ({ accountNum, setAccountNum, handleSearch, accounts, handleSelectAccount, selectedAccount }) => {
   return (
     <div className="xxx">
       <div>
@@ -37,4 +37,4 @@ const SearchAccount = ({ accountNum, setAccountNum, handleSearch, accounts, hand
   );
 };
 
-export default SearchAccount;
+export default DisputeSearchAccount;

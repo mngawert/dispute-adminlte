@@ -1,6 +1,6 @@
 import React from 'react';
 
-const BillSummary = ({ billsummary, handleSelectBill, selectedBill }) => {
+const DisputeBillSummary = ({ billsummary, handleSelectBill, selectedBill }) => {
   return (
     <div className="xxx">
       {billsummary.length > 0 && (
@@ -29,4 +29,4 @@ const BillSummary = ({ billsummary, handleSelectBill, selectedBill }) => {
   );
 };
 
-export default BillSummary;
+export default DisputeBillSummary;
