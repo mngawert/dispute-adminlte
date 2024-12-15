@@ -3,10 +3,18 @@ import api from '../api';
 import { useDocumentContext } from '../contexts/DocumentContext';
 import PendingDocument from '../components/PendingDocument';
 import { DOCUMENT_TYPE } from '../contexts/Constants';
+import AccountSearch from '../components/AccountSearch';
 
 const AdjustMinus = () => {
 
-    const { pendingDocument, adjustmentRequests, fetchPendingDocumentAndRequests, deleteAdjustmentRequest, updateDocumentStatus } = useDocumentContext();
+    /** Document Submit */
+    const { 
+        /** Account */
+        accountNum, setAccountNum, accounts, getAccountsByAccountNum, selectedAccount, setSelectedAccount,
+        
+        /** Document Submit */
+        pendingDocument, adjustmentRequests, fetchPendingDocumentAndRequests, deleteAdjustmentRequest, updateDocumentStatus
+    } = useDocumentContext();
 
     useEffect(() => {
         fetchPendingDocumentAndRequests(DOCUMENT_TYPE.ADJUST_MINUS);
@@ -38,49 +46,8 @@ const AdjustMinus = () => {
             <div className="col-12">
             {/* START CONTENT */}
 
-                <div className="card">
-                    <div className="card-body">
-                    <div className="row">
-                        <div className="col-sm-4">
-                        <div className="form-group">
-                            <label>Search for service number:</label>
-                            <input type="text" className="form-control" placeholder="" />
-                        </div>
-                        <div className="form-group">
-                            <button type="submit" className="btn btn-default">Service Num</button>
-                            <button type="submit" className="btn btn-default">Account Num</button>
-                        </div>
-                        </div>
-                        <div className="col-sm-4">
-                        <div className="form-group">
-                            <label>Accounts</label>
-                            <div className="table-responsive" style={{height: 200, border: '1px solid #dee2e6'}}>
-                            <table className="table table-as-list text-nowrap table-hover">
-                                <tbody>
-                                <tr>
-                                    <td>1232313123</td>
-                                </tr>
-                                <tr>
-                                    <td>1232313123</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                            </div>
-                        </div>
-                        </div>
-                        <div className="col-sm-4">
-                        <div className="form-group">
-                            <label>Customer name</label>
-                            <input type="text" className="form-control" defaultValue readOnly />
-                        </div>
-                        <div className="form-group">
-                            <label>Account type</label>
-                            <input type="text" className="form-control" defaultValue readOnly />
-                        </div>
-                        </div>
-                    </div>
-                    </div>
-                </div>
+                <AccountSearch accountNum={accountNum} setAccountNum={setAccountNum} accounts={accounts} getAccountsByAccountNum={getAccountsByAccountNum} selectedAccount={selectedAccount} setSelectedAccount={setSelectedAccount} />
+
                 <div className="card">
                     <div className="card-body">
                     <div className="d-flex">

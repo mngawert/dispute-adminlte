@@ -9,6 +9,25 @@ export const useDocumentContext = () => {
 
 export const DocumentProvider = ({ children }) => {
 
+    /** Account */
+    const [accountNum, setAccountNum] = useState("");
+    const [accounts, setAccounts] = useState([]);
+    const [selectedAccount, setSelectedAccount] = useState({});
+  
+    const getAccountsByAccountNum = async (accountNum) => {
+        try {
+            const response = await api.get('/api/Account/GetAccountsByAccountNum', {
+            params: {
+                accountNum: accountNum
+            }
+            });
+            setAccounts(response.data);
+        } catch (error) {
+            console.error('Error fetching accounts:', error);
+        }
+    }
+
+    /** Document */
     const [pendingDocument, setPendingDocument] = useState({});
     const [adjustmentRequests, setAdjustmentRequests] = useState([]);
 
@@ -60,7 +79,10 @@ export const DocumentProvider = ({ children }) => {
     }
 
     return (
-        <DocumentContext.Provider value={{ pendingDocument, adjustmentRequests, fetchPendingDocumentAndRequests, deleteAdjustmentRequest, updateDocumentStatus }}>
+        <DocumentContext.Provider value={{ 
+                pendingDocument, adjustmentRequests, fetchPendingDocumentAndRequests, deleteAdjustmentRequest, updateDocumentStatus,
+                accountNum, setAccountNum, accounts, getAccountsByAccountNum, selectedAccount, setSelectedAccount
+            }}>
             {children}
         </DocumentContext.Provider>
     );
