@@ -1,6 +1,6 @@
 
 
-const AccountSearch = ({ accountNum, setAccountNum, accounts, getAccountsByAccountNum, selectedAccount, setSelectedAccount }) => {
+const AccountSearch = ({ accountNum, setAccountNum, accounts, getAccountsByAccountNum, getAccountsByServiceNum, selectedAccount, setSelectedAccount }) => {
   return (
     <div className="card">
         <div className="card-body">
@@ -11,7 +11,7 @@ const AccountSearch = ({ accountNum, setAccountNum, accounts, getAccountsByAccou
                     <input type="text" className="form-control" placeholder="" value={accountNum} onChange={(e) => setAccountNum(e.target.value)} />
                 </div>
                 <div className="form-group">
-                    <button type="submit" className="btn btn-default mr-1">Service Num</button>
+                    <button type="submit" className="btn btn-default mr-1" onClick={() => getAccountsByServiceNum(accountNum)} >Service Num</button>
                     <button type="submit" className="btn btn-default" onClick={() => getAccountsByAccountNum(accountNum)} >Account Num</button>
                 </div>
             </div>
