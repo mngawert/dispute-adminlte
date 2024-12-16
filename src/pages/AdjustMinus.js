@@ -9,14 +9,9 @@ import InvoiceDataRC from '../components/InvoiceDataRC';
 import InvoiceDataUsage from '../components/InvoiceDataUsage';
 import MakeAdjustment from '../components/MakeAdjustment';
 import DisputeEvent from '../components/DisputeEvent';
-import { get } from 'jquery';
 
-/** ADJUST- */
-const documentType =  DOCUMENT_TYPE.ADJUST_MINUS
+const AdjustMinus = ({documentType=DOCUMENT_TYPE.ADJUST_MINUS, documentTypeName='Adjust -'}) => {
 
-const AdjustMinus = () => {
-
-    /** Document Submit */
     const { 
         /** Account */
         accountNum, setAccountNum, accounts, getAccountsByAccountNum, getAccountsByServiceNum, selectedAccount, setSelectedAccount,
@@ -95,7 +90,7 @@ const AdjustMinus = () => {
         <div className="container-fluid">
         <div className="row mb-2">
             <div className="col-sm-6">
-            <h1 className="m-0">Adjust -</h1>
+            <h1 className="m-0">{documentTypeName}</h1>
             </div>{/* /.col */}
             <div className="col-sm-6">
             <ol className="breadcrumb float-sm-right">

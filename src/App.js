@@ -18,6 +18,8 @@ import Review from "./pages/Review";
 import ReviewBak from "./pages/ReviewBak";
 import AdjustPlus from "./pages/AdjustPlus";
 import AdjustMinus from "./pages/AdjustMinus";
+import AdjustP31 from "./pages/AdjustP31";
+import AdjustP32 from "./pages/AdjustP32";
 import { DocumentProvider } from "./contexts/DocumentContext";
 
 function App() {
@@ -42,6 +44,9 @@ function App() {
             <Route path="/reviewBak" element={<ReviewBak />} />
             <Route path="/adjustPlus" element={<AdjustPlus />} />
             <Route path="/adjustMinus" element={<AdjustMinus />} />
+            <Route path="/adjustP31" element={<AdjustP31 />} />
+            <Route path="/adjustP32" element={<AdjustP32 />} />
+
             <Route path="/test" element={<Test />} />
             <Route path="/dashboard" element={<PrivateRoute element={<Dashboard />} />} />
             <Route path="/disputedata" element={<DisputeData />} />

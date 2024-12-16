@@ -65,12 +65,12 @@ export default function Sidebar() {
                 </p>
               </a>
               <ul className="nav nav-treeview">
-              <li className="nav-item">
+                {/* <li className="nav-item">
                   <a href="/Dispute" className="nav-link">
                     <i className="far fa-circle nav-icon" />
                     <p>Dispute</p>
                   </a>
-                </li>
+                </li> */}
                 <li className="nav-item">
                   <a href="/AdjustMinus" className="nav-link">
                     <i className="far fa-circle nav-icon" />
@@ -84,11 +84,24 @@ export default function Sidebar() {
                   </a>
                 </li>
                 <li className="nav-item">
+                  <a href="/AdjustP31" className="nav-link">
+                    <i className="far fa-circle nav-icon" />
+                    <p>P31 </p>
+                  </a>
+                </li>
+                <li className="nav-item">
+                  <a href="/AdjustP32" className="nav-link">
+                    <i className="far fa-circle nav-icon" />
+                    <p>P32 </p>
+                  </a>
+                </li>
+
+                {/* <li className="nav-item">
                   <a href="/Create" className="nav-link">
                     <i className="far fa-circle nav-icon" />
                     <p>Create Adjustments </p>
                   </a>
-                </li>
+                </li> */}
               </ul>
             </li>
 
