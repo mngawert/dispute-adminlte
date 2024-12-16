@@ -108,9 +108,26 @@ export const DocumentProvider = ({ children }) => {
         }
     }
 
-
     /** Costed Event */
+    const [costedEvents, setCostedEvents] = useState([]);
     const [selectedCostedEvent, setSelectedCostedEvent] = useState({});
+
+    const getCostedEvents = async (invoiceData) => {
+        try {
+            const response = await api.get(`/api/CostedEvent/GetCostedEvents`, {
+                params: {
+                  accountNum: invoiceData.accountNum,
+                  billSeq: invoiceData.billSeq,
+                  eventSource: invoiceData.serviceNumber,
+                  eventTypeId: invoiceData.eventTypeId,
+                  callType: invoiceData.callType
+                }
+              });
+              setCostedEvents(response.data);
+        } catch (error) {
+            console.error('Error fetching costed event:', error);
+        }
+    }
 
 
     /** AdjustmentTypes */
@@ -233,7 +250,8 @@ export const DocumentProvider = ({ children }) => {
                 adjustmentTypes, setAdjustmentTypes, getAdjustmentTypes,
                 selectedAdjustmentType, setSelectedAdjustmentType,
                 adjustmentAmount, setAdjustmentAmount,
-                createAdjustmentRequest
+                createAdjustmentRequest,
+                costedEvents, setCostedEvents, getCostedEvents, selectedCostedEvent, setSelectedCostedEvent
             }}>
             {children}
         </DocumentContext.Provider>

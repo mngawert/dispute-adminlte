@@ -9,6 +9,7 @@ import InvoiceDataRC from '../components/InvoiceDataRC';
 import InvoiceDataUsage from '../components/InvoiceDataUsage';
 import MakeAdjustment from '../components/MakeAdjustment';
 import DisputeEvent from '../components/DisputeEvent';
+import { get } from 'jquery';
 
 /** ADJUST- */
 const documentType =  DOCUMENT_TYPE.ADJUST_MINUS
@@ -38,7 +39,10 @@ const AdjustMinus = () => {
         adjustmentTypes, setAdjustmentTypes, getAdjustmentTypes,
         selectedAdjustmentType, setSelectedAdjustmentType,
         adjustmentAmount, setAdjustmentAmount,
-        createAdjustmentRequest
+        createAdjustmentRequest,
+
+        /** Dispute Event */
+        costedEvents, setCostedEvents, getCostedEvents, selectedCostedEvent, setSelectedCostedEvent
 
     } = useDocumentContext();
 
@@ -71,6 +75,11 @@ const AdjustMinus = () => {
     const handleCreateAdjustmentRequest = async () => {
         await createAdjustmentRequest(documentType);
         await fetchPendingDocumentAndRequests(documentType);
+    }
+
+    const handleSelectCostedEvent = (data) => {
+        setSelectedCostedEvent(data);
+        setAdjustmentAmount(data?.eventCostMny);
     }
 
     /** Fetch Pending Document */
@@ -125,7 +134,7 @@ const AdjustMinus = () => {
 
                         <hr className="mb-5" />
                         
-                        {/* <DisputeEvent /> */}
+                        <DisputeEvent costedEvents={costedEvents} selectedCostedEvent={selectedCostedEvent} handleSelectCostedEvent={handleSelectCostedEvent} getCostedEvents={getCostedEvents} selectedInvoiceDataUsage={selectedInvoiceDataUsage} />
                     
                     </div>
                 </div>

@@ -1,10 +1,6 @@
 
 const MakeAdjustment = ({adjustmentTypes, selectedAdjustmentType, setSelectedAdjustmentType, adjustmentAmount, setAdjustmentAmount, handleCreateAdjustmentRequest, documentType}) => {
 
-    console.log(adjustmentTypes);
-    console.log(selectedAdjustmentType);
-
-
   return (
     <div className="card">
         <div className="card-body">
