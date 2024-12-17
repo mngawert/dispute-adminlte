@@ -4,6 +4,7 @@ export const DOCUMENT_TYPE = {
   Adjust_PLUS   : '02',
   P31           : '31',
   P32           : '32',
-  P_PLUS        : '03',
-  P_MINUS       : '04',
+  P3_PLUS       : '03',
+  P3_MINUS      : '04',
+  B             : '05'
 };

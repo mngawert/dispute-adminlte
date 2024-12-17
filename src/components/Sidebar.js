@@ -95,6 +95,26 @@ export default function Sidebar() {
                     <p>P32 </p>
                   </a>
                 </li>
+                <li className="nav-item">
+                  <a href="/AdjustP3Plus" className="nav-link">
+                    <i className="far fa-circle nav-icon" />
+                    <p>P3 + </p>
+                  </a>
+                </li>
+                <li className="nav-item">
+                  <a href="/AdjustP3Minus" className="nav-link">
+                    <i className="far fa-circle nav-icon" />
+                    <p>P3 - </p>
+                  </a>
+                </li>
+                <li className="nav-item">
+                  <a href="/AdjustB" className="nav-link">
+                    <i className="far fa-circle nav-icon" />
+                    <p>B +/- </p>
+                  </a>
+                </li>
+
+
 
                 {/* <li className="nav-item">
                   <a href="/Create" className="nav-link">

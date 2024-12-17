@@ -20,6 +20,10 @@ import AdjustPlus from "./pages/AdjustPlus";
 import AdjustMinus from "./pages/AdjustMinus";
 import AdjustP31 from "./pages/AdjustP31";
 import AdjustP32 from "./pages/AdjustP32";
+import AdjustP3Plus from "./pages/AdjustP3Plus";
+import AdjustP3Minus from "./pages/AdjustP3Minus";
+import AdjustB from "./pages/AdjustB";
+
 import { DocumentProvider } from "./contexts/DocumentContext";
 
 function App() {
@@ -46,6 +50,9 @@ function App() {
             <Route path="/adjustMinus" element={<AdjustMinus />} />
             <Route path="/adjustP31" element={<AdjustP31 />} />
             <Route path="/adjustP32" element={<AdjustP32 />} />
+            <Route path="/AdjustP3Plus" element={<AdjustP3Plus />} />
+            <Route path="/AdjustP3Minus" element={<AdjustP3Minus />} />
+            <Route path="/AdjustB" element={<AdjustB />} />
 
             <Route path="/test" element={<Test />} />
             <Route path="/dashboard" element={<PrivateRoute element={<Dashboard />} />} />
