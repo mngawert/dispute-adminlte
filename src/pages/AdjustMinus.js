@@ -31,7 +31,7 @@ const AdjustMinus = ({documentType=DOCUMENT_TYPE.ADJUST_MINUS, documentTypeName=
         selectedInvoiceDataUsage, setSelectedInvoiceDataUsage,
 
         /** Adjustment */
-        adjustmentTypes, setAdjustmentTypes, getAdjustmentTypes,
+        adjustmentTypes, setAdjustmentTypes, getAdjustmentTypesByProductCodeAndRevenueCode,
         selectedAdjustmentType, setSelectedAdjustmentType,
         adjustmentAmount, setAdjustmentAmount,
         createAdjustmentRequest,
@@ -56,14 +56,14 @@ const AdjustMinus = ({documentType=DOCUMENT_TYPE.ADJUST_MINUS, documentTypeName=
     const handleSelectInvoiceRC = (data) => {
         setSelectedInvoiceDataUsage({});
         setSelectedInvoiceDataRC(data);
-        getAdjustmentTypes(data);
+        getAdjustmentTypesByProductCodeAndRevenueCode(data);
         setAdjustmentAmount(data?.aggAmount);
     }
 
     const handleSelectInvoiceUsage = (data) => {
         setSelectedInvoiceDataRC({});
         setSelectedInvoiceDataUsage(data);
-        getAdjustmentTypes(data);
+        getAdjustmentTypesByProductCodeAndRevenueCode(data);
         setAdjustmentAmount(data?.aggAmount);
     }
 

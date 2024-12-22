@@ -40,6 +40,25 @@ export const DocumentProvider = ({ children }) => {
         }
     }
 
+    /** Services */
+
+    const [serviceNum, setServiceNum] = useState("");
+    const [services, setServices] = useState([]);
+    const [selectedService, setSelectedService] = useState({});
+
+    const getServicesByAccountNum = async (accountNum) => {
+        try {
+            const response = await api.get('/api/Account/GetServicesByAccountNum', {
+                params: {
+                    accountNum: accountNum
+                }
+            });
+            setServices(response.data);
+        } catch (error) {
+            console.error('Error fetching services:', error);
+        }
+    }
+
     /** Invoices */
     const [invoices, setInvoices] = useState([]);
     const [selectedInvoice, setSelectedInvoice] = useState({});
@@ -136,7 +155,7 @@ export const DocumentProvider = ({ children }) => {
     const [selectedAdjustmentType, setSelectedAdjustmentType] = useState({});
     const [adjustmentAmount, setAdjustmentAmount] = useState(0);
 
-    const getAdjustmentTypes = async (invoiceData) => {
+    const getAdjustmentTypesByProductCodeAndRevenueCode = async (invoiceData) => {
         try {
             const response = await api.get(`/api/AdjustmentType/GetAdjustmentTypesByProductCodeAndRevenueCode`, {
                 params: {
@@ -153,6 +172,21 @@ export const DocumentProvider = ({ children }) => {
         }
     }
 
+    const getAdjustmentTypes = async (documentType) => {
+        try {
+            const response = await api.get(`/api/AdjustmentType/GetAdjustmentTypes`, {
+                params: {
+                    documentType: documentType
+                }
+            });
+            setAdjustmentTypes(response.data);
+            if (response.data.length > 0) {
+                setSelectedAdjustmentType(response.data[0]);
+            }
+        } catch (error) {
+            console.error('Error fetching adjustment types:', error);
+        }
+    }
 
 
     /** Create Adjustment Request */
@@ -163,9 +197,9 @@ export const DocumentProvider = ({ children }) => {
             const response = await api.post('/api/Adjustment/CreateAdjustmentRequest', {
                 documentType: documentType,
                 createdBy: JSON.parse(localStorage.getItem('userLogin'))?.userId,
-                accountNum: selectedInvoice.accountNum,
+                accountNum: selectedAccount.accountNum,
                 disputeDtm: new Date().toISOString(),
-                billSeq: selectedInvoice.billSeq,
+                billSeq: selectedInvoice?.billSeq,
                 disputeMny: parseFloat(adjustmentAmount),
                 productId: selectedInvoiceDataRC?.productId ?? selectedInvoiceDataUsage?.productId,
                 cpsId: selectedAccount.cpsId,
@@ -173,8 +207,8 @@ export const DocumentProvider = ({ children }) => {
                 eventRef: selectedCostedEvent?.eventRef,
                 eventTypeId: selectedCostedEvent?.eventTypeId,
                 adjustmentTypeId: selectedAdjustmentType.adjustmentTypeId,
-                serviceNum: selectedInvoiceDataService.serviceNumber,
-                invoiceNum: selectedInvoice.invoiceNum,
+                serviceNum: selectedInvoiceDataService.serviceNumber ?? selectedService?.serviceNumber,
+                invoiceNum: selectedInvoice?.invoiceNum,
                 disputeSeq: null,
                 adjustmentSeq: null,
                 requestStatus: "Create-Pending"
@@ -240,6 +274,7 @@ export const DocumentProvider = ({ children }) => {
         <DocumentContext.Provider value={{ 
                 pendingDocument, adjustmentRequests, fetchPendingDocumentAndRequests, deleteAdjustmentRequest, updateDocumentStatus,
                 accountNum, setAccountNum, accounts, getAccountsByAccountNum, getAccountsByServiceNum, selectedAccount, setSelectedAccount,
+                serviceNum, setServiceNum, services, setServices, getServicesByAccountNum, selectedService, setSelectedService,
                 invoices, setInvoices, getInvoicesByAccountNum, selectedInvoice, setSelectedInvoice,
                 invoiceDataServices, setInvoiceDataServices, getInvoiceDataServices,
                 invoiceDataRC, setInvoiceDataRC, getInvoiceDataRC,
@@ -247,7 +282,7 @@ export const DocumentProvider = ({ children }) => {
                 selectedInvoiceDataService, setSelectedInvoiceDataService,
                 selectedInvoiceDataRC, setSelectedInvoiceDataRC,
                 selectedInvoiceDataUsage, setSelectedInvoiceDataUsage,
-                adjustmentTypes, setAdjustmentTypes, getAdjustmentTypes,
+                adjustmentTypes, setAdjustmentTypes, getAdjustmentTypesByProductCodeAndRevenueCode, getAdjustmentTypes,
                 selectedAdjustmentType, setSelectedAdjustmentType,
                 adjustmentAmount, setAdjustmentAmount,
                 createAdjustmentRequest,

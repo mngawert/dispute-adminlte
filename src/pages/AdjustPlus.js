@@ -1,6 +1,57 @@
+import { useEffect } from "react";
+import AccountInfo from "../components/AccountInfo";
+import Accounts from "../components/Accounts";
+import Services from "../components/Services";
+import ServiceSearch from "../components/ServiceSearch";
+import { DOCUMENT_TYPE } from "../contexts/Constants";
+import { useDocumentContext } from "../contexts/DocumentContext";
+import PendingDocument from "../components/PendingDocument";
+import MakeAdjustment from "../components/MakeAdjustment";
 
 
-const AdjustPlus = () => {
+const AdjustPlus = ({documentType=DOCUMENT_TYPE.ADJUST_PLUS, documentTypeName='Adjust +'}) => {
+
+    const { 
+        /** Account */
+        accountNum, setAccountNum, accounts, getAccountsByAccountNum, getAccountsByServiceNum, selectedAccount, setSelectedAccount,
+        
+        /** Service */
+        serviceNum, setServiceNum, services, setServices, getServicesByAccountNum, selectedService, setSelectedService,
+
+        /** Adjustment */
+        adjustmentTypes, setAdjustmentTypes, getAdjustmentTypes,
+        selectedAdjustmentType, setSelectedAdjustmentType,
+        adjustmentAmount, setAdjustmentAmount,
+        createAdjustmentRequest,
+
+        /** Document Submit */
+        pendingDocument, adjustmentRequests, fetchPendingDocumentAndRequests, deleteAdjustmentRequest, updateDocumentStatus,
+
+    } = useDocumentContext();
+
+    const handleSelectAccount = (account) => {
+        setSelectedAccount(account);
+        getServicesByAccountNum(account.accountNum);
+    }
+
+    const handleCreateAdjustmentRequest = async () => {
+        await createAdjustmentRequest(documentType);
+        await fetchPendingDocumentAndRequests(documentType);
+    }
+
+    /** Fetch Pending Document */
+    useEffect(() => {
+        fetchPendingDocumentAndRequests(documentType);
+    }, []);
+
+    /** Fetch Adjustment Types */
+    useEffect(() => {
+        getAdjustmentTypes(documentType);
+        
+        console.log('Adjustment Types:', adjustmentTypes);
+    }, []);
+    
+
     return (
     <div className="content-wrapper-x">
     {/* Content Header (Page header) */}
@@ -8,7 +59,7 @@ const AdjustPlus = () => {
         <div className="container-fluid">
         <div className="row mb-2">
             <div className="col-sm-6">
-            <h1 className="m-0">Adjust +</h1>
+            <h1 className="m-0">{documentTypeName}</h1>
             </div>{/* /.col */}
             <div className="col-sm-6">
             <ol className="breadcrumb float-sm-right">
@@ -27,67 +78,62 @@ const AdjustPlus = () => {
             {/* START CONTENT */}
             <div className="card">
                 <div className="card-body">
-                <div className="row">
-                    <div className="col-sm-4">
-                    <div className="form-group">
-                        <label>Search for:</label>
-                        <input type="text" className="form-control" placeholder="" />
-                    </div>
-                    <div className="form-group">
-                        <button type="submit" className="btn btn-default">Service Num</button>
-                        <button type="submit" className="btn btn-default">Account Num</button>
-                    </div>
-                    </div>
-                    <div className="col-sm-5">
                     <div className="row">
-                        <div className="col-sm-6">
-                        <div className="form-group">
-                            <label>Accounts</label>
-                            <div className="table-responsive" style={{height: 200, border: '1px solid #dee2e6'}}>
-                            <table className="table table-as-list text-nowrap table-hover">
-                                <tbody>
-                                <tr>
-                                    <td>1232313123</td>
-                                </tr>
-                                <tr>
-                                    <td>1232313123</td>
-                                </tr>
-                                </tbody>
-                            </table>
+                        <div className="col-sm-4">
+                            <ServiceSearch accountNum={accountNum} setAccountNum={setAccountNum} getAccountsByAccountNum={getAccountsByAccountNum} getAccountsByServiceNum={getAccountsByServiceNum} />
+                        </div>
+
+                        <div className="col-sm-2">
+                            <Accounts accounts={accounts} selectedAccount={selectedAccount} setSelectedAccount={handleSelectAccount} />
+                        </div>
+                        <div className="col-sm-2">
+                            <Services services={services} selectedService={selectedService} setSelectedService={setSelectedService} />
+                        </div>
+                        <div className="col-sm-4">
+                            <AccountInfo selectedAccount={selectedAccount} />
+                        </div>
+
+
+                        {/* <div className="col-sm-5">
+                            <div className="row">
+                                <div className="col-sm-6">
+
+                                    <Accounts accounts={accounts} selectedAccount={selectedAccount} setSelectedAccount={setSelectedAccount} />
+
+                                </div>
+                                <div className="col-sm-6">
+                                <div className="mb-2">
+                                    <label>Service Numbers</label>
+                                    <input type="text" className="form-control" defaultValue />
+                                </div>
+                                <div className="table-responsive" style={{height: 153, border: '1px solid #dee2e6'}}>
+                                    <table className="table table-as-list text-nowrap table-hover">
+                                    <tbody>
+                                        <tr>
+                                        <td>1232313123</td>
+                                        </tr>
+                                        <tr>
+                                        <td>1232313123</td>
+                                        </tr>
+                                    </tbody>
+                                    </table>
+                                </div>
+                                </div>
                             </div>
                         </div>
-                        </div>
-                        <div className="col-sm-6">
-                        <div className="mb-2">
-                            <label>Service Numbers</label>
-                            <input type="text" className="form-control" defaultValue />
-                        </div>
-                        <div className="table-responsive" style={{height: 153, border: '1px solid #dee2e6'}}>
-                            <table className="table table-as-list text-nowrap table-hover">
-                            <tbody>
-                                <tr>
-                                <td>1232313123</td>
-                                </tr>
-                                <tr>
-                                <td>1232313123</td>
-                                </tr>
-                            </tbody>
-                            </table>
-                        </div>
-                        </div>
+                        <div className="col-sm-3">
+                            <div className="form-group">
+                                <label>Customer name</label>
+                                <input type="text" className="form-control" defaultValue readOnly />
+                            </div>
+                            <div className="form-group">
+                                <label>Account type</label>
+                                <input type="text" className="form-control" defaultValue readOnly />
+                            </div>
+                        </div> */}
+
+
                     </div>
-                    </div>
-                    <div className="col-sm-3">
-                    <div className="form-group">
-                        <label>Customer name</label>
-                        <input type="text" className="form-control" defaultValue readOnly />
-                    </div>
-                    <div className="form-group">
-                        <label>Account type</label>
-                        <input type="text" className="form-control" defaultValue readOnly />
-                    </div>
-                    </div>
-                </div>
                 </div>
             </div>
             <div className="card">
@@ -117,7 +163,10 @@ const AdjustPlus = () => {
                 </div>
                 </div>
             </div>
-            <div className="card">
+            
+            <MakeAdjustment adjustmentTypes={adjustmentTypes} selectedAdjustmentType={selectedAdjustmentType} setSelectedAdjustmentType={setSelectedAdjustmentType}  adjustmentAmount={adjustmentAmount} setAdjustmentAmount={setAdjustmentAmount} handleCreateAdjustmentRequest={handleCreateAdjustmentRequest} documentType={documentType} />
+
+            {/* <div className="card">
                 <div className="card-body">
                 <div className="row">
                     <div className="col-sm-3 form-group">
@@ -154,52 +203,10 @@ const AdjustPlus = () => {
                     </div>
                 </div>
                 </div>
-            </div>
-            <div className="card">
-                <div className="card-header border-0">
-                <h3 className="card-title">Document Sequence</h3>
-                </div>
-                <div className="card-body">
-                <div className="row">
-                    <div className="form-group col-sm-4">
-                    <strong>Adjustment type:</strong> Adjustment -
-                    </div>
-                    <div className="form-group col-sm-4">
-                    <strong>Current sequence:</strong> 2024860204042
-                    </div>
-                    <div className="form-group col-sm-4">
-                    <button type="submit" className="btn btn-default">Remove Adjustment</button>
-                    <button type="submit" className="btn btn-default">Submit document</button>
-                    </div>
-                </div>
-                <div className="table-responsive" style={{height: 300}}>
-                    <table className="table table-head-fixed text-nowrap table-bordered table-hover">
-                    <thead>
-                        <tr>
-                        <th>Adjustment Type</th>
-                        <th>Account Number</th>
-                        <th>Invoice Number</th>
-                        <th>Service Number</th>
-                        <th>Amount</th>
-                        <th>VAT</th>
-                        <th>Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                        <td />
-                        <td />
-                        <td />
-                        <td />
-                        <td />
-                        <td />
-                        <td />
-                        </tr>
-                    </tbody>
-                    </table>
-                </div>
-                </div>
-            </div>
+            </div> */}
+
+            <PendingDocument pendingDocument={pendingDocument} adjustmentRequests={adjustmentRequests} fetchPendingDocumentAndRequests={fetchPendingDocumentAndRequests} deleteAdjustmentRequest={deleteAdjustmentRequest} updateDocumentStatus={updateDocumentStatus} />
+
             {/* END CONTENT */}
             </div>
         </div>

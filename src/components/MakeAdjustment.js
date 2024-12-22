@@ -1,13 +1,19 @@
 
 const MakeAdjustment = ({adjustmentTypes, selectedAdjustmentType, setSelectedAdjustmentType, adjustmentAmount, setAdjustmentAmount, handleCreateAdjustmentRequest, documentType}) => {
 
+    const handleChangeAdjustmentType = (e) => {
+        const selectedAdjustmentTypeId = e.target.value;        
+        const selectedAdjustmentType = adjustmentTypes.find((adjType) => adjType.adjustmentTypeId === Number(selectedAdjustmentTypeId));
+        setSelectedAdjustmentType(selectedAdjustmentType);
+    }
+    
   return (
     <div className="card">
         <div className="card-body">
         <div className="row">
             <div className="col-sm-3 form-group">
             <label>Make adjustment type</label>
-            <select className="form-control" value={selectedAdjustmentType.adjustmentTypeId} onChange={(e) => setSelectedAdjustmentType(e.target.value)}>
+            <select className="form-control" value={selectedAdjustmentType?.adjustmentTypeId || ''} onChange={(e) => handleChangeAdjustmentType(e)}>
                 <option value="">Select Adjustment Type</option>
                 {adjustmentTypes.map((adjType) => (
                 <option key={adjType.adjustmentTypeId} value={adjType.adjustmentTypeId}>
