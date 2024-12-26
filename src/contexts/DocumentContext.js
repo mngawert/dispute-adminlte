@@ -193,6 +193,12 @@ export const DocumentProvider = ({ children }) => {
 
     const createAdjustmentRequest = async (documentType) => {
         
+        const isSelectedInvoiceValid = selectedInvoice && Object.keys(selectedInvoice).length > 0;
+        const disputeAmount = isSelectedInvoiceValid ? parseFloat(adjustmentAmount) : parseFloat(adjustmentAmount) * -1; 
+        console.log('selectedInvoice:', selectedInvoice);
+        console.log('selectedInvoice?.billSeq:', selectedInvoice?.billSeq);
+        console.log('Dispute amount:', disputeAmount);
+
         try {
             const response = await api.post('/api/Adjustment/CreateAdjustmentRequest', {
                 documentType: documentType,
@@ -200,7 +206,7 @@ export const DocumentProvider = ({ children }) => {
                 accountNum: selectedAccount.accountNum,
                 disputeDtm: new Date().toISOString(),
                 billSeq: selectedInvoice?.billSeq,
-                disputeMny: parseFloat(adjustmentAmount),
+                disputeMny: disputeAmount,
                 productId: selectedInvoiceDataRC?.productId ?? selectedInvoiceDataUsage?.productId,
                 cpsId: selectedAccount.cpsId,
                 productSeq: selectedInvoiceDataRC?.productSeq ?? selectedInvoiceDataUsage?.productSeq,
