@@ -29,7 +29,7 @@ const InvoiceSearch = ({ accountNum, invoices, getInvoicesByAccountNum, selected
                 </thead>
                 <tbody>
                     {invoices.map((invoice, index) => (
-                    <tr key={index} onClick={() => handleSelectInvoice(invoice)} className={invoice.invoiceNum === selectedInvoice.invoiceNum ? 'selected' : ''} >
+                    <tr key={index} onClick={() => handleSelectInvoice(invoice)} className={invoice.invoiceNum === selectedInvoice?.invoiceNum ? 'selected' : ''} >
                         <td>{invoice.billSeq}</td>
                         <td>{invoice.invoiceNum}</td>
                         <td>{new Date(invoice.billDtm).toLocaleDateString()}</td>

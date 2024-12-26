@@ -22,6 +22,11 @@ const AdjustPlus = ({documentType=DOCUMENT_TYPE.ADJUST_PLUS, documentTypeName='A
         adjustmentTypes, setAdjustmentTypes, getAdjustmentTypes,
         selectedAdjustmentType, setSelectedAdjustmentType,
         adjustmentAmount, setAdjustmentAmount,
+
+        /** Validation */
+        validateInputsAdjustMinus, validateInputsAdjustPlus,
+
+        /** Create Adjustment Request */
         createAdjustmentRequest,
 
         /** Document Submit */
@@ -35,6 +40,13 @@ const AdjustPlus = ({documentType=DOCUMENT_TYPE.ADJUST_PLUS, documentTypeName='A
     }
 
     const handleCreateAdjustmentRequest = async () => {
+
+        const validationError = validateInputsAdjustPlus();
+        if(validationError) {
+            alert(validationError);
+            return;
+        }
+
         await createAdjustmentRequest(documentType);
         await fetchPendingDocumentAndRequests(documentType);
     }

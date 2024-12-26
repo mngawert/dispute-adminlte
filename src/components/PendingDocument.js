@@ -9,10 +9,10 @@ const PendingDocument = ({ pendingDocument, adjustmentRequests, fetchPendingDocu
             <div className="card-body">
                 <div className="row">
                     <div className="form-group col-sm-4">
-                        <strong>Adjustment type:</strong> {pendingDocument.documentTypeDesc}
+                        <strong>Adjustment type:</strong> {pendingDocument?.documentTypeDesc}
                     </div>
                     <div className="form-group col-sm-4">
-                        <strong>Current sequence:</strong> {pendingDocument.documentNum}
+                        <strong>Current sequence:</strong> {pendingDocument?.documentNum}
                     </div>
                     <div className="form-group col-sm-4" align="right">
                         <button type="button" className="btn btn-default" onClick={async () => {

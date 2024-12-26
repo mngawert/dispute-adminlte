@@ -34,6 +34,11 @@ const AdjustMinus = ({documentType=DOCUMENT_TYPE.ADJUST_MINUS, documentTypeName=
         adjustmentTypes, setAdjustmentTypes, getAdjustmentTypesByProductCodeAndRevenueCode,
         selectedAdjustmentType, setSelectedAdjustmentType,
         adjustmentAmount, setAdjustmentAmount,
+
+        /** Validation */
+        validateInputsAdjustMinus, validateInputsAdjustPlus,
+
+        /** Create Adjustment Request */
         createAdjustmentRequest,
 
         /** Dispute Event */
@@ -67,14 +72,21 @@ const AdjustMinus = ({documentType=DOCUMENT_TYPE.ADJUST_MINUS, documentTypeName=
         setAdjustmentAmount(data?.aggAmount);
     }
 
-    const handleCreateAdjustmentRequest = async () => {
-        await createAdjustmentRequest(documentType);
-        await fetchPendingDocumentAndRequests(documentType);
-    }
-
     const handleSelectCostedEvent = (data) => {
         setSelectedCostedEvent(data);
         setAdjustmentAmount(data?.eventCostMny);
+    }
+
+    const handleCreateAdjustmentRequest = async () => {
+
+        const validationError = validateInputsAdjustMinus();
+        if(validationError) {
+            alert(validationError);
+            return;
+        }
+
+        await createAdjustmentRequest(documentType);
+        await fetchPendingDocumentAndRequests(documentType);
     }
 
     /** Fetch Pending Document */
@@ -113,7 +125,7 @@ const AdjustMinus = ({documentType=DOCUMENT_TYPE.ADJUST_MINUS, documentTypeName=
                 <div className="card">
                     <div className="card-body">
 
-                        <InvoiceSearch accountNum={selectedAccount.accountNum} invoices={invoices} getInvoicesByAccountNum={getInvoicesByAccountNum} selectedInvoice={selectedInvoice} handleSelectInvoice={handleSelectInvoice}  />
+                        <InvoiceSearch accountNum={selectedAccount?.accountNum} invoices={invoices} getInvoicesByAccountNum={getInvoicesByAccountNum} selectedInvoice={selectedInvoice} handleSelectInvoice={handleSelectInvoice}  />
                                             
                         <hr className="mb-5" />
 

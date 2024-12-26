@@ -12,7 +12,7 @@ export const DocumentProvider = ({ children }) => {
     /** Account */
     const [accountNum, setAccountNum] = useState("");
     const [accounts, setAccounts] = useState([]);
-    const [selectedAccount, setSelectedAccount] = useState({ accountNum: '', legalName: '', billCycle: '' });
+    const [selectedAccount, setSelectedAccount] = useState(null);
   
     const getAccountsByAccountNum = async (accountNum) => {
         try {
@@ -189,15 +189,67 @@ export const DocumentProvider = ({ children }) => {
     }
 
 
+
+    /** Validation */
+
+    const validateInputsAdjustMinus = () => {
+        if (!accountNum) {
+            return 'Please enter an account number';
+        } else if (!selectedAccount || Object.keys(selectedAccount).length === 0) {
+            return 'Please select an account';
+        } else if (!selectedInvoice || Object.keys(selectedInvoice).length === 0) {
+            return 'Please select an invoice';
+        } else if (!selectedInvoiceDataService || Object.keys(selectedInvoiceDataService).length === 0) {
+            return 'Please select a service number';
+        } else if ((!selectedInvoiceDataRC || Object.keys(selectedInvoiceDataRC).length === 0) && (!selectedInvoiceDataUsage || Object.keys(selectedInvoiceDataUsage).length === 0) ) {
+            return 'Please select a RC or Usage';
+        } else if (!selectedAdjustmentType || Object.keys(selectedAdjustmentType).length === 0) {
+            return 'Please select an adjustment type';
+        } else if (!adjustmentAmount) {
+            return 'Please enter an adjustment amount';
+        } else if (isNaN(adjustmentAmount)) {
+            return 'Adjustment amount must be a number';
+        } else if (parseFloat(adjustmentAmount) <= 0) {
+            return 'Adjustment amount must be greater than 0';
+        } else if (parseFloat(adjustmentAmount) > parseFloat(selectedInvoiceDataRC?.aggAmount ?? selectedInvoiceDataUsage?.aggAmount)) {
+            return 'Adjustment amount must be less than or equal to the invoice amount';
+        } else if (parseFloat(adjustmentAmount) > parseFloat(selectedInvoice?.invoiceNetMny)) {
+            return 'Adjustment amount must be less than or equal to the invoice amount';
+        }
+        
+        else {
+            return '';
+        }
+    }
+
+    const validateInputsAdjustPlus = () => {
+        if (!accountNum) {
+            return 'Please enter an account number';
+        } else if (!selectedAccount || Object.keys(selectedAccount).length === 0) {
+            return 'Please select an account';
+        } else if (!selectedService || Object.keys(selectedService).length === 0) {
+            return 'Please select a service';
+        } else if (!selectedAdjustmentType || Object.keys(selectedAdjustmentType).length === 0) {
+            return 'Please select an adjustment type';
+        } else if (!adjustmentAmount) {
+            return 'Please enter an adjustment amount';
+        } else if (isNaN(adjustmentAmount)) {
+            return 'Adjustment amount must be a number';
+        } else if (parseFloat(adjustmentAmount) <= 0) {
+            return 'Adjustment amount must be greater than 0';
+        }
+        
+        else {
+            return '';
+        }
+    }
+
     /** Create Adjustment Request */
 
     const createAdjustmentRequest = async (documentType) => {
         
         const isSelectedInvoiceValid = selectedInvoice && Object.keys(selectedInvoice).length > 0;
         const disputeAmount = isSelectedInvoiceValid ? parseFloat(adjustmentAmount) : parseFloat(adjustmentAmount) * -1; 
-        console.log('selectedInvoice:', selectedInvoice);
-        console.log('selectedInvoice?.billSeq:', selectedInvoice?.billSeq);
-        console.log('Dispute amount:', disputeAmount);
 
         try {
             const response = await api.post('/api/Adjustment/CreateAdjustmentRequest', {
@@ -291,6 +343,7 @@ export const DocumentProvider = ({ children }) => {
                 adjustmentTypes, setAdjustmentTypes, getAdjustmentTypesByProductCodeAndRevenueCode, getAdjustmentTypes,
                 selectedAdjustmentType, setSelectedAdjustmentType,
                 adjustmentAmount, setAdjustmentAmount,
+                validateInputsAdjustMinus, validateInputsAdjustPlus,
                 createAdjustmentRequest,
                 costedEvents, setCostedEvents, getCostedEvents, selectedCostedEvent, setSelectedCostedEvent
             }}>
