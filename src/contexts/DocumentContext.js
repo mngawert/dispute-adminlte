@@ -17,11 +17,25 @@ export const DocumentProvider = ({ children }) => {
     const getAccountsByAccountNum = async (accountNum) => {
         try {
             const response = await api.get('/api/Account/GetAccountsByAccountNum', {
-            params: {
-                accountNum: accountNum
-            }
+                params: {
+                    accountNum: accountNum
+                }
             });
             setAccounts(response.data);
+
+            if (response.data.length === 0) {
+                alert('No accounts found');
+            }
+
+            /** Clear states */
+            setSelectedAccount(null);
+            setServices([]); setSelectedService({}); 
+            setInvoices([]); setSelectedInvoice({}); 
+            setInvoiceDataServices([]); setInvoiceDataRC([]); setInvoiceDataUsage([]); setSelectedInvoiceDataService({}); setSelectedInvoiceDataRC({}); setSelectedInvoiceDataUsage({}); 
+            setCostedEvents([]); setSelectedCostedEvent({});
+            setAdjustmentTypes([]); setSelectedAdjustmentType({}); 
+            setAdjustmentAmount(0); 
+
         } catch (error) {
             console.error('Error fetching accounts:', error);
         }
@@ -30,11 +44,25 @@ export const DocumentProvider = ({ children }) => {
     const getAccountsByServiceNum = async (serviceNum) => {
         try {
             const response = await api.get('/api/Account/GetAccountsByServiceNum', {
-            params: {
-                serviceNum: serviceNum
-            }
+                params: {
+                    serviceNum: serviceNum
+                }
             });
             setAccounts(response.data);
+
+            if (response.data.length === 0) {
+                alert('No accounts found');
+            }
+
+            /** Clear states */
+            setSelectedAccount(null);
+            setServices([]); setSelectedService({}); 
+            setInvoices([]); setSelectedInvoice({}); 
+            setInvoiceDataServices([]); setInvoiceDataRC([]); setInvoiceDataUsage([]); setSelectedInvoiceDataService({}); setSelectedInvoiceDataRC({}); setSelectedInvoiceDataUsage({}); 
+            setCostedEvents([]); setSelectedCostedEvent({});
+            setAdjustmentTypes([]); setSelectedAdjustmentType({}); 
+            setAdjustmentAmount(0);
+
         } catch (error) {
             console.error('Error fetching accounts:', error);
         }
@@ -271,9 +299,11 @@ export const DocumentProvider = ({ children }) => {
                 adjustmentSeq: null,
                 requestStatus: "Create-Pending"
             });
-            console.log('Dispute created:', response.data);
+            console.log('Adjustment Request Created:', response.data);
+            alert('Adjustment Request Created');
         } catch (error) {
-            console.error('Error creating dispute', error);
+            console.error('Error creating adjustment request', error);
+            alert('Error creating adjustment request');
         }
       };
 

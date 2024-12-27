@@ -37,6 +37,9 @@ const AdjustPlus = ({documentType=DOCUMENT_TYPE.ADJUST_PLUS, documentTypeName='A
     const handleSelectAccount = (account) => {
         setSelectedAccount(account);
         getServicesByAccountNum(account.accountNum);
+
+        /** Fetch Adjustment types */
+        getAdjustmentTypes(documentType);
     }
 
     const handleCreateAdjustmentRequest = async () => {
@@ -56,13 +59,6 @@ const AdjustPlus = ({documentType=DOCUMENT_TYPE.ADJUST_PLUS, documentTypeName='A
         fetchPendingDocumentAndRequests(documentType);
     }, []);
 
-    /** Fetch Adjustment Types */
-    useEffect(() => {
-        getAdjustmentTypes(documentType);
-        
-        console.log('Adjustment Types:', adjustmentTypes);
-    }, []);
-    
 
     return (
     <div className="content-wrapper-x">

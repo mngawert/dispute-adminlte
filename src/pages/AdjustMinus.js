@@ -50,12 +50,25 @@ const AdjustMinus = ({documentType=DOCUMENT_TYPE.ADJUST_MINUS, documentTypeName=
     const handleSelectInvoice = (invoice) => { 
         setSelectedInvoice(invoice);
         getInvoiceDataServices(invoice);
+
+        /** Clear states */
+        setInvoiceDataServices([]); setSelectedInvoiceDataService({}); 
+        setInvoiceDataRC([]); setSelectedInvoiceDataRC({}); setInvoiceDataUsage([]); setSelectedInvoiceDataUsage({});
+        setCostedEvents([]); setSelectedCostedEvent({});
+        setAdjustmentTypes([]); setSelectedAdjustmentType({}); 
+        setAdjustmentAmount(0); 
     }
 
     const handleSelectInvoiceServices = (data) => {
         setSelectedInvoiceDataService(data);
         getInvoiceDataRC(data);
         getInvoiceDataUsage(data);
+
+        /** Clear states */
+        setInvoiceDataRC([]); setSelectedInvoiceDataRC({}); setInvoiceDataUsage([]); setSelectedInvoiceDataUsage({});
+        setCostedEvents([]); setSelectedCostedEvent({});
+        setAdjustmentTypes([]); setSelectedAdjustmentType({}); 
+        setAdjustmentAmount(0); 
     }
 
     const handleSelectInvoiceRC = (data) => {
