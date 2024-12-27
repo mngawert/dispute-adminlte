@@ -9,7 +9,7 @@ const AccountInfo = ({selectedAccount}) => {
         </div>
         <div className="form-group">
             <label>Account type</label>
-            <input type="text" className="form-control" value={selectedAccount ? selectedAccount.billCycle : ''} readOnly />
+            <input type="text" className="form-control" value={selectedAccount ? selectedAccount.invoicingCoName : ''} readOnly />
         </div>
     </>
   );
