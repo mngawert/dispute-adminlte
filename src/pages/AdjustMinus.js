@@ -154,8 +154,11 @@ const AdjustMinus = ({documentType=DOCUMENT_TYPE.ADJUST_MINUS, documentTypeName=
 
                         <hr className="mb-5" />
                         
-                        <DisputeEvent costedEvents={costedEvents} selectedCostedEvent={selectedCostedEvent} handleSelectCostedEvent={handleSelectCostedEvent} getCostedEvents={getCostedEvents} selectedInvoiceDataUsage={selectedInvoiceDataUsage} />
-                    
+                        {Object.keys(selectedInvoiceDataUsage).length > 0 && 
+                        (
+                            <DisputeEvent costedEvents={costedEvents} selectedCostedEvent={selectedCostedEvent} handleSelectCostedEvent={handleSelectCostedEvent} getCostedEvents={getCostedEvents} selectedInvoiceDataUsage={selectedInvoiceDataUsage} />
+                        )
+                        }
                     </div>
                 </div>
 

@@ -240,7 +240,7 @@ export const DocumentProvider = ({ children }) => {
         } else if (parseFloat(adjustmentAmount) <= 0) {
             return 'Adjustment amount must be greater than 0';
         } else if (parseFloat(adjustmentAmount) > parseFloat(selectedInvoiceDataRC?.aggAmount ?? selectedInvoiceDataUsage?.aggAmount)) {
-            return 'Adjustment amount must be less than or equal to the invoice amount';
+            return 'Adjustment amount must be less than or equal to the charge amount';
         } else if (parseFloat(adjustmentAmount) > parseFloat(selectedInvoice?.invoiceNetMny)) {
             return 'Adjustment amount must be less than or equal to the invoice amount';
         }
@@ -301,6 +301,16 @@ export const DocumentProvider = ({ children }) => {
             });
             console.log('Adjustment Request Created:', response.data);
             alert('Adjustment Request Created');
+
+            /** Clear states */
+            setAccountNum(""); setAccounts([]); setSelectedAccount(null);
+            setSelectedAccount(null);
+            setServices([]); setSelectedService({}); 
+            setInvoices([]); setSelectedInvoice({}); 
+            setInvoiceDataServices([]); setInvoiceDataRC([]); setInvoiceDataUsage([]); setSelectedInvoiceDataService({}); setSelectedInvoiceDataRC({}); setSelectedInvoiceDataUsage({}); 
+            setCostedEvents([]); setSelectedCostedEvent({});
+            setAdjustmentTypes([]); setSelectedAdjustmentType({}); 
+            setAdjustmentAmount(0);            
         } catch (error) {
             console.error('Error creating adjustment request', error);
             alert('Error creating adjustment request');

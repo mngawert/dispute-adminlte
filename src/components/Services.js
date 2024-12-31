@@ -4,7 +4,7 @@ const Services = ({services, selectedService, setSelectedService}) => {
     <>
         <div className="form-group">
             <label>Service Numbers</label>
-            <div className="table-responsive" style={{height: 200, border: '1px solid #dee2e6'}}>
+            <div className="table-responsive" style={{height: 120, border: '1px solid #dee2e6'}}>
             <table className="table table-as-list text-nowrap table-hover">
                 <tbody>
                 {services.map((service, index) => (
