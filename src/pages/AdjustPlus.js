@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import AccountInfo from "../components/AccountInfo";
 import Accounts from "../components/Accounts";
 import Services from "../components/Services";
@@ -7,6 +7,8 @@ import { DOCUMENT_TYPE } from "../contexts/Constants";
 import { useDocumentContext } from "../contexts/DocumentContext";
 import PendingDocument from "../components/PendingDocument";
 import MakeAdjustment from "../components/MakeAdjustment";
+import AdjustmentTypeNamesFilter from "../components/AdjustmentTypeNamesFilter";
+import { get } from "jquery";
 
 
 const AdjustPlus = ({documentType=DOCUMENT_TYPE.ADJUST_PLUS, documentTypeName='Adjust +'}) => {
@@ -34,12 +36,15 @@ const AdjustPlus = ({documentType=DOCUMENT_TYPE.ADJUST_PLUS, documentTypeName='A
 
     } = useDocumentContext();
 
+    const initialAdjustmentTypeNames = ['RC', 'USG', 'NRC'];
+    const [adjustmentTypeNames, setAdjustmentTypeNames] = useState(initialAdjustmentTypeNames);
+
     const handleSelectAccount = (account) => {
         setSelectedAccount(account);
         getServicesByAccountNum(account.accountNum);
 
         /** Fetch Adjustment types */
-        getAdjustmentTypes(documentType);
+        getAdjustmentTypes(adjustmentTypeNames);
     }
 
     const handleCreateAdjustmentRequest = async () => {
@@ -59,6 +64,10 @@ const AdjustPlus = ({documentType=DOCUMENT_TYPE.ADJUST_PLUS, documentTypeName='A
         fetchPendingDocumentAndRequests(documentType);
     }, []);
 
+    /** Fetch Adjustment Types */
+    useEffect(() => {
+        getAdjustmentTypes(adjustmentTypeNames);
+    }, [adjustmentTypeNames]);
 
     return (
     <div className="content-wrapper-x">
@@ -144,33 +153,8 @@ const AdjustPlus = ({documentType=DOCUMENT_TYPE.ADJUST_PLUS, documentTypeName='A
                     </div>
                 </div>
             </div>
-            <div className="card">
-                <div className="card-body">
-                <p className="mb-4"><b>Choose your desired adjustment properties</b></p>
-                <div className="form-group d-flex " style={{columnGap: 40}}>
-                    <div className="form-check">
-                    <input className="form-check-input" type="checkbox" />
-                    <label className="form-check-label">RC</label>
-                    </div>
-                    <div className="form-check">
-                    <input className="form-check-input" type="checkbox" />
-                    <label className="form-check-label">Usage</label>
-                    </div>
-                    <div className="form-check">
-                    <input className="form-check-input" type="checkbox" />
-                    <label className="form-check-label">NRC</label>
-                    </div>
-                    <div className="form-check">
-                    <input className="form-check-input" type="checkbox" />
-                    <label className="form-check-label">Recommended</label>
-                    </div>
-                    <div className="form-check">
-                    <input className="form-check-input" type="checkbox" />
-                    <label className="form-check-label">My Favorites</label>
-                    </div>
-                </div>
-                </div>
-            </div>
+            
+            <AdjustmentTypeNamesFilter initialAdjustmentTypeNames={initialAdjustmentTypeNames} adjustmentTypeNames={adjustmentTypeNames} setAdjustmentTypeNames={setAdjustmentTypeNames} getAdjustmentTypes={getAdjustmentTypes} />
             
             <MakeAdjustment adjustmentTypes={adjustmentTypes} selectedAdjustmentType={selectedAdjustmentType} setSelectedAdjustmentType={setSelectedAdjustmentType}  adjustmentAmount={adjustmentAmount} setAdjustmentAmount={setAdjustmentAmount} handleCreateAdjustmentRequest={handleCreateAdjustmentRequest} documentType={documentType} />
 

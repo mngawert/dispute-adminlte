@@ -4,7 +4,7 @@ const InvoiceSearch = ({ accountNum, invoices, getInvoicesByAccountNum, selected
     <>
         <div className="d-flex">
             <p className="d-flex flex-column">
-                <button type="button" className="btn btn-default" onClick={() => getInvoicesByAccountNum(accountNum)} >View invoice's pending adjustments</button>
+                <button type="button" className="btn btn-default" onClick={() => getInvoicesByAccountNum(accountNum)} >View Account's Invoices</button>
                 {/* <button type="button" className="btn btn-default">Get details for Account</button> */}
             </p>
             <p className="ml-auto d-flex flex-column text-right">
@@ -20,11 +20,13 @@ const InvoiceSearch = ({ accountNum, invoices, getInvoicesByAccountNum, selected
                     <th>Bill</th>
                     <th>Invoice Number</th>
                     <th>Bill Month</th>
-                    {/* <th>Actual Bill</th> */}
+                    <th>Actual Bill</th>
                     {/* <th>Convergent Amount</th> */}
                     <th>Invoice Amount</th>
                     <th>VAT Amount</th>
                     <th>Adjusted</th>
+                    <th>Write Off</th>
+                    <th>Pending Adjust Amount</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -33,11 +35,13 @@ const InvoiceSearch = ({ accountNum, invoices, getInvoicesByAccountNum, selected
                         <td>{invoice.billSeq}</td>
                         <td>{invoice.invoiceNum}</td>
                         <td>{new Date(invoice.billDtm).toLocaleDateString()}</td>
-                        {/* <td>{invoice.actualBill}</td> */}
+                        <td>{new Date(invoice.actualBillDtm).toLocaleDateString()}</td>
                         {/* <td>{invoice.convergentAmount}</td> */}
                         <td>{invoice.invoiceNetMny}</td>
                         <td>{invoice.invoiceTaxMny}</td>
                         <td>{invoice.adjustedMny}</td>
+                        <td>{invoice.writeOffMny}</td>
+                        <td>{invoice.pendingAdjustmentMny}</td>
                     </tr>
                     ))}
                 </tbody>

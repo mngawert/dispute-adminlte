@@ -200,12 +200,14 @@ export const DocumentProvider = ({ children }) => {
         }
     }
 
-    const getAdjustmentTypes = async (documentType) => {
+    const getAdjustmentTypes = async (adjustmentTypeNames) => {
         try {
+
+            const params = new URLSearchParams();
+            adjustmentTypeNames.forEach(name => params.append('adjustmentTypeNames', name));
+      
             const response = await api.get(`/api/AdjustmentType/GetAdjustmentTypes`, {
-                params: {
-                    documentType: documentType
-                }
+                params: params
             });
             setAdjustmentTypes(response.data);
             if (response.data.length > 0) {
