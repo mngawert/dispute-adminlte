@@ -295,7 +295,7 @@ export const DocumentProvider = ({ children }) => {
                 eventRef: selectedCostedEvent?.eventRef,
                 eventTypeId: selectedCostedEvent?.eventTypeId,
                 adjustmentTypeId: selectedAdjustmentType.adjustmentTypeId,
-                serviceNum: selectedInvoiceDataService.serviceNumber ?? selectedService?.serviceNumber,
+                serviceNum: selectedInvoiceDataService?.serviceNumber || selectedService?.serviceNum,
                 invoiceNum: selectedInvoice?.invoiceNum,
                 disputeSeq: null,
                 adjustmentSeq: null,
