@@ -305,17 +305,20 @@ export const DocumentProvider = ({ children }) => {
         if (documentType === DOCUMENT_TYPE.P36) {
 
             const currentDate = process.env.REACT_APP_OVERRIDE_CURRENT_DATE_FLAG === 'Y' ? new Date(process.env.REACT_APP_OVERRIDE_CURRENT_DATE_VALUE) : new Date();
-            
-            const actualBillDtm = new Date(selectedInvoice.actualBillDtm);
-            const currentYear = currentDate.getFullYear();
 
-            if (actualBillDtm.getFullYear() >= currentYear) {
-                return `Cannot create this adjustment. For P36 the invoice actual billed must be older than this year.`;
+            const actualBillDtm = new Date(selectedInvoice.actualBillDtm);
+            const lastYear = currentDate.getFullYear() - 1;
+            const endOfOctoberLastYear = new Date(lastYear, 9, 31); // October 31st of last year
+
+            if (actualBillDtm > endOfOctoberLastYear) {
+                return `Cannot create this adjustment. For P36 the invoice actual billed must be on or before October 31st of ${lastYear}`;
             }
-        
+
         }
         if (documentType === DOCUMENT_TYPE.ADJUST_MINUS) {
-            const currentYear = new Date().getFullYear();
+
+            const currentDate = process.env.REACT_APP_OVERRIDE_CURRENT_DATE_FLAG === 'Y' ? new Date(process.env.REACT_APP_OVERRIDE_CURRENT_DATE_VALUE) : new Date();
+            const currentYear = currentDate.getFullYear();
             const actualBillDtmYear = new Date(selectedInvoice.actualBillDtm).getFullYear();
 
             if (actualBillDtmYear !== currentYear) {
