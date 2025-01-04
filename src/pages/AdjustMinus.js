@@ -92,7 +92,7 @@ const AdjustMinus = ({documentType=DOCUMENT_TYPE.ADJUST_MINUS, documentTypeName=
 
     const handleCreateAdjustmentRequest = async () => {
 
-        const validationError = validateInputsAdjustMinus();
+        const validationError = validateInputsAdjustMinus(documentType);
         if(validationError) {
             alert(validationError);
             return;

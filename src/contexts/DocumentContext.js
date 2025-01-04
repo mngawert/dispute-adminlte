@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import api from '../api';
+import { DOCUMENT_TYPE } from './Constants';
 
 const DocumentContext = React.createContext();
 
@@ -222,56 +223,134 @@ export const DocumentProvider = ({ children }) => {
 
     /** Validation */
 
-    const validateInputsAdjustMinus = () => {
+    const validateInputsAdjustMinus = (documentType) => {
+
+        console.log('documentType:', documentType);
+        console.log('selectedInvoice:', selectedInvoice);
+
         if (!accountNum) {
             return 'Please enter an account number';
-        } else if (!selectedAccount || Object.keys(selectedAccount).length === 0) {
+        } 
+        if (!selectedAccount || Object.keys(selectedAccount).length === 0) {
             return 'Please select an account';
-        } else if (!selectedInvoice || Object.keys(selectedInvoice).length === 0) {
+        }
+        if (!selectedInvoice || Object.keys(selectedInvoice).length === 0) {
             return 'Please select an invoice';
-        } else if (!selectedInvoiceDataService || Object.keys(selectedInvoiceDataService).length === 0) {
+        } 
+        if (!selectedInvoiceDataService || Object.keys(selectedInvoiceDataService).length === 0) {
             return 'Please select a service number';
-        } else if ((!selectedInvoiceDataRC || Object.keys(selectedInvoiceDataRC).length === 0) && (!selectedInvoiceDataUsage || Object.keys(selectedInvoiceDataUsage).length === 0) ) {
+        }
+        if ((!selectedInvoiceDataRC || Object.keys(selectedInvoiceDataRC).length === 0) && (!selectedInvoiceDataUsage || Object.keys(selectedInvoiceDataUsage).length === 0) ) {
             return 'Please select a RC or Usage';
-        } else if (!selectedAdjustmentType || Object.keys(selectedAdjustmentType).length === 0) {
+        }
+        if (!selectedAdjustmentType || Object.keys(selectedAdjustmentType).length === 0) {
             return 'Please select an adjustment type';
-        } else if (!adjustmentAmount) {
+        }
+        if (!adjustmentAmount) {
             return 'Please enter an adjustment amount';
-        } else if (isNaN(adjustmentAmount)) {
+        }
+        if (isNaN(adjustmentAmount)) {
             return 'Adjustment amount must be a number';
-        } else if (parseFloat(adjustmentAmount) <= 0) {
+        }
+        if (parseFloat(adjustmentAmount) <= 0) {
             return 'Adjustment amount must be greater than 0';
-        } else if (parseFloat(adjustmentAmount) > parseFloat(selectedInvoiceDataRC?.aggAmount ?? selectedInvoiceDataUsage?.aggAmount)) {
+        }
+        if (parseFloat(adjustmentAmount) > parseFloat(selectedInvoiceDataRC?.aggAmount ?? selectedInvoiceDataUsage?.aggAmount)) {
             return 'Adjustment amount must be less than or equal to the charge amount';
-        } else if (parseFloat(adjustmentAmount) > parseFloat(selectedInvoice?.invoiceNetMny)) {
+        }
+        if (parseFloat(adjustmentAmount) > parseFloat(selectedInvoice?.invoiceNetMny)) {
             return 'Adjustment amount must be less than or equal to the invoice amount';
         }
-        
-        else {
-            return '';
+        if (parseFloat(selectedInvoice?.writeOffMny) > 0) {
+            return 'Cannot create this adjustment. Invoice has already been written off';
         }
+        if (documentType === DOCUMENT_TYPE.P35) {
+
+            console.log('process.env.REACT_APP_OVERRIDE_CURRENT_DATE_FLAG:', process.env.REACT_APP_OVERRIDE_CURRENT_DATE_FLAG);
+            console.log('process.env.REACT_APP_OVERRIDE_CURRENT_DATE_VALUE:', process.env.REACT_APP_OVERRIDE_CURRENT_DATE_VALUE);
+            
+            const currentDate = process.env.REACT_APP_OVERRIDE_CURRENT_DATE_FLAG === 'Y' ? new Date(process.env.REACT_APP_OVERRIDE_CURRENT_DATE_VALUE) : new Date();
+
+            console.log('currentDate:', currentDate);
+
+            const actualBillDtm = new Date(selectedInvoice.actualBillDtm);
+            const lastYear = currentDate.getFullYear() - 1;
+            const startDate = new Date(lastYear, 10, 1); // November 1st of last year
+            const endDate = new Date(lastYear, 11, 31); // December 31st of last year
+
+            const billDtm = new Date(selectedInvoice.billDtm);
+            if (billDtm.getMonth() === 11) { // December
+                endDate.setMonth(0); // January
+                endDate.setFullYear(currentDate.getFullYear()); // Current year
+            }
+
+            console.log('actualBillDtm:', actualBillDtm);
+            console.log('billDtm:', billDtm);
+            console.log('startDate:', startDate);
+            console.log('endDate:', endDate);
+
+            if (actualBillDtm < startDate || actualBillDtm > endDate) {
+                return `Cannot create this adjusment. For P35 the invoice actual billed must be between October and December of ${lastYear}`;
+            }
+
+            const startYear = currentDate.getFullYear();
+            const startJan = new Date(startYear, 0, 1); // January 1st of current year
+            const endMar = new Date(startYear, 2, 31); // March 31st of current year
+
+            if (currentDate < startJan || currentDate > endMar) {
+                return `Cannot create this adjustment. For P35 adjustment can be created between January and March of ${startYear}`;
+            }
+
+        }
+        if (documentType === DOCUMENT_TYPE.P36) {
+
+            const currentDate = process.env.REACT_APP_OVERRIDE_CURRENT_DATE_FLAG === 'Y' ? new Date(process.env.REACT_APP_OVERRIDE_CURRENT_DATE_VALUE) : new Date();
+            
+            const actualBillDtm = new Date(selectedInvoice.actualBillDtm);
+            const currentYear = currentDate.getFullYear();
+
+            if (actualBillDtm.getFullYear() >= currentYear) {
+                return `Cannot create this adjustment. For P36 the invoice actual billed must be older than this year.`;
+            }
+        
+        }
+        if (documentType === DOCUMENT_TYPE.ADJUST_MINUS) {
+            const currentYear = new Date().getFullYear();
+            const actualBillDtmYear = new Date(selectedInvoice.actualBillDtm).getFullYear();
+
+            if (actualBillDtmYear !== currentYear) {
+                return `Cannot create this adjustment. For Adjustment(-) the invoice actual billed must be in the current year.`;
+            }
+
+        }
+
+        return '';
     }
 
-    const validateInputsAdjustPlus = () => {
+    const validateInputsAdjustPlus = (documentType) => {
         if (!accountNum) {
             return 'Please enter an account number';
-        } else if (!selectedAccount || Object.keys(selectedAccount).length === 0) {
+        }
+        if (!selectedAccount || Object.keys(selectedAccount).length === 0) {
             return 'Please select an account';
-        } else if (!selectedService || Object.keys(selectedService).length === 0) {
+        }
+        if (!selectedService || Object.keys(selectedService).length === 0) {
             return 'Please select a service';
-        } else if (!selectedAdjustmentType || Object.keys(selectedAdjustmentType).length === 0) {
+        }
+        if (!selectedAdjustmentType || Object.keys(selectedAdjustmentType).length === 0) {
             return 'Please select an adjustment type';
-        } else if (!adjustmentAmount) {
+        }
+        if (!adjustmentAmount) {
             return 'Please enter an adjustment amount';
-        } else if (isNaN(adjustmentAmount)) {
+        }
+        if (isNaN(adjustmentAmount)) {
             return 'Adjustment amount must be a number';
-        } else if (parseFloat(adjustmentAmount) <= 0) {
+        }
+        if (parseFloat(adjustmentAmount) <= 0) {
             return 'Adjustment amount must be greater than 0';
         }
         
-        else {
-            return '';
-        }
+        return '';
     }
 
     /** Create Adjustment Request */

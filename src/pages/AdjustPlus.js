@@ -49,7 +49,7 @@ const AdjustPlus = ({documentType=DOCUMENT_TYPE.ADJUST_PLUS, documentTypeName='A
 
     const handleCreateAdjustmentRequest = async () => {
 
-        const validationError = validateInputsAdjustPlus();
+        const validationError = validateInputsAdjustPlus(documentType);
         if(validationError) {
             alert(validationError);
             return;
