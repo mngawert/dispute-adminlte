@@ -290,7 +290,7 @@ export const DocumentProvider = ({ children }) => {
             console.log('endDate:', endDate);
 
             if (actualBillDtm < startDate || actualBillDtm > endDate) {
-                return `Cannot create this adjusment. For P35 the invoice actual billed must be between October and December of ${lastYear}`;
+                return `Cannot create this adjusment. For P35 the invoice actual billed must be between November and December of ${lastYear}`;
             }
 
             const startYear = currentDate.getFullYear();
