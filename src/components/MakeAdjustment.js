@@ -1,5 +1,5 @@
 
-const MakeAdjustment = ({adjustmentTypes, selectedAdjustmentType, setSelectedAdjustmentType, adjustmentAmount, setAdjustmentAmount, handleCreateAdjustmentRequest, documentType}) => {
+const MakeAdjustment = ({adjustmentTypes, selectedAdjustmentType, setSelectedAdjustmentType, selectedCostedEvent, adjustmentNote, setAdjustmentNote, adjustmentAmount, setAdjustmentAmount, handleCreateAdjustmentRequest, documentType}) => {
 
     const handleChangeAdjustmentType = (e) => {
         const selectedAdjustmentTypeId = e.target.value;        
@@ -7,7 +7,7 @@ const MakeAdjustment = ({adjustmentTypes, selectedAdjustmentType, setSelectedAdj
         setSelectedAdjustmentType(selectedAdjustmentType);
     }
     
-  return (
+return (
     <div className="card">
         <div className="card-body">
         <div className="row">
@@ -24,7 +24,7 @@ const MakeAdjustment = ({adjustmentTypes, selectedAdjustmentType, setSelectedAdj
             </div>
             <div className="col-sm-3 form-group">
             <label>Amount</label>
-            <input type="text" className="form-control" value={adjustmentAmount} onChange={(e) => setAdjustmentAmount(e.target.value)} />
+            <input type="text" className="form-control" value={adjustmentAmount} onChange={(e) => setAdjustmentAmount(e.target.value)} readOnly={Object.keys(selectedCostedEvent).length !== 0} />
             <small>Thai Baht (excl VAT).</small>
             </div>
             <div className="col-sm-3 form-group">
@@ -39,7 +39,7 @@ const MakeAdjustment = ({adjustmentTypes, selectedAdjustmentType, setSelectedAdj
         <div className="row">
             <div className="col-sm-6 form-group">
             <label>Note</label>
-            <textarea className="form-control" rows={3} defaultValue={""} />
+            <textarea className="form-control" rows={3} value={adjustmentNote} onChange={(e) => setAdjustmentNote(e.target.value)} readOnly={Object.keys(selectedCostedEvent).length === 0} />
             </div>
             <div className="col-sm-6 form-group d-flex" style={{alignItems: 'flex-end'}}>
             <button type="submit" className="btn btn-default" onClick={() => handleCreateAdjustmentRequest(documentType)} >Submit</button>
@@ -47,7 +47,7 @@ const MakeAdjustment = ({adjustmentTypes, selectedAdjustmentType, setSelectedAdj
         </div>
         </div>
     </div>
-  );
+);
 }
 
 export default MakeAdjustment;

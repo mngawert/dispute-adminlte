@@ -18,7 +18,8 @@ const Login = () => {
       localStorage.setItem("userLogin", JSON.stringify(response.data.user));
 
       // Redirect to the earlier wanted URL or default to "/home"
-      const redirectUrl = localStorage.getItem('redirectUrl') || '/home';
+      //const redirectUrl = localStorage.getItem('redirectUrl') || '/home';
+      const redirectUrl = '/home';
       localStorage.removeItem('redirectUrl');
       window.location.href = redirectUrl;      
     } catch (error) {
@@ -48,9 +49,9 @@ const Login = () => {
 
 <div className="login-box">
   {/* /.login-logo */}
-  <div className="card card-outline card-primary">
+  <div className="card card-outline">
     <div className="card-header text-center">
-      <a href="../../index2.html" className="h1"><b>Adjustor</b> TOT</a>
+      <a href="../../index2.html" className="h1"><b>Adjustor</b> NT</a>
     </div>
     <div className="card-body">
       <p className="login-box-msg">Sign in to start</p>
@@ -59,7 +60,7 @@ const Login = () => {
           <input type="text" value={username} className="form-control" placeholder="User" onChange={(e) => setUsername(e.target.value)} />
           <div className="input-group-append">
             <div className="input-group-text">
-              <span className="fas fa-envelope" />
+              <span className="fas fa-user" />
             </div>
           </div>
         </div>
@@ -74,10 +75,10 @@ const Login = () => {
         <div className="row">
           <div className="col-8">
             <div className="icheck-primary">
-              <input type="checkbox" id="remember" />
+              {/* <input type="checkbox" id="remember" />
               <label htmlFor="remember">
                 Remember Me
-              </label>
+              </label> */}
             </div>
           </div>
           {/* /.col */}

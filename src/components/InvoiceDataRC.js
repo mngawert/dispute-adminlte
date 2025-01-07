@@ -23,8 +23,8 @@ const InvoiceDataRC = ({ invoiceDataRC, selectedInvoiceDataRC, handleSelectInvoi
                             <td>{invoice.productName}</td>
                             <td>{invoice.tariffName}</td>
                             <td>{invoice.aggAmount}</td>
-                            <td>{invoice.costed}</td>
-                            <td>{invoice.discount}</td>
+                            <td>{invoice.costedAmount}</td>
+                            <td>{invoice.discountAmount}</td>
                         </tr>
                     ))}
                     </tbody>

@@ -35,6 +35,7 @@ export const DocumentProvider = ({ children }) => {
             setInvoiceDataServices([]); setInvoiceDataRC([]); setInvoiceDataUsage([]); setSelectedInvoiceDataService({}); setSelectedInvoiceDataRC({}); setSelectedInvoiceDataUsage({}); 
             setCostedEvents([]); setSelectedCostedEvent({});
             setAdjustmentTypes([]); setSelectedAdjustmentType({}); 
+            setAdjustmentNote('');
             setAdjustmentAmount(0); 
 
         } catch (error) {
@@ -62,6 +63,7 @@ export const DocumentProvider = ({ children }) => {
             setInvoiceDataServices([]); setInvoiceDataRC([]); setInvoiceDataUsage([]); setSelectedInvoiceDataService({}); setSelectedInvoiceDataRC({}); setSelectedInvoiceDataUsage({}); 
             setCostedEvents([]); setSelectedCostedEvent({});
             setAdjustmentTypes([]); setSelectedAdjustmentType({}); 
+            setAdjustmentNote('');
             setAdjustmentAmount(0);
 
         } catch (error) {
@@ -183,6 +185,7 @@ export const DocumentProvider = ({ children }) => {
     const [adjustmentTypes, setAdjustmentTypes] = useState([]);
     const [selectedAdjustmentType, setSelectedAdjustmentType] = useState({});
     const [adjustmentAmount, setAdjustmentAmount] = useState(0);
+    const [adjustmentNote, setAdjustmentNote] = useState('');
 
     const getAdjustmentTypesByProductCodeAndRevenueCode = async (invoiceData) => {
         try {
@@ -394,7 +397,8 @@ export const DocumentProvider = ({ children }) => {
             setInvoiceDataServices([]); setInvoiceDataRC([]); setInvoiceDataUsage([]); setSelectedInvoiceDataService({}); setSelectedInvoiceDataRC({}); setSelectedInvoiceDataUsage({}); 
             setCostedEvents([]); setSelectedCostedEvent({});
             setAdjustmentTypes([]); setSelectedAdjustmentType({}); 
-            setAdjustmentAmount(0);            
+            setAdjustmentNote('');
+            setAdjustmentAmount(0);
         } catch (error) {
             console.error('Error creating adjustment request', error);
             alert('Error creating adjustment request');
@@ -467,6 +471,7 @@ export const DocumentProvider = ({ children }) => {
                 adjustmentTypes, setAdjustmentTypes, getAdjustmentTypesByProductCodeAndRevenueCode, getAdjustmentTypes,
                 selectedAdjustmentType, setSelectedAdjustmentType,
                 adjustmentAmount, setAdjustmentAmount,
+                adjustmentNote, setAdjustmentNote,
                 validateInputsAdjustMinus, validateInputsAdjustPlus,
                 createAdjustmentRequest,
                 costedEvents, setCostedEvents, getCostedEvents, selectedCostedEvent, setSelectedCostedEvent

@@ -34,6 +34,7 @@ const AdjustMinus = ({documentType=DOCUMENT_TYPE.ADJUST_MINUS, documentTypeName=
         adjustmentTypes, setAdjustmentTypes, getAdjustmentTypesByProductCodeAndRevenueCode,
         selectedAdjustmentType, setSelectedAdjustmentType,
         adjustmentAmount, setAdjustmentAmount,
+        adjustmentNote, setAdjustmentNote,
 
         /** Validation */
         validateInputsAdjustMinus, validateInputsAdjustPlus,
@@ -73,6 +74,7 @@ const AdjustMinus = ({documentType=DOCUMENT_TYPE.ADJUST_MINUS, documentTypeName=
 
     const handleSelectInvoiceRC = (data) => {
         setSelectedInvoiceDataUsage({});
+        setCostedEvents([]); setSelectedCostedEvent({});
         setSelectedInvoiceDataRC(data);
         getAdjustmentTypesByProductCodeAndRevenueCode(data);
         setAdjustmentAmount(data?.aggAmount);
@@ -81,6 +83,7 @@ const AdjustMinus = ({documentType=DOCUMENT_TYPE.ADJUST_MINUS, documentTypeName=
     const handleSelectInvoiceUsage = (data) => {
         setSelectedInvoiceDataRC({});
         setSelectedInvoiceDataUsage(data);
+        setCostedEvents([]); setSelectedCostedEvent({});
         getAdjustmentTypesByProductCodeAndRevenueCode(data);
         setAdjustmentAmount(data?.aggAmount);
     }
@@ -162,7 +165,7 @@ const AdjustMinus = ({documentType=DOCUMENT_TYPE.ADJUST_MINUS, documentTypeName=
                     </div>
                 </div>
 
-                <MakeAdjustment adjustmentTypes={adjustmentTypes} selectedAdjustmentType={selectedAdjustmentType} setSelectedAdjustmentType={setSelectedAdjustmentType}  adjustmentAmount={adjustmentAmount} setAdjustmentAmount={setAdjustmentAmount} handleCreateAdjustmentRequest={handleCreateAdjustmentRequest} documentType={documentType} />
+                <MakeAdjustment adjustmentTypes={adjustmentTypes} selectedAdjustmentType={selectedAdjustmentType} setSelectedAdjustmentType={setSelectedAdjustmentType} selectedCostedEvent={selectedCostedEvent} adjustmentNote={adjustmentNote} setAdjustmentNote={setAdjustmentNote} adjustmentAmount={adjustmentAmount} setAdjustmentAmount={setAdjustmentAmount} handleCreateAdjustmentRequest={handleCreateAdjustmentRequest} documentType={documentType} />
 
                 <PendingDocument pendingDocument={pendingDocument} adjustmentRequests={adjustmentRequests} fetchPendingDocumentAndRequests={fetchPendingDocumentAndRequests} deleteAdjustmentRequest={deleteAdjustmentRequest} updateDocumentStatus={updateDocumentStatus} />
 
