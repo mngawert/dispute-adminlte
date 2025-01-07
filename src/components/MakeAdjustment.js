@@ -24,7 +24,7 @@ return (
             </div>
             <div className="col-sm-3 form-group">
             <label>Amount</label>
-            <input type="text" className="form-control" value={adjustmentAmount} onChange={(e) => setAdjustmentAmount(e.target.value)} readOnly={Object.keys(selectedCostedEvent).length !== 0} />
+            <input type="text" className="form-control" value={adjustmentAmount} onChange={(e) => setAdjustmentAmount(e.target.value)} readOnly={selectedCostedEvent != null && Object.keys(selectedCostedEvent).length !== 0} />
             <small>Thai Baht (excl VAT).</small>
             </div>
             <div className="col-sm-3 form-group">
@@ -39,7 +39,7 @@ return (
         <div className="row">
             <div className="col-sm-6 form-group">
             <label>Note</label>
-            <textarea className="form-control" rows={3} value={adjustmentNote} onChange={(e) => setAdjustmentNote(e.target.value)} readOnly={Object.keys(selectedCostedEvent).length === 0} />
+            <textarea className="form-control" rows={3} value={adjustmentNote} onChange={(e) => setAdjustmentNote(e.target.value)} />
             </div>
             <div className="col-sm-6 form-group d-flex" style={{alignItems: 'flex-end'}}>
             <button type="submit" className="btn btn-default" onClick={() => handleCreateAdjustmentRequest(documentType)} >Submit</button>

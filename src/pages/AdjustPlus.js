@@ -24,6 +24,7 @@ const AdjustPlus = ({documentType=DOCUMENT_TYPE.ADJUST_PLUS, documentTypeName='A
         adjustmentTypes, setAdjustmentTypes, getAdjustmentTypes,
         selectedAdjustmentType, setSelectedAdjustmentType,
         adjustmentAmount, setAdjustmentAmount,
+        adjustmentNote, setAdjustmentNote,
 
         /** Validation */
         validateInputsAdjustMinus, validateInputsAdjustPlus,
@@ -156,7 +157,7 @@ const AdjustPlus = ({documentType=DOCUMENT_TYPE.ADJUST_PLUS, documentTypeName='A
             
             <AdjustmentTypeNamesFilter initialAdjustmentTypeNames={initialAdjustmentTypeNames} adjustmentTypeNames={adjustmentTypeNames} setAdjustmentTypeNames={setAdjustmentTypeNames} getAdjustmentTypes={getAdjustmentTypes} />
             
-            <MakeAdjustment adjustmentTypes={adjustmentTypes} selectedAdjustmentType={selectedAdjustmentType} setSelectedAdjustmentType={setSelectedAdjustmentType}  adjustmentAmount={adjustmentAmount} setAdjustmentAmount={setAdjustmentAmount} handleCreateAdjustmentRequest={handleCreateAdjustmentRequest} documentType={documentType} />
+            <MakeAdjustment adjustmentTypes={adjustmentTypes} selectedAdjustmentType={selectedAdjustmentType} setSelectedAdjustmentType={setSelectedAdjustmentType} adjustmentNote={adjustmentNote} setAdjustmentNote={setAdjustmentNote}  adjustmentAmount={adjustmentAmount} setAdjustmentAmount={setAdjustmentAmount} handleCreateAdjustmentRequest={handleCreateAdjustmentRequest} documentType={documentType} />
 
             {/* <div className="card">
                 <div className="card-body">
