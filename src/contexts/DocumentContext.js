@@ -166,14 +166,18 @@ export const DocumentProvider = ({ children }) => {
         try {
             const response = await api.get(`/api/CostedEvent/GetCostedEvents`, {
                 params: {
-                  accountNum: invoiceData.accountNum,
-                  billSeq: invoiceData.billSeq,
-                  eventSource: invoiceData.serviceNumber,
-                  eventTypeId: invoiceData.eventTypeId,
-                  callType: invoiceData.callType
+                    accountNum: invoiceData.accountNum,
+                    billSeq: invoiceData.billSeq,
+                    eventSource: invoiceData.serviceNumber,
+                    eventTypeId: invoiceData.eventTypeId,
+                    callType: invoiceData.callType
                 }
-              });
-              setCostedEvents(response.data);
+            });
+            setCostedEvents(response.data);
+
+            if (response.data.length === 0) {
+                alert('No costed events found');
+            }
         } catch (error) {
             console.error('Error fetching costed event:', error);
         }
