@@ -196,7 +196,7 @@ export const DocumentProvider = ({ children }) => {
             const response = await api.get(`/api/AdjustmentType/GetAdjustmentTypesByProductCodeAndRevenueCode`, {
                 params: {
                   productCode: invoiceData.productCode,
-                  revenueCodeId: invoiceData.revenueCodeId
+                  revenueCodeIds: invoiceData.revenueCodeIds
                 }
             });
             setAdjustmentTypes(response.data);
