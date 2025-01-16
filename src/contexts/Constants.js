@@ -10,3 +10,15 @@ export const DOCUMENT_TYPE = {
   P3_MINUS      : '22',
   B             : '11'
 };
+
+export const DOCUMENT_STATUS_LIST = [
+  'Create-Pending',
+  'Create-Accept',
+  'Create-Reject',
+  'Review-Accept',
+  'Review-Reject',
+  'Finance-Accept',
+  'Finance-Reject',
+  'Approve-Accept',
+  'Approve-Reject'
+];

@@ -199,6 +199,12 @@ export default function Sidebar() {
 
               <ul className="nav nav-treeview">
                 <li className="nav-item">
+                  <a href="/SearchAdj" className="nav-link">
+                    <i className="far fa-circle nav-icon" />
+                    <p>Search Adjustment</p>
+                  </a>
+                </li>
+                <li className="nav-item">
                   <a href="#" className="nav-link">
                     <i className="far fa-circle nav-icon" />
                     <p>Users</p>

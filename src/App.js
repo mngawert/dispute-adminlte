@@ -27,6 +27,7 @@ import AdjustP3Minus from "./pages/AdjustP3Minus";
 import AdjustB from "./pages/AdjustB";
 
 import { DocumentProvider } from "./contexts/DocumentContext";
+import SearchAdj from "./pages/SearchAdj";
 
 function App() {
   return (
@@ -57,6 +58,7 @@ function App() {
             <Route path="/AdjustP3Plus" element={<AdjustP3Plus />} />
             <Route path="/AdjustP3Minus" element={<AdjustP3Minus />} />
             <Route path="/AdjustB" element={<AdjustB />} />
+            <Route path="/SearchAdj" element={<SearchAdj />} />
 
             <Route path="/test" element={<Test />} />
             <Route path="/dashboard" element={<PrivateRoute element={<Dashboard />} />} />
