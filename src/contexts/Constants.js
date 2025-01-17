@@ -12,13 +12,20 @@ export const DOCUMENT_TYPE = {
 };
 
 export const DOCUMENT_STATUS_LIST = [
-  'Create-Pending',
-  'Create-Accept',
-  'Create-Reject',
-  'Review-Accept',
-  'Review-Reject',
-  'Finance-Accept',
-  'Finance-Reject',
-  'Approve-Accept',
-  'Approve-Reject'
+  { name: 'Create-Pending', value: 'Create-Pending' },
+  { name: 'Create-Accept', value: 'Create-Accept' },
+  { name: 'Create-Reject', value: 'Create-Reject' },
+  { name: 'Review-Accept', value: 'Review-Accept' },
+  { name: 'Review-Reject', value: 'Review-Reject' },
+  { name: 'Finance-Accept', value: 'Finance-Accept' },
+  { name: 'Finance-Reject', value: 'Finance-Reject' },
+  { name: 'Approve-Accept', value: 'Approve-Accept' },
+  { name: 'Approve-Reject', value: 'Approve-Reject' },
+  { name: 'Created in RBM', value: 'CREATED_IN_RBM' },
+];
+
+export const SEARCH_BY_LIST = [
+  { name: 'Documen Number', value: 'DocumentNum' },
+  { name: 'Account Number', value: 'AccountNum' },
+  { name: 'Service Number', value: 'ServiceNum' },
 ];
