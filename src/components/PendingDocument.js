@@ -15,11 +15,17 @@ const PendingDocument = ({ pendingDocument, adjustmentRequests, fetchPendingDocu
                         <strong>Current sequence:</strong> {pendingDocument?.documentNum}
                     </div>
                     <div className="form-group col-sm-4" align="right">
-                        <button type="button" className="btn btn-default" onClick={async () => {
-                            await updateDocumentStatus(pendingDocument.documentNum, 'Create', 'Create-Accept');
-                            await fetchPendingDocumentAndRequests(pendingDocument.documentType);
-                        }} 
-                        >Submit document</button>
+                        <button 
+                            type="button" 
+                            className="btn btn-default" 
+                            onClick={async () => {
+                                await updateDocumentStatus(pendingDocument.documentNum, 'Create', 'Create-Accept');
+                                await fetchPendingDocumentAndRequests(pendingDocument.documentType);
+                            }} 
+                            disabled={adjustmentRequests.length === 0}
+                        >
+                            Submit document
+                        </button>
                     </div>
                 </div>
                 <div className="table-responsive" style={{ height: 300 }}>
