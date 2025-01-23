@@ -28,6 +28,7 @@ import AdjustB from "./pages/AdjustB";
 
 import { DocumentProvider } from "./contexts/DocumentContext";
 import SearchAdj from "./pages/SearchAdj";
+import User from "./pages/User";
 
 function App() {
   return (
@@ -59,6 +60,7 @@ function App() {
             <Route path="/AdjustP3Minus" element={<AdjustP3Minus />} />
             <Route path="/AdjustB" element={<AdjustB />} />
             <Route path="/SearchAdj" element={<SearchAdj />} />
+            <Route path="/User" element={<User />} />
 
             <Route path="/test" element={<Test />} />
             <Route path="/dashboard" element={<PrivateRoute element={<Dashboard />} />} />
