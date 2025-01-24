@@ -29,6 +29,8 @@ import AdjustB from "./pages/AdjustB";
 import { DocumentProvider } from "./contexts/DocumentContext";
 import SearchAdj from "./pages/SearchAdj";
 import User from "./pages/User";
+import NotAuthorized from "./pages/NotAuthorized";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
@@ -53,7 +55,9 @@ function App() {
             <Route path="/adjustPlus" element={<AdjustPlus />} />
             <Route path="/adjustMinus" element={<AdjustMinus />} />
             <Route path="/adjustP31" element={<AdjustP31 />} />
-            <Route path="/adjustP32" element={<AdjustP32 />} />
+            <Route path="/adjustP32" element={ <PrivateRoute element={<AdjustP32 />} allowedRoles={['Admin', 'Finance']} /> } />
+            {/* <ProtectedRoute element={<AdjustP32 />} allowedRoles={['Admin', 'Finance']} /> */}
+            {/* <Route path="/adjustP32" element={<AdjustP32 />} /> */}
             <Route path="/adjustP35" element={<AdjustP35 />} />
             <Route path="/adjustP36" element={<AdjustP36 />} />
             <Route path="/AdjustP3Plus" element={<AdjustP3Plus />} />
@@ -61,9 +65,10 @@ function App() {
             <Route path="/AdjustB" element={<AdjustB />} />
             <Route path="/SearchAdj" element={<SearchAdj />} />
             <Route path="/User" element={<User />} />
+            <Route path="/not-authorized" element={<NotAuthorized /> } />
 
             <Route path="/test" element={<Test />} />
-            <Route path="/dashboard" element={<PrivateRoute element={<Dashboard />} />} />
+            <Route path="/dashboard" element={<PrivateRoute element={<Dashboard />} allowedRoles={['Admin']} />} />
             <Route path="/disputedata" element={<DisputeData />} />
           </Route>
         </Routes>

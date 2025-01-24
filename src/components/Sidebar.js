@@ -1,6 +1,9 @@
 import React from "react";
+import { useDocumentContext } from "../contexts/DocumentContext";
 
 export default function Sidebar() {
+
+  const { user, roles, userHasRole} = useDocumentContext();
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");
@@ -204,12 +207,15 @@ export default function Sidebar() {
                     <p>Search Adjustment</p>
                   </a>
                 </li>
-                <li className="nav-item">
-                  <a href="/User" className="nav-link">
-                    <i className="far fa-circle nav-icon" />
-                    <p>Users</p>
-                  </a>
-                </li>
+
+                {(userHasRole("Admin") || userHasRole("Approver")) && 
+                  <li className="nav-item">
+                    <a href="/User" className="nav-link">
+                      <i className="far fa-circle nav-icon" />
+                      <p>Users</p>
+                    </a>
+                  </li>                            
+                }
                 <li className="nav-item">
                   <a href="#" className="nav-link" onClick={() => { handleLogout() }} >
                     <i className="far fa-circle nav-icon"></i>
