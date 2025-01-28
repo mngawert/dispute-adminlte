@@ -1,9 +1,23 @@
 import React from "react";
-import { useDocumentContext } from "../contexts/DocumentContext";
+import { jwtDecode } from 'jwt-decode';
 
 export default function Sidebar() {
 
-  const { user, roles, userHasRole} = useDocumentContext();
+
+  const token = localStorage.getItem('authToken');
+  //console.log('token:', token);
+  let decodedToken = null
+  let roles = [];
+
+  if (token) {
+    decodedToken = jwtDecode(token);
+    roles = decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || [];
+    //console.log('decodedToken:', decodedToken);
+  }
+
+  const userHasRole = (role) => {
+    return roles.includes(role);
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");

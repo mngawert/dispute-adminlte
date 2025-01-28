@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api';
 import { DOCUMENT_TYPE } from './Constants';
-import { use } from 'react';
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
 const DocumentContext = React.createContext();
 
@@ -13,26 +12,22 @@ export const useDocumentContext = () => {
 export const DocumentProvider = ({ children }) => {
 
     /** User and Roles */
-    const [user, setUser] = useState(null);
-    const [roles, setRoles] = useState([]);
+    // const [user, setUser] = useState(null);
+    // const [roles, setRoles] = useState([]);
 
-    useEffect(() => {
-        const token = localStorage.getItem('authToken');
-        if (token) {
-            const decodedToken = jwtDecode(token);
-            const roles = decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || [];
-            setUser(user);
-            setRoles(roles);
+    // useEffect(() => {
+    //     const token = localStorage.getItem('authToken');
+    //     if (token) {
+    //         const decodedToken = jwtDecode(token);
+    //         const roles = decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || [];
+    //         setUser(user);
+    //         setRoles(roles);
+    //     }
+    // }, []);
 
-            // console.log('token:', token);
-            // console.log('decodedToken:', decodedToken);
-            // console.log('roles:', roles);
-        }
-    }, []);
-
-    const userHasRole = (role) => {
-        return roles.includes(role);
-    };
+    // const userHasRole = (role) => {
+    //     return roles.includes(role);
+    // };
 
     /** Account */
     const [accountNum, setAccountNum] = useState("");
@@ -486,7 +481,7 @@ export const DocumentProvider = ({ children }) => {
 
     return (
         <DocumentContext.Provider value={{ 
-                user, setUser, roles, setRoles, userHasRole,
+                //user, setUser, roles, setRoles, userHasRole,
                 pendingDocument, adjustmentRequests, fetchPendingDocumentAndRequests, deleteAdjustmentRequest, updateDocumentStatus,
                 accountNum, setAccountNum, accounts, getAccountsByAccountNum, getAccountsByServiceNum, selectedAccount, setSelectedAccount,
                 serviceNum, setServiceNum, services, setServices, getServicesByAccountNum, selectedService, setSelectedService,
