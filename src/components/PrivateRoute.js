@@ -15,10 +15,10 @@ const PrivateRoute = ({ element, allowedRoles }) => {
     const roles = decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || [];
     const userRoles = Array.isArray(roles) ? roles : [roles];
 
-    console.log("1.decodedToken:", decodedToken);
-    console.log("2.roles:", roles);
-    console.log("3.userRoles:", userRoles);
-    console.log("4.allowedRoles:", allowedRoles);
+    // console.log("1.decodedToken:", decodedToken);
+    // console.log("2.roles:", roles);
+    // console.log("3.userRoles:", userRoles);
+    // console.log("4.allowedRoles:", allowedRoles);
 
     if (userRoles.some(role => allowedRoles.includes(role))) {
       return element;

@@ -25,122 +25,91 @@ export default function Sidebar() {
                 <p>Home</p>
               </a>
             </li>
-            {/* <li className="nav-item menu-is-opening menu-open">
-              <a href="/Dashboard" className="nav-link">
-                <i className="nav-icon fas fa-tachometer-alt"></i>
-                <p>Dashboard</p>
-              </a>
-
-                <ul className="nav nav-treeview">
-                  <li className="nav-item">
-                    <a href="/Dashboard" className="nav-link">
-                      <i className="far fa-circle nav-icon"></i>
-                      <p>Sub1</p>
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a href="/Dashboard/Sub2" className="nav-link">
-                      <i className="far fa-circle nav-icon"></i>
-                      <p>Sub2</p>
-                    </a>
-                  </li>
-                </ul>
-
-            </li>
-            <li className="nav-item">
-              <a href="/Dispute" className="nav-link">
-                <i className="nav-icon fas fa-edit"></i>
-                <p>Dispute</p>
-              </a>
-            </li>
-            <li className="nav-item">
-              <a href="/DisputeData" className="nav-link">
-                <i className="far fa-circle nav-icon"></i>
-                <p>DisputeData</p>
-              </a>
-            </li> */}
-
+ 
             {/* Creation Tasks */}
-            <li className="nav-item menu-is-opening menu-open">
-              <a href="#" className="nav-link">
-                <p>
-                  Creation Task
-                </p>
-              </a>
-              <ul className="nav nav-treeview">
-                {/* <li className="nav-item">
-                  <a href="/Dispute" className="nav-link">
-                    <i className="far fa-circle nav-icon" />
-                    <p>Dispute</p>
-                  </a>
-                </li> */}
-                <li className="nav-item">
-                  <a href="/AdjustMinus" className="nav-link">
-                    <i className="far fa-circle nav-icon" />
-                    <p>Adjust - </p>
-                  </a>
-                </li>
-                <li className="nav-item">
-                  <a href="/AdjustPlus" className="nav-link">
-                    <i className="far fa-circle nav-icon" />
-                    <p>Adjust + </p>
-                  </a>
-                </li>
-                <li className="nav-item">
-                  <a href="/AdjustP31" className="nav-link">
-                    <i className="far fa-circle nav-icon" />
-                    <p>P31 </p>
-                  </a>
-                </li>
-                <li className="nav-item">
-                  <a href="/AdjustP32" className="nav-link">
-                    <i className="far fa-circle nav-icon" />
-                    <p>P32 </p>
-                  </a>
-                </li>
-                <li className="nav-item">
-                  <a href="/AdjustP35" className="nav-link">
-                    <i className="far fa-circle nav-icon" />
-                    <p>P35 </p>
-                  </a>
-                </li>
-                <li className="nav-item">
-                  <a href="/AdjustP36" className="nav-link">
-                    <i className="far fa-circle nav-icon" />
-                    <p>P36 </p>
-                  </a>
-                </li>
-                <li className="nav-item">
-                  <a href="/AdjustP3Plus" className="nav-link">
-                    <i className="far fa-circle nav-icon" />
-                    <p>P3 + </p>
-                  </a>
-                </li>
-                <li className="nav-item">
-                  <a href="/AdjustP3Minus" className="nav-link">
-                    <i className="far fa-circle nav-icon" />
-                    <p>P3 - </p>
-                  </a>
-                </li>
-                <li className="nav-item">
-                  <a href="/AdjustB" className="nav-link">
-                    <i className="far fa-circle nav-icon" />
-                    <p>B +/- </p>
-                  </a>
-                </li>
+            {(userHasRole("Admin") || userHasRole("Creator")) && 
+              <li className="nav-item menu-is-opening menu-open">
+                <a href="#" className="nav-link">
+                  <p>
+                    Creation Task
+                  </p>
+                </a>
+                <ul className="nav nav-treeview">
+                  {/* <li className="nav-item">
+                    <a href="/Dispute" className="nav-link">
+                      <i className="far fa-circle nav-icon" />
+                      <p>Dispute</p>
+                    </a>
+                  </li> */}
+                  <li className="nav-item">
+                    <a href="/AdjustMinus" className="nav-link">
+                      <i className="far fa-circle nav-icon" />
+                      <p>Adjust - </p>
+                    </a>
+                  </li>
+                  <li className="nav-item">
+                    <a href="/AdjustPlus" className="nav-link">
+                      <i className="far fa-circle nav-icon" />
+                      <p>Adjust + </p>
+                    </a>
+                  </li>
+                  <li className="nav-item">
+                    <a href="/AdjustP31" className="nav-link">
+                      <i className="far fa-circle nav-icon" />
+                      <p>P31 </p>
+                    </a>
+                  </li>
+                  <li className="nav-item">
+                    <a href="/AdjustP32" className="nav-link">
+                      <i className="far fa-circle nav-icon" />
+                      <p>P32 </p>
+                    </a>
+                  </li>
+                  <li className="nav-item">
+                    <a href="/AdjustP35" className="nav-link">
+                      <i className="far fa-circle nav-icon" />
+                      <p>P35 </p>
+                    </a>
+                  </li>
+                  <li className="nav-item">
+                    <a href="/AdjustP36" className="nav-link">
+                      <i className="far fa-circle nav-icon" />
+                      <p>P36 </p>
+                    </a>
+                  </li>
+                  <li className="nav-item">
+                    <a href="/AdjustP3Plus" className="nav-link">
+                      <i className="far fa-circle nav-icon" />
+                      <p>P3 + </p>
+                    </a>
+                  </li>
+                  <li className="nav-item">
+                    <a href="/AdjustP3Minus" className="nav-link">
+                      <i className="far fa-circle nav-icon" />
+                      <p>P3 - </p>
+                    </a>
+                  </li>
+                  <li className="nav-item">
+                    <a href="/AdjustB" className="nav-link">
+                      <i className="far fa-circle nav-icon" />
+                      <p>B +/- </p>
+                    </a>
+                  </li>
 
 
 
-                {/* <li className="nav-item">
-                  <a href="/Create" className="nav-link">
-                    <i className="far fa-circle nav-icon" />
-                    <p>Create Adjustments </p>
-                  </a>
-                </li> */}
-              </ul>
-            </li>
+                  {/* <li className="nav-item">
+                    <a href="/Create" className="nav-link">
+                      <i className="far fa-circle nav-icon" />
+                      <p>Create Adjustments </p>
+                    </a>
+                  </li> */}
+                </ul>
+              </li>
+            }
 
             {/* Review Tasks */}
+            {(userHasRole("Admin") || userHasRole("Reviewer")) && 
             <li className="nav-item menu-is-opening menu-open">
               <a href="#" className="nav-link">
                 <p>
@@ -155,41 +124,46 @@ export default function Sidebar() {
                   </a>
                 </li>
               </ul>
-            </li>
+            </li>          
+            }
 
             {/* Approve Tasks */}
-            <li className="nav-item menu-is-opening menu-open">
-              <a href="#" className="nav-link">
-                <p>
-                  Approve Tasks
-                </p>
-              </a>
-              <ul className="nav nav-treeview">
-                <li className="nav-item">
-                  <a href="/Approve" className="nav-link">
-                    <i className="far fa-circle nav-icon" />
-                    <p>Approve Adjustments</p>
-                  </a>
-                </li>
-              </ul>
-            </li>
+            {(userHasRole("Admin") || userHasRole("Approver")) && 
+              <li className="nav-item menu-is-opening menu-open">
+                <a href="#" className="nav-link">
+                  <p>
+                    Approve Tasks
+                  </p>
+                </a>
+                <ul className="nav nav-treeview">
+                  <li className="nav-item">
+                    <a href="/Approve" className="nav-link">
+                      <i className="far fa-circle nav-icon" />
+                      <p>Approve Adjustments</p>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+            }
 
             {/* Review Financial Tasks */}
-            <li className="nav-item menu-is-opening menu-open">
-              <a href="#" className="nav-link">
-                <p>
-                Review Financial Tasks
-                </p>
-              </a>
-              <ul className="nav nav-treeview">
-                <li className="nav-item">
-                  <a href="/Finance" className="nav-link">
-                    <i className="far fa-circle nav-icon" />
-                    <p>Review Financially</p>
-                  </a>
-                </li>
-              </ul>
-            </li>
+            {(userHasRole("Admin") || userHasRole("Finance")) && 
+              <li className="nav-item menu-is-opening menu-open">
+                <a href="#" className="nav-link">
+                  <p>
+                  Review Financial Tasks
+                  </p>
+                </a>
+                <ul className="nav nav-treeview">
+                  <li className="nav-item">
+                    <a href="/Finance" className="nav-link">
+                      <i className="far fa-circle nav-icon" />
+                      <p>Review Financially</p>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+            }
 
 
             {/* User Management */}

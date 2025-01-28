@@ -47,21 +47,20 @@ function App() {
             <Route path="/home" element={<Home />} />
             <Route path="/dispute" element={<Dispute />} />
             <Route path="/disputeBak" element={<DisputeBak />} />
-            <Route path="/create" element={<Review reviewType="Create" prevDocumentStatus='Create-Pending' />} />
-            <Route path="/review" element={<Review reviewType="Review" prevDocumentStatus='Create-Accept' />} />
-            <Route path="/approve" element={<Review reviewType="Approve" prevDocumentStatus='Review-Accept' />} />
-            <Route path="/finance" element={<Review reviewType="Finance" prevDocumentStatus='Approve-Accept' />} />
+            <Route path="/Create" element={ <PrivateRoute element={<Review reviewType="Create" prevDocumentStatus='Create-Pending' />} allowedRoles={['Admin', 'Creator']} /> } />
+            <Route path="/Review" element={ <PrivateRoute element={<Review reviewType="Review" prevDocumentStatus='Create-Accept' />} allowedRoles={['Admin', 'Reviewer']} /> } />
+            <Route path="/Approve" element={ <PrivateRoute element={<Review reviewType="Approve" prevDocumentStatus='Review-Accept' />} allowedRoles={['Admin', 'Approver']} /> } />
+            <Route path="/Finance" element={ <PrivateRoute element={<Review reviewType="Finance" prevDocumentStatus='Approve-Accept' />} allowedRoles={['Admin', 'Finance']} /> } />
             <Route path="/reviewBak" element={<ReviewBak />} />
-            <Route path="/adjustPlus" element={<AdjustPlus />} />
-            <Route path="/adjustMinus" element={<AdjustMinus />} />
-            <Route path="/adjustP31" element={<AdjustP31 />} />
-            <Route path="/adjustP32" element={ <PrivateRoute element={<AdjustP32 />} allowedRoles={['Admin', 'Finance']} /> } />
-            {/* <ProtectedRoute element={<AdjustP32 />} allowedRoles={['Admin', 'Finance']} /> */}
-            {/* <Route path="/adjustP32" element={<AdjustP32 />} /> */}
-            <Route path="/adjustP35" element={<AdjustP35 />} />
-            <Route path="/adjustP36" element={<AdjustP36 />} />
-            <Route path="/AdjustP3Plus" element={<AdjustP3Plus />} />
-            <Route path="/AdjustP3Minus" element={<AdjustP3Minus />} />
+            <Route path="/AdjustPlus" element={ <PrivateRoute element={<AdjustPlus />} allowedRoles={['Admin', 'Creator']} /> } />
+            <Route path="/AdjustMinus" element={ <PrivateRoute element={<AdjustMinus />} allowedRoles={['Admin', 'Creator']} /> } />
+            <Route path="/AdjustP31" element={ <PrivateRoute element={<AdjustP31 />} allowedRoles={['Admin', 'Creator']} /> } />
+            <Route path="/AdjustP31" element={ <PrivateRoute element={<AdjustP31 />} allowedRoles={['Admin', 'Creator']} /> } />
+            <Route path="/AdjustP32" element={ <PrivateRoute element={<AdjustP32 />} allowedRoles={['Admin', 'Creator']} /> } />
+            <Route path="/AdjustP35" element={ <PrivateRoute element={<AdjustP35 />} allowedRoles={['Admin', 'Creator']} /> } />
+            <Route path="/AdjustP36" element={ <PrivateRoute element={<AdjustP36 />} allowedRoles={['Admin', 'Creator']} /> } />
+            <Route path="/AdjustP3Plus" element={ <PrivateRoute element={<AdjustP3Plus />} allowedRoles={['Admin', 'Creator']} /> } />
+            <Route path="/AdjustP3Minus" element={ <PrivateRoute element={<AdjustP3Minus />} allowedRoles={['Admin', 'Creator']} /> } />
             <Route path="/AdjustB" element={<AdjustB />} />
             <Route path="/SearchAdj" element={<SearchAdj />} />
             <Route path="/User" element={<User />} />

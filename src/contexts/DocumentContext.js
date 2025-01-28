@@ -24,9 +24,9 @@ export const DocumentProvider = ({ children }) => {
             setUser(user);
             setRoles(roles);
 
-            console.log('token:', token);
-            console.log('decodedToken:', decodedToken);
-            console.log('roles:', roles);
+            // console.log('token:', token);
+            // console.log('decodedToken:', decodedToken);
+            // console.log('roles:', roles);
         }
     }, []);
 
