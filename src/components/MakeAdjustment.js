@@ -1,6 +1,9 @@
+import { CPS_MAP_HASH } from "../contexts/Constants";
 
-const MakeAdjustment = ({adjustmentTypes, selectedAdjustmentType, setSelectedAdjustmentType, selectedCostedEvent, adjustmentNote, setAdjustmentNote, adjustmentAmount, setAdjustmentAmount, handleCreateAdjustmentRequest, documentType}) => {
+const MakeAdjustment = ({adjustmentTypes, selectedAdjustmentType, setSelectedAdjustmentType, selectedCostedEvent, adjustmentNote, setAdjustmentNote, adjustmentAmount, setAdjustmentAmount, handleCreateAdjustmentRequest, documentType, selectedAccount}) => {
 
+    //console.log('selectedAccount', selectedAccount);
+    
     const handleChangeAdjustmentType = (e) => {
         const selectedAdjustmentTypeId = e.target.value;        
         const selectedAdjustmentType = adjustmentTypes.find((adjType) => adjType.adjustmentTypeId === Number(selectedAdjustmentTypeId));
@@ -29,11 +32,11 @@ return (
             </div>
             <div className="col-sm-3 form-group">
             <label>7% VAT</label>
-            <input type="text" className="form-control" readOnly value={(adjustmentAmount * 0.07).toFixed(2)} />
+            <input type="text" className="form-control" readOnly value={(adjustmentAmount * (  CPS_MAP_HASH[selectedAccount?.cpsId]/100)).toFixed(2)} />
             </div>
             <div className="col-sm-3 form-group">
             <label>Total</label>
-            <input type="text" className="form-control" readOnly value={(adjustmentAmount * 1.07).toFixed(2)} />
+            <input type="text" className="form-control" readOnly value={(adjustmentAmount * (1+CPS_MAP_HASH[selectedAccount?.cpsId]/100)).toFixed(2)} />
             </div>
         </div>
         <div className="row">

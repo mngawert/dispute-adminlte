@@ -29,3 +29,27 @@ export const SEARCH_BY_LIST = [
   { name: 'Account Number', value: 'AccountNum' },
   { name: 'Service Number', value: 'ServiceNum' },
 ];
+
+export const CPS_MAP = [
+  { name: '0', value: '0' },
+  { name: '1', value: '7' },
+  { name: '2', value: '7' },
+  { name: '9', value: '0' },
+  { name: '10', value: '7' },
+  { name: '11', value: '0' },
+  { name: '12', value: '0' },
+  { name: '30', value: '7' },
+  { name: '31', value: '0' },
+  { name: '32', value: '0' },
+  { name: '40', value: '7' },
+  { name: '41', value: '0' },
+  { name: '42', value: '0' },
+  { name: '50', value: '7' },
+  { name: '51', value: '0' },
+  { name: '52', value: '0' },   
+]
+
+export const CPS_MAP_HASH = CPS_MAP.reduce((acc, { name, value }) => {
+  acc[name] = value;
+  return acc;
+}, {});

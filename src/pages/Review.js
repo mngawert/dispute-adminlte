@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import api from '../api';
-
+import { CPS_MAP_HASH } from '../contexts/Constants';
 
 const Review = ({reviewType, prevDocumentStatus}) => {
 
@@ -198,8 +198,8 @@ const Review = ({reviewType, prevDocumentStatus}) => {
                                                 <td>{adj.serviceNum}</td>
                                                 <td>{adj.adjustmentTypeName}</td>
                                                 <td align='center'>{adj.disputeMny.toFixed(2)}</td>
-                                                <td align='center'>{(adj.disputeMny*0.07).toFixed(2)}</td>
-                                                <td align='center'>{(adj.disputeMny*1.07).toFixed(2)}</td>
+                                                <td align='center'>{(adj.disputeMny * (  CPS_MAP_HASH[adj.cpsId]/100)).toFixed(2)}</td>
+                                                <td align='center'>{(adj.disputeMny * (1+CPS_MAP_HASH[adj.cpsId]/100)).toFixed(2)}</td>
                                             </tr>
                                         ))}
                                     </tbody>

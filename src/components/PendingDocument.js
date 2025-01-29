@@ -1,4 +1,5 @@
 import React from "react";
+import { CPS_MAP_HASH } from '../contexts/Constants';
 
 const PendingDocument = ({ pendingDocument, adjustmentRequests, fetchPendingDocumentAndRequests, deleteAdjustmentRequest, updateDocumentStatus }) => {
     return (
@@ -43,17 +44,17 @@ const PendingDocument = ({ pendingDocument, adjustmentRequests, fetchPendingDocu
                             </tr>
                         </thead>
                         <tbody>
-                            {adjustmentRequests.map((request) => (
-                                <tr key={request.documentSeq}>
-                                    <td>{request.adjustmentTypeName}</td>
-                                    <td>{request.accountNum}</td>
-                                    <td>{request.invoiceNum}</td>
-                                    <td>{request.serviceNum}</td>
-                                    <td align='center'>{request.disputeMny.toFixed(2)}</td>
-                                    <td align='center'>{(request.disputeMny * 0.07).toFixed(2)}</td>
-                                    <td align='center'>{(request.disputeMny * 1.07).toFixed(2)}</td>
+                            {adjustmentRequests.map((adj) => (
+                                <tr key={adj.documentSeq}>
+                                    <td>{adj.adjustmentTypeName}</td>
+                                    <td>{adj.accountNum}</td>
+                                    <td>{adj.invoiceNum}</td>
+                                    <td>{adj.serviceNum}</td>
+                                    <td align='center'>{adj.disputeMny.toFixed(2)}</td>
+                                    <td align='center'>{(adj.disputeMny * (  CPS_MAP_HASH[adj.cpsId]/100)).toFixed(2)}</td>
+                                    <td align='center'>{(adj.disputeMny * (1+CPS_MAP_HASH[adj.cpsId]/100)).toFixed(2)}</td>
                                     <td>
-                                        <button className="btn btn-sm" onClick={() => deleteAdjustmentRequest(request.documentSeq)}>
+                                        <button className="btn btn-sm" onClick={() => deleteAdjustmentRequest(adj.documentSeq)}>
                                             <i className="fas fa-trash-alt"></i>
                                         </button>
                                     </td>
