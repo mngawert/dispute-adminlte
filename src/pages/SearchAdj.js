@@ -36,8 +36,7 @@ const SearchAdj = () => {
               params: {
                   //documentStatus: selectedDocumentStatus?.value,
                   documentNum: documentNum,
-                  searchBy: selectedSearchBy?.value,
-                  //onlyLocationOfUserId: JSON.parse(localStorage.getItem('userLogin'))?.userId
+                  searchBy: selectedSearchBy?.value
               }
           });
           setDocuments(response.data);

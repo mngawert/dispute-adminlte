@@ -21,8 +21,7 @@ const Review = ({reviewType, prevDocumentStatus}) => {
             const response = await api.get(`/api/Document/GetAllDocuments`, {
                 params: {
                     documentStatus: prevDocumentStatus,
-                    documentNum: documentNum,
-                    onlyLocationOfUserId: JSON.parse(localStorage.getItem('userLogin'))?.userId
+                    documentNum: documentNum
                 }
             });
             setDocuments(response.data);
