@@ -118,7 +118,7 @@ const SearchAdj = () => {
                       </div>
                       <div className="col-sm-3">
                         <div className="form-group">
-                          <input type="text" className="form-control" onChange={handleInputChange} value={documentNum} />
+                          <input type="text" className="form-control" onChange={handleInputChange} value={documentNum} disabled={!selectedSearchBy?.value} />
                         </div>
                       </div>
                       <div className="col-sm-5">
