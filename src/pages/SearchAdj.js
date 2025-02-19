@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import api from '../api';
 import { DOCUMENT_STATUS_LIST, SEARCH_BY_LIST } from '../contexts/Constants';
+import ContentHeader from '../components/ContentHeader'; // Adjust the import path as necessary
 
 const SearchAdj = () => {
 
@@ -72,20 +73,7 @@ const SearchAdj = () => {
     return (
       <div className="content-wrapper-x">
         {/* Content Header (Page header) */}
-        <div className="content-header">
-            <div className="container-fluid">
-            <div className="row mb-2">
-                <div className="col-sm-6">
-                <h1 className="m-0">Search Adjustments</h1>
-                </div>{/* /.col */}
-                <div className="col-sm-6">
-                <ol className="breadcrumb float-sm-right">
-                    <li className="breadcrumb-item active"> [ { JSON.parse(localStorage.getItem('userLogin'))?.username } ] </li>
-                </ol>
-                </div>{/* /.col */}
-            </div>{/* /.row */}
-            </div>{/* /.container-fluid */}
-        </div>
+        <ContentHeader title="Search Adjustments" />
         {/* /.content-header */}
         {/* Main content */}
         <div className="content">
