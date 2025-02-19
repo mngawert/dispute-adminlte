@@ -92,7 +92,7 @@ const Review = ({reviewType, prevDocumentStatus}) => {
                 </div>{/* /.col */}
                 <div className="col-sm-6">
                 <ol className="breadcrumb float-sm-right">
-                    <li className="breadcrumb-item active"> [ { JSON.parse(localStorage.getItem('userLogin'))?.username } ] </li>
+                    <li className="breadcrumb-item active"> {`[ ${JSON.parse(localStorage.getItem('userLogin'))?.username} ] [ ${JSON.parse(localStorage.getItem('userLogin'))?.homeLocationCode} ]`} </li>
                 </ol>
                 </div>{/* /.col */}
             </div>{/* /.row */}
