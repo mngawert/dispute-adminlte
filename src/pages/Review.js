@@ -3,6 +3,7 @@ import api from '../api';
 import { CPS_MAP_HASH } from '../contexts/Constants';
 import { Tab, Tabs } from 'react-bootstrap';
 import ReviewDocType from './ReviewDocType';
+import ContentHeader from '../components/ContentHeader';
 
 const Review = ({reviewType, prevDocumentStatus}) => {
 
@@ -84,20 +85,9 @@ const Review = ({reviewType, prevDocumentStatus}) => {
     return(
         <div className="content-wrapper-x">
         {/* Content Header (Page header) */}
-        <div className="content-header">
-            <div className="container-fluid">
-            <div className="row mb-2">
-                <div className="col-sm-6">
-                <h1 className="m-0">{reviewType} Adjustments</h1>
-                </div>{/* /.col */}
-                <div className="col-sm-6">
-                <ol className="breadcrumb float-sm-right">
-                    <li className="breadcrumb-item active"> {`[ ${JSON.parse(localStorage.getItem('userLogin'))?.username} ] [ ${JSON.parse(localStorage.getItem('userLogin'))?.homeLocationCode} ]`} </li>
-                </ol>
-                </div>{/* /.col */}
-            </div>{/* /.row */}
-            </div>{/* /.container-fluid */}
-        </div>
+
+        <ContentHeader title={reviewType + " Adjustments"} />
+
         {/* /.content-header */}
         {/* Main content */}
         <div className="content">

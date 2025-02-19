@@ -1,24 +1,14 @@
 import React from "react";
+import ContentHeader from "../components/ContentHeader";
 
 export default function Home() {
   console.log("process.env.REACT_APP_API_URL", process.env);
 
   return (
     <>
-      <section className="content-header">
-        <div className="container-fluid">
-          <div className="row mb-2">
-            <div className="col-sm-6">
-              <h1>Home</h1>
-            </div>
-            <div className="col-sm-6">
-              <ol className="breadcrumb float-sm-right">
-                <li className="breadcrumb-item active"> {`[ ${JSON.parse(localStorage.getItem('userLogin'))?.username} ] [ ${JSON.parse(localStorage.getItem('userLogin'))?.homeLocationCode} ]`} </li>
-              </ol>
-            </div>
-          </div>
-        </div>
-      </section>
+
+      <ContentHeader title="Home" />
+      
       <section className="content">
         <div className="container-fluid">
           <div className="row">
