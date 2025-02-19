@@ -196,7 +196,7 @@ export default function Sidebar() {
                   </a>
                 </li>
 
-                {(userHasRole("Admin") || userHasRole("Approver")) && 
+                {(userHasRole("AdminXX") || userHasRole("ApproverXX")) && 
                   <li className="nav-item">
                     <a href="/User" className="nav-link">
                       <i className="far fa-circle nav-icon" />
