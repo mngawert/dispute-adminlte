@@ -189,12 +189,22 @@ export default function Sidebar() {
               </a>
 
               <ul className="nav nav-treeview">
+
                 <li className="nav-item">
-                  <a href="/SearchAdj" className="nav-link">
+                  <a href="/MyAdj" className="nav-link">
                     <i className="far fa-circle nav-icon" />
-                    <p>Search Adjustment</p>
+                    <p>My Adjustments</p>
                   </a>
-                </li>
+                </li>                            
+
+                {(userHasRole("AdminXX") || userHasRole("ApproverXX")) && 
+                  <li className="nav-item">
+                    <a href="/SearchAdj" className="nav-link">
+                      <i className="far fa-circle nav-icon" />
+                      <p>Search Adjustments</p>
+                    </a>
+                  </li>                            
+                }
 
                 {(userHasRole("AdminXX") || userHasRole("ApproverXX")) && 
                   <li className="nav-item">

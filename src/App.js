@@ -62,7 +62,8 @@ function App() {
             <Route path="/AdjustP3Plus" element={ <PrivateRoute element={<AdjustP3Plus />} allowedRoles={['Admin', 'Creator']} /> } />
             <Route path="/AdjustP3Minus" element={ <PrivateRoute element={<AdjustP3Minus />} allowedRoles={['Admin', 'Creator']} /> } />
             <Route path="/AdjustB" element={<AdjustB />} />
-            <Route path="/SearchAdj" element={<SearchAdj />} />
+            <Route path="/MyAdj" element={<SearchAdj myAdjust="Yes" title="My Adjustments" />} />
+            <Route path="/SearchAdj" element={<SearchAdj myAdjust="No" title="Search Adjustments" />} />
             <Route path="/User" element={<User />} />
             <Route path="/not-authorized" element={<NotAuthorized /> } />
 

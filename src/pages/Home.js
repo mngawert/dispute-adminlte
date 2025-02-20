@@ -6,7 +6,6 @@ export default function Home() {
 
   return (
     <>
-
       <ContentHeader title="Home" />
       
       <section className="content">
@@ -22,7 +21,7 @@ export default function Home() {
                   <div className="col-12">
                     <h4>
                       <i className="fas fa-globe" /> NT Corporation
-                      <small className="float-right">Date: {new Date().toLocaleDateString()}</small>
+                      <small className="float-right">Date: {new Date().toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' })}</small>
                     </h4>
                   </div>
                 </div>
