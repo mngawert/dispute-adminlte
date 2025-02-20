@@ -58,7 +58,7 @@ const DisputeEvent = ({costedEvents, selectedCostedEvent, handleSelectCostedEven
                         <td>{event.eventAttr1}</td>
                         <td>{event.eventAttr2}</td>
                         <td>{event.eventAttr4}</td>
-                        <td>{new Date(event.eventDtm).toLocaleString()}</td>
+                        <td>{new Date(event.eventDtm).toLocaleDateString('en-GB')}</td>
                         <td>{event.eventAttr3}</td>
                         <td>{event.eventCostMny}</td>
                     </tr>

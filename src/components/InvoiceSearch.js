@@ -1,4 +1,3 @@
-
 const InvoiceSearch = ({ accountNum, invoices, getInvoicesByAccountNum, selectedInvoice, handleSelectInvoice }) => {
   return (
     <>
@@ -34,8 +33,8 @@ const InvoiceSearch = ({ accountNum, invoices, getInvoicesByAccountNum, selected
                     <tr key={index} onClick={() => handleSelectInvoice(invoice)} className={invoice.invoiceNum === selectedInvoice?.invoiceNum && invoice.billSeq === selectedInvoice?.billSeq ? 'selected' : ''} >
                         <td>{invoice.billSeq}</td>
                         <td>{invoice.invoiceNum}</td>
-                        <td>{new Date(invoice.billDtm).toLocaleDateString()}</td>
-                        <td>{new Date(invoice.actualBillDtm).toLocaleDateString()}</td>
+                        <td>{new Date(invoice.billDtm).toLocaleDateString('en-GB')}</td>
+                        <td>{new Date(invoice.actualBillDtm).toLocaleDateString('en-GB')}</td>
                         {/* <td>{invoice.convergentAmount}</td> */}
                         <td>{invoice.invoiceNetMny}</td>
                         <td>{invoice.invoiceTaxMny}</td>
