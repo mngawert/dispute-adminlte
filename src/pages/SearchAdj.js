@@ -3,19 +3,20 @@ import api from '../api';
 import { DOCUMENT_STATUS_LIST, SEARCH_BY_LIST } from '../contexts/Constants';
 import ContentHeader from '../components/ContentHeader'; // Adjust the import path as necessary
 
-const SearchAdj = ({ myAdjust, title }) => {
+const SearchAdj = ({ myAdjust, title, fetchDataAtStart }) => {
     const [documentNum, setDocumentNum] = useState('');
     const [documents, setDocuments] = useState([]);
     const [selectedDocument, setSelectedDocument] = useState(null);
     const [adjustmentRequests, setAdjustmentRequests] = useState([]);
     const [searchBy, setSearchBy] = useState(SEARCH_BY_LIST);
     const [selectedSearchBy, setSelectedSearchBy] = useState(null);
-    const [userId, setUserId] = useState(null);
 
     useEffect(() => {
-        const userLogin = JSON.parse(localStorage.getItem('userLogin'));
-        setUserId(userLogin?.userId);
-    }, []);
+
+        if (fetchDataAtStart === 'Yes') {
+            getAllDocuments();
+        }
+    }, [fetchDataAtStart]);
 
     const handleSearchByChange = (e) => {
         const selectedOption = searchBy.find(search => search.value === e.target.value);
@@ -28,6 +29,8 @@ const SearchAdj = ({ myAdjust, title }) => {
 
     const getAllDocuments = async () => {
         try {
+            const userId = JSON.parse(localStorage.getItem('userLogin'))?.userId;
+
             const params = {
                 documentNum: documentNum,
                 searchBy: selectedSearchBy?.value

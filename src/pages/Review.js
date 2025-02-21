@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import api from '../api';
 import { CPS_MAP_HASH } from '../contexts/Constants';
 import { Tab, Tabs } from 'react-bootstrap';
@@ -16,6 +16,10 @@ const Review = ({ reviewType, prevDocumentStatus }) => {
   const [adjustmentRequests, setAdjustmentRequests] = useState([]);
 
   const [activeTab, setActiveTab] = useState('P36');
+
+  useEffect(() => {
+    getAllDocuments();
+  }, []);
 
   const filterDocumentsByType = (type) => {
     return documents.filter(doc => doc.documentTypeDesc === type);
