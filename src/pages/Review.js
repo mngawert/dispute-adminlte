@@ -102,7 +102,7 @@ const Review = ({ reviewType, prevDocumentStatus }) => {
                 <p className="ml-auto flex-column text-right">
                   <input type="text" className="form-control mr-1" placeholder="Document Number" onChange={handleInputChange} value={documentNum} />
                   <button type="button" className="btn btn-primary mr-1" onClick={handleSearch} >Search</button>
-                  <button type="button" className="btn btn-default">Get more</button>
+                  {/* <button type="button" className="btn btn-default">Get more</button> */}
                 </p>
               </div>
 
@@ -113,12 +113,12 @@ const Review = ({ reviewType, prevDocumentStatus }) => {
                 <Tab eventKey="P36" title="P36">
                   <ReviewDocType documentTypeDesc='P36' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} />
                 </Tab>
-                <Tab eventKey="Adjust-" title="Adjust-">
+                {/* <Tab eventKey="Adjust-" title="Adjust-">
                   <ReviewDocType documentTypeDesc='Adjust-' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} />
                 </Tab>
                 <Tab eventKey="Adjust+" title="Adjust+">
                   <ReviewDocType documentTypeDesc='Adjust+' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} />
-                </Tab>
+                </Tab> */}
               </Tabs>
 
               {/* END CONTENT */}

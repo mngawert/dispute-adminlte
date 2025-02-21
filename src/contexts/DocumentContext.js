@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import api from '../api';
 import { DOCUMENT_TYPE } from './Constants';
 import { jwtDecode } from 'jwt-decode';
+import getTranslation from '../utils/getTranslation';
+import { get } from 'jquery';
 
 const DocumentContext = React.createContext();
 
@@ -10,6 +12,8 @@ export const useDocumentContext = () => {
 };
 
 export const DocumentProvider = ({ children }) => {
+
+    const [language, setLanguage] = useState('th'); // Default language
 
     /** User and Roles */
     // const [user, setUser] = useState(null);
@@ -44,7 +48,7 @@ export const DocumentProvider = ({ children }) => {
             setAccounts(response.data);
 
             if (response.data.length === 0) {
-                alert('No accounts found');
+                alert(getTranslation('noAccountsFound', language));
             }
 
             /** Clear states */
@@ -72,7 +76,7 @@ export const DocumentProvider = ({ children }) => {
             setAccounts(response.data);
 
             if (response.data.length === 0) {
-                alert('No accounts found');
+                alert(getTranslation('noAccountsFound', language));
             }
 
             /** Clear states */
@@ -195,7 +199,7 @@ export const DocumentProvider = ({ children }) => {
             setCostedEvents(response.data);
 
             if (response.data.length === 0) {
-                alert('No costed events found');
+                alert(getTranslation('noCostedEventsFound', language));
             }
         } catch (error) {
             console.error('Error fetching costed event:', error);
@@ -255,40 +259,40 @@ export const DocumentProvider = ({ children }) => {
         console.log('selectedInvoice:', selectedInvoice);
 
         if (!accountNum) {
-            return 'Please enter an account number';
-        } 
+            return getTranslation('enterAccountNumber', language);
+        }
         if (!selectedAccount || Object.keys(selectedAccount).length === 0) {
-            return 'Please select an account';
+            return getTranslation('selectAccount', language);
         }
         if (!selectedInvoice || Object.keys(selectedInvoice).length === 0) {
-            return 'Please select an invoice';
-        } 
-        if (!selectedInvoiceDataService || Object.keys(selectedInvoiceDataService).length === 0) {
-            return 'Please select a service number';
+            return getTranslation('selectInvoice', language);
         }
-        if ((!selectedInvoiceDataRC || Object.keys(selectedInvoiceDataRC).length === 0) && (!selectedInvoiceDataUsage || Object.keys(selectedInvoiceDataUsage).length === 0) ) {
-            return 'Please select a RC or Usage';
+        if (!selectedInvoiceDataService || Object.keys(selectedInvoiceDataService).length === 0) {
+            return getTranslation('selectServiceNumber', language);
+        }
+        if ((!selectedInvoiceDataRC || Object.keys(selectedInvoiceDataRC).length === 0) && (!selectedInvoiceDataUsage || Object.keys(selectedInvoiceDataUsage).length === 0)) {
+            return getTranslation('selectRCOrUsage', language);
         }
         if (!selectedAdjustmentType || Object.keys(selectedAdjustmentType).length === 0) {
-            return 'Please select an adjustment type';
+            return getTranslation('selectAdjustmentType', language);
         }
         if (!adjustmentAmount) {
-            return 'Please enter an adjustment amount';
+            return getTranslation('enterAdjustmentAmount', language);
         }
         if (isNaN(adjustmentAmount)) {
-            return 'Adjustment amount must be a number';
+            return getTranslation('adjustmentAmountNumber', language);
         }
         if (parseFloat(adjustmentAmount) <= 0) {
-            return 'Adjustment amount must be greater than 0';
+            return getTranslation('adjustmentAmountGreaterThanZero', language);
         }
         if (parseFloat(adjustmentAmount) > parseFloat(selectedInvoiceDataRC?.aggAmount ?? selectedInvoiceDataUsage?.aggAmount)) {
-            return 'Adjustment amount must be less than or equal to the charge amount';
+            return getTranslation('adjustmentAmountLessThanCharge', language);
         }
         if (parseFloat(adjustmentAmount) > parseFloat(selectedInvoice?.invoiceNetMny)) {
-            return 'Adjustment amount must be less than or equal to the invoice amount';
+            return getTranslation('adjustmentAmountLessThanInvoice', language);
         }
         if (parseFloat(selectedInvoice?.writeOffMny) > 0) {
-            return 'Cannot create this adjustment. Invoice has already been written off';
+            return getTranslation('invoiceWrittenOff', language);
         }
         if (documentType === DOCUMENT_TYPE.P35) {
 
@@ -316,7 +320,7 @@ export const DocumentProvider = ({ children }) => {
             console.log('endDate:', endDate);
 
             if (actualBillDtm < startDate || actualBillDtm > endDate) {
-                return `Cannot create this adjusment. For P35 the invoice actual billed must be between November and December of ${lastYear}`;
+                return getTranslation('p35InvoiceDate', language, { lastYear });
             }
 
             const startYear = currentDate.getFullYear();
@@ -324,7 +328,7 @@ export const DocumentProvider = ({ children }) => {
             const endMar = new Date(startYear, 2, 31); // March 31st of current year
 
             if (currentDate < startJan || currentDate > endMar) {
-                return `Cannot create this adjustment. For P35 adjustment can be created between January and March of ${startYear}`;
+                return getTranslation('p35AdjustmentDate', language, { startYear });
             }
 
         }
@@ -337,7 +341,7 @@ export const DocumentProvider = ({ children }) => {
             const endOfOctoberLastYear = new Date(lastYear, 9, 31); // October 31st of last year
 
             if (actualBillDtm > endOfOctoberLastYear) {
-                return `Cannot create this adjustment. For P36 the invoice actual billed must be on or before October 31st of ${lastYear}`;
+                return getTranslation('p36InvoiceDate', language, { lastYear });
             }
 
         }
@@ -348,7 +352,7 @@ export const DocumentProvider = ({ children }) => {
             const actualBillDtmYear = new Date(selectedInvoice.actualBillDtm).getFullYear();
 
             if (actualBillDtmYear !== currentYear) {
-                return `Cannot create this adjustment. For Adjustment(-) the invoice actual billed must be in the current year.`;
+                return getTranslation('adjustMinusInvoiceDate', language);
             }
 
         }
@@ -358,25 +362,25 @@ export const DocumentProvider = ({ children }) => {
 
     const validateInputsAdjustPlus = (documentType) => {
         if (!accountNum) {
-            return 'Please enter an account number';
+            return getTranslation('enterAccountNumber', language);
         }
         if (!selectedAccount || Object.keys(selectedAccount).length === 0) {
-            return 'Please select an account';
+            return getTranslation('selectAccount', language);
         }
         if (!selectedService || Object.keys(selectedService).length === 0) {
-            return 'Please select a service';
+            return getTranslation('selectServiceNumber', language);
         }
         if (!selectedAdjustmentType || Object.keys(selectedAdjustmentType).length === 0) {
-            return 'Please select an adjustment type';
+            return getTranslation('selectAdjustmentType', language);
         }
         if (!adjustmentAmount) {
-            return 'Please enter an adjustment amount';
+            return getTranslation('enterAdjustmentAmount', language);
         }
         if (isNaN(adjustmentAmount)) {
-            return 'Adjustment amount must be a number';
+            return getTranslation('adjustmentAmountNumber', language);
         }
         if (parseFloat(adjustmentAmount) <= 0) {
-            return 'Adjustment amount must be greater than 0';
+            return getTranslation('adjustmentAmountGreaterThanZero', language);
         }
         
         return '';
@@ -410,7 +414,7 @@ export const DocumentProvider = ({ children }) => {
                 requestStatus: "Create-Pending"
             });
             console.log('Adjustment Request Created:', response.data);
-            alert('Adjustment Request Created');
+            alert(getTranslation('adjustmentRequestCreated', language));
 
             /** Clear states */
             setAccountNum(""); setAccounts([]); setSelectedAccount(null);
@@ -481,6 +485,7 @@ export const DocumentProvider = ({ children }) => {
 
     return (
         <DocumentContext.Provider value={{ 
+                language, setLanguage,
                 //user, setUser, roles, setRoles, userHasRole,
                 pendingDocument, adjustmentRequests, fetchPendingDocumentAndRequests, deleteAdjustmentRequest, updateDocumentStatus,
                 accountNum, setAccountNum, accounts, getAccountsByAccountNum, getAccountsByServiceNum, selectedAccount, setSelectedAccount,
