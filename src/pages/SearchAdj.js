@@ -14,6 +14,8 @@ const SearchAdj = ({ myAdjust, title, fetchDataAtStart }) => {
     const [searchBy, setSearchBy] = useState(SEARCH_BY_LIST);
     const [selectedSearchBy, setSelectedSearchBy] = useState(null);
     const [filterBy, setFilterBy] = useState('createdBy');
+    const [fromDate, setFromDate] = useState('');
+    const [toDate, setToDate] = useState('');
 
     const getAllDocuments = useCallback(async () => {
         try {
@@ -21,7 +23,9 @@ const SearchAdj = ({ myAdjust, title, fetchDataAtStart }) => {
 
             const params = {
                 documentNum: documentNum,
-                searchBy: selectedSearchBy?.value
+                searchBy: selectedSearchBy?.value,
+                fromDate: fromDate,
+                toDate: toDate
             };
             if (myAdjust === 'Yes' && userId) {
                 params[filterBy] = userId;
@@ -34,7 +38,7 @@ const SearchAdj = ({ myAdjust, title, fetchDataAtStart }) => {
         } catch (error) {
             console.error('Error fetching data', error);
         }
-    }, [documentNum, selectedSearchBy, myAdjust, filterBy]);
+    }, [documentNum, selectedSearchBy, myAdjust, filterBy, fromDate, toDate]);
 
     useEffect(() => {
         if (fetchDataAtStart === 'Yes') {
@@ -53,6 +57,14 @@ const SearchAdj = ({ myAdjust, title, fetchDataAtStart }) => {
 
     const handleFilterByChange = (e) => {
         setFilterBy(e.target.value);
+    };
+
+    const handleFromDateChange = (e) => {
+        setFromDate(e.target.value);
+    };
+
+    const handleToDateChange = (e) => {
+        setToDate(e.target.value);
     };
 
     const handleSearch = async () => {
@@ -94,6 +106,10 @@ const SearchAdj = ({ myAdjust, title, fetchDataAtStart }) => {
                                 handleSearch={handleSearch}
                                 filterBy={filterBy}
                                 handleFilterByChange={handleFilterByChange}
+                                fromDate={fromDate}
+                                toDate={toDate}
+                                handleFromDateChange={handleFromDateChange}
+                                handleToDateChange={handleToDateChange}
                             />
                             <div className="card">
                                 <div className="card-body">

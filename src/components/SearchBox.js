@@ -1,6 +1,6 @@
 import React from 'react';
 
-const SearchBox = ({ searchBy, selectedSearchBy, handleSearchByChange, documentNum, handleInputChange, handleSearch, filterBy, handleFilterByChange }) => {
+const SearchBox = ({ searchBy, selectedSearchBy, handleSearchByChange, documentNum, handleInputChange, handleSearch, filterBy, handleFilterByChange, fromDate, toDate, handleFromDateChange, handleToDateChange }) => {
     return (
         <div className="card">
             <div className="card-body">
@@ -35,6 +35,20 @@ const SearchBox = ({ searchBy, selectedSearchBy, handleSearchByChange, documentN
                     <div className="col-sm-2">
                         <div className="form-group">
                             <button type="button" className="btn btn-primary" onClick={handleSearch}>Search</button>
+                        </div>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-sm-3">
+                        <div className="form-group">
+                            <label>From Date:</label>
+                            <input type="date" className="form-control" onChange={handleFromDateChange} value={fromDate} />
+                        </div>
+                    </div>
+                    <div className="col-sm-3">
+                        <div className="form-group">
+                            <label>To Date:</label>
+                            <input type="date" className="form-control" onChange={handleToDateChange} value={toDate} />
                         </div>
                     </div>
                 </div>
