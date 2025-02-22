@@ -13,6 +13,7 @@ const SearchAdj = ({ myAdjust, title, fetchDataAtStart }) => {
     const [adjustmentRequests, setAdjustmentRequests] = useState([]);
     const [searchBy, setSearchBy] = useState(SEARCH_BY_LIST);
     const [selectedSearchBy, setSelectedSearchBy] = useState(null);
+    const [filterBy, setFilterBy] = useState('createdBy');
 
     const getAllDocuments = useCallback(async () => {
         try {
@@ -23,14 +24,17 @@ const SearchAdj = ({ myAdjust, title, fetchDataAtStart }) => {
                 searchBy: selectedSearchBy?.value
             };
             if (myAdjust === 'Yes' && userId) {
-                params.createdBy = userId;
+                params[filterBy] = userId;
             }
             const response = await api.get(`/api/Document/GetAllDocuments`, { params });
             setDocuments(response.data);
+            /* Clear selected document and adjustment requests */
+            setSelectedDocument(null);
+            setAdjustmentRequests([]);
         } catch (error) {
             console.error('Error fetching data', error);
         }
-    }, [documentNum, selectedSearchBy, myAdjust]);
+    }, [documentNum, selectedSearchBy, myAdjust, filterBy]);
 
     useEffect(() => {
         if (fetchDataAtStart === 'Yes') {
@@ -47,11 +51,12 @@ const SearchAdj = ({ myAdjust, title, fetchDataAtStart }) => {
         setDocumentNum(e.target.value);
     };
 
+    const handleFilterByChange = (e) => {
+        setFilterBy(e.target.value);
+    };
+
     const handleSearch = async () => {
         getAllDocuments();
-        /* Clear selected document and adjustment requests */
-        setSelectedDocument(null);
-        setAdjustmentRequests([]);
     };
 
     const handleSelectDocument = async (doc) => {
@@ -87,6 +92,8 @@ const SearchAdj = ({ myAdjust, title, fetchDataAtStart }) => {
                                 documentNum={documentNum}
                                 handleInputChange={handleInputChange}
                                 handleSearch={handleSearch}
+                                filterBy={filterBy}
+                                handleFilterByChange={handleFilterByChange}
                             />
                             <div className="card">
                                 <div className="card-body">

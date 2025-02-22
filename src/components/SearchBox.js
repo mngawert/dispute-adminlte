@@ -1,6 +1,6 @@
 import React from 'react';
 
-const SearchBox = ({ searchBy, selectedSearchBy, handleSearchByChange, documentNum, handleInputChange, handleSearch }) => {
+const SearchBox = ({ searchBy, selectedSearchBy, handleSearchByChange, documentNum, handleInputChange, handleSearch, filterBy, handleFilterByChange }) => {
     return (
         <div className="card">
             <div className="card-body">
@@ -21,7 +21,18 @@ const SearchBox = ({ searchBy, selectedSearchBy, handleSearchByChange, documentN
                             <input type="text" className="form-control" onChange={handleInputChange} value={documentNum} disabled={!selectedSearchBy?.value} />
                         </div>
                     </div>
-                    <div className="col-sm-5">
+                    <div className="col-sm-3">
+                        <div className="form-group d-flex align-items-center">
+                            <label style={{ width: 160 }}>Filter by:</label>
+                            <select className="form-control" onChange={handleFilterByChange} value={filterBy}>
+                                <option value="createdBy">Created By</option>
+                                <option value="reviewedBy">Reviewed By</option>
+                                <option value="approvedBy">Approved By</option>
+                                <option value="financeReviewedBy">Finance Reviewed By</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div className="col-sm-2">
                         <div className="form-group">
                             <button type="button" className="btn btn-primary" onClick={handleSearch}>Search</button>
                         </div>
