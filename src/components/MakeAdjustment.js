@@ -15,6 +15,9 @@ const MakeAdjustment = ({ adjustmentTypes, selectedAdjustmentType, setSelectedAd
         }
     }
 
+    const vat = selectedAccount ? (adjustmentAmount * (CPS_MAP_HASH[selectedAccount.cpsId] / 100)).toFixed(2) : 0;
+    const total = selectedAccount ? (adjustmentAmount * (1 + CPS_MAP_HASH[selectedAccount.cpsId] / 100)).toFixed(2) : 0;
+
     return (
         <div className="card">
             <div className="card-body">
@@ -32,16 +35,16 @@ const MakeAdjustment = ({ adjustmentTypes, selectedAdjustmentType, setSelectedAd
                     </div>
                     <div className="col-sm-3 form-group">
                         <label>Amount</label>
-                        <input type="number" className="form-control" value={adjustmentAmount} onChange={handleAmountChange} readOnly={selectedCostedEvent != null && Object.keys(selectedCostedEvent).length !== 0} />
+                        <input type="number" className="form-control" value={adjustmentAmount} onChange={handleAmountChange} />
                         <small>Thai Baht (excl VAT).</small>
                     </div>
                     <div className="col-sm-3 form-group">
-                        <label>7% VAT</label>
-                        <input type="text" className="form-control" readOnly value={(adjustmentAmount * (CPS_MAP_HASH[selectedAccount?.cpsId] / 100)).toFixed(2)} />
+                        <label>VAT</label>
+                        <input type="text" className="form-control" readOnly value={vat} />
                     </div>
                     <div className="col-sm-3 form-group">
                         <label>Total</label>
-                        <input type="text" className="form-control" readOnly value={(adjustmentAmount * (1 + CPS_MAP_HASH[selectedAccount?.cpsId] / 100)).toFixed(2)} />
+                        <input type="text" className="form-control" readOnly value={total} />
                     </div>
                 </div>
                 <div className="row">

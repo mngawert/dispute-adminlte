@@ -15,7 +15,7 @@ const Review = ({ reviewType, prevDocumentStatus }) => {
   const [selectedDocument, setSelectedDocument] = useState({});
   const [adjustmentRequests, setAdjustmentRequests] = useState([]);
 
-  const [activeTab, setActiveTab] = useState('P36');
+  const [activeTab, setActiveTab] = useState('P35');
 
   useEffect(() => {
     getAllDocuments();

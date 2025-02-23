@@ -110,6 +110,7 @@ const SearchAdj = ({ myAdjust, title, fetchDataAtStart }) => {
                                 toDate={toDate}
                                 handleFromDateChange={handleFromDateChange}
                                 handleToDateChange={handleToDateChange}
+                                showSearchBy={myAdjust !== 'Yes'}
                             />
                             <div className="card">
                                 <div className="card-body">
