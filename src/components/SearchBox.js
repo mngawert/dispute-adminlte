@@ -29,31 +29,33 @@ const SearchBox = ({ searchBy, selectedSearchBy, handleSearchByChange, documentN
                         </div>
                     </div>
                 )}
-                <div className="row">
-                    <div className="col-sm-3">
-                        <div className="form-group">
-                            <label>View Adjustments that you :</label>
-                            <select className="form-control" onChange={handleFilterByChange} value={filterBy}>
-                                <option value="createdBy">Created</option>
-                                <option value="reviewedBy">Reviewed</option>
-                                <option value="approvedBy">Approved</option>
-                                <option value="financeReviewedBy">Finance Reviewed</option>
-                            </select>
+                {!showSearchBy && (
+                    <div className="row">
+                        <div className="col-sm-3">
+                            <div className="form-group">
+                                <label>View Adjustments that you :</label>
+                                <select className="form-control" onChange={handleFilterByChange} value={filterBy}>
+                                    <option value="createdBy">Created</option>
+                                    <option value="reviewedBy">Reviewed</option>
+                                    <option value="approvedBy">Approved</option>
+                                    <option value="financeReviewedBy">Finance Reviewed</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div className="col-sm-3">
+                            <div className="form-group">
+                                <label>From Date:</label>
+                                <input type="date" className="form-control" onChange={handleFromDateChange} value={fromDate} />
+                            </div>
+                        </div>
+                        <div className="col-sm-3">
+                            <div className="form-group">
+                                <label>To Date:</label>
+                                <input type="date" className="form-control" onChange={handleToDateChange} value={toDate} />
+                            </div>
                         </div>
                     </div>
-                    <div className="col-sm-3">
-                        <div className="form-group">
-                            <label>From Date:</label>
-                            <input type="date" className="form-control" onChange={handleFromDateChange} value={fromDate} />
-                        </div>
-                    </div>
-                    <div className="col-sm-3">
-                        <div className="form-group">
-                            <label>To Date:</label>
-                            <input type="date" className="form-control" onChange={handleToDateChange} value={toDate} />
-                        </div>
-                    </div>
-                </div>
+                )}
             </div>
         </div>
     );

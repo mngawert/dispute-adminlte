@@ -193,14 +193,12 @@ export default function Sidebar() {
                   </a>
                 </li>                            
 
-                {(userHasRole("AdminXX") || userHasRole("ApproverXX")) && 
-                  <li className="nav-item">
-                    <a href="/SearchAdj" className="nav-link">
-                      <i className="far fa-circle nav-icon" />
-                      <p>Search Adjustments</p>
-                    </a>
-                  </li>                            
-                }
+                <li className="nav-item">
+                  <a href="/SearchAdj" className="nav-link">
+                    <i className="far fa-circle nav-icon" />
+                    <p>Search Adjustments</p>
+                  </a>
+                </li>                            
 
                 {(userHasRole("AdminXX") || userHasRole("ApproverXX")) && 
                   <li className="nav-item">

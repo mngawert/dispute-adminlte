@@ -1,6 +1,10 @@
 import React from 'react';
 
 const DocumentDetails = ({ selectedDocument, adjustmentRequests }) => {
+    const totalAmount = adjustmentRequests.reduce((sum, adj) => sum + adj.disputeMny, 0).toFixed(2);
+    const totalVAT = adjustmentRequests.reduce((sum, adj) => sum + (adj.disputeMny * 0.07), 0).toFixed(2);
+    const total = adjustmentRequests.reduce((sum, adj) => sum + (adj.disputeMny * 1.07), 0).toFixed(2);
+
     return (
         <>
             <div className="row">
@@ -92,6 +96,12 @@ const DocumentDetails = ({ selectedDocument, adjustmentRequests }) => {
                                 <td align='center'>{(adj.disputeMny * 1.07).toFixed(2)}</td>
                             </tr>
                         ))}
+                        <tr>
+                            <td colSpan="4" align='right'><strong>Total</strong></td>
+                            <td align='center'><strong>{totalAmount}</strong></td>
+                            <td align='center'><strong>{totalVAT}</strong></td>
+                            <td align='center'><strong>{total}</strong></td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
