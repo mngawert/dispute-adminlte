@@ -114,7 +114,6 @@ const SearchAdj = ({ myAdjust, title, fetchDataAtStart }) => {
                             />
                             <div className="card">
                                 <div className="card-body">
-                                    <p className="mb-3">Documents</p>
                                     <DocumentTable documents={documents} selectedDocument={selectedDocument} handleSelectDocument={handleSelectDocument} />
                                     <DocumentDetails selectedDocument={selectedDocument} adjustmentRequests={adjustmentRequests} />
                                 </div>

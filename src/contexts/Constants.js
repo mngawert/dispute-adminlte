@@ -1,4 +1,3 @@
-
 export const DOCUMENT_TYPE = {
   ADJUST_MINUS  : '01',
   ADJUST_PLUS   : '02',
@@ -27,7 +26,8 @@ export const DOCUMENT_STATUS_LIST = [
 export const SEARCH_BY_LIST = [
   { name: 'Document Number', value: 'DocumentNum' },
   { name: 'Account Number', value: 'AccountNum' },
-  { name: 'Service Number', value: 'ServiceNum' },
+  { name: 'Invoice Number', value: 'InvoiceNum' },
+  { name: 'Service Number', value: 'ServiceNum' }
 ];
 
 export const CPS_MAP = [

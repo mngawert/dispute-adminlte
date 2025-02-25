@@ -33,7 +33,7 @@ const SearchBox = ({ searchBy, selectedSearchBy, handleSearchByChange, documentN
                     <div className="row">
                         <div className="col-sm-3">
                             <div className="form-group">
-                                <label>View Adjustments that you :</label>
+                                <label>View Adjustments that you:</label>
                                 <select className="form-control" onChange={handleFilterByChange} value={filterBy}>
                                     <option value="createdBy">Created</option>
                                     <option value="reviewedBy">Reviewed</option>

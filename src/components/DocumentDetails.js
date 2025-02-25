@@ -7,6 +7,47 @@ const DocumentDetails = ({ selectedDocument, adjustmentRequests }) => {
 
     return (
         <>
+
+            <label className="mb-3">Adjustments:</label>
+
+            <div className="table-responsive" style={{ height: 300 }}>
+                <table className="table table-head-fixed text-nowrap table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>Account Number</th>
+                            <th>Invoice Number</th>
+                            <th>Service Number</th>
+                            <th>Adjustment Type</th>
+                            <th>Amount</th>
+                            <th>VAT</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {adjustmentRequests.map((adj, index) => (
+                            <tr key={index}>
+                                <td>{adj.accountNum}</td>
+                                <td>{adj.invoiceNum}</td>
+                                <td>{adj.serviceNum}</td>
+                                <td>{adj.adjustmentTypeName}</td>
+                                <td align='center'>{adj.disputeMny.toFixed(2)}</td>
+                                <td align='center'>{(adj.disputeMny * 0.07).toFixed(2)}</td>
+                                <td align='center'>{(adj.disputeMny * 1.07).toFixed(2)}</td>
+                            </tr>
+                        ))}
+                        <tr>
+                            <td colSpan="4" align='right'><strong>Total</strong></td>
+                            <td align='center'><strong>{totalAmount}</strong></td>
+                            <td align='center'><strong>{totalVAT}</strong></td>
+                            <td align='center'><strong>{total}</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            
+            <label className="mb-3">Approval:</label>
+            
             <div className="row">
                 <div className="col-sm-6 col-md-4 col-lg-2">
                     <div className="form-group mb-2">
@@ -70,41 +111,7 @@ const DocumentDetails = ({ selectedDocument, adjustmentRequests }) => {
                         <input type="text" className="form-control" readOnly value={selectedDocument?.documentStatus || ''} />
                     </div>
                 </div>
-            </div>
-            <div className="table-responsive" style={{ height: 300 }}>
-                <table className="table table-head-fixed text-nowrap table-bordered table-hover">
-                    <thead>
-                        <tr>
-                            <th>Account Number</th>
-                            <th>Invoice Number</th>
-                            <th>Service Number</th>
-                            <th>Adjustment Type</th>
-                            <th>Amount</th>
-                            <th>VAT</th>
-                            <th>Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {adjustmentRequests.map((adj, index) => (
-                            <tr key={index}>
-                                <td>{adj.accountNum}</td>
-                                <td>{adj.invoiceNum}</td>
-                                <td>{adj.serviceNum}</td>
-                                <td>{adj.adjustmentTypeName}</td>
-                                <td align='center'>{adj.disputeMny.toFixed(2)}</td>
-                                <td align='center'>{(adj.disputeMny * 0.07).toFixed(2)}</td>
-                                <td align='center'>{(adj.disputeMny * 1.07).toFixed(2)}</td>
-                            </tr>
-                        ))}
-                        <tr>
-                            <td colSpan="4" align='right'><strong>Total</strong></td>
-                            <td align='center'><strong>{totalAmount}</strong></td>
-                            <td align='center'><strong>{totalVAT}</strong></td>
-                            <td align='center'><strong>{total}</strong></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+            </div>                        
         </>
     );
 };

@@ -417,10 +417,11 @@ export const DocumentProvider = ({ children }) => {
             alert(getTranslation('adjustmentRequestCreated', language));
 
             /** Clear states */
-            setAccountNum(""); setAccounts([]); setSelectedAccount(null);
-            setSelectedAccount(null);
-            setServices([]); setSelectedService({}); 
-            setInvoices([]); setSelectedInvoice({}); 
+            // setAccountNum(""); setAccounts([]); setSelectedAccount(null);
+            // setSelectedAccount(null);
+            // setServices([]); setSelectedService({}); 
+            // setInvoices([]); 
+            setSelectedInvoice({}); 
             setInvoiceDataServices([]); setInvoiceDataRC([]); setInvoiceDataUsage([]); setSelectedInvoiceDataService({}); setSelectedInvoiceDataRC({}); setSelectedInvoiceDataUsage({}); 
             setCostedEvents([]); setSelectedCostedEvent({});
             setAdjustmentTypes([]); setSelectedAdjustmentType({}); 

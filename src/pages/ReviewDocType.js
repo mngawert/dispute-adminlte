@@ -66,6 +66,7 @@ const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, select
                                         <thead>
                                             <tr>
                                                 <th>Account Number</th>
+                                                <th>Invoice Number</th>
                                                 <th>Service Number</th>
                                                 <th>Adjustment Type</th>
                                                 <th>Amount</th>
@@ -77,6 +78,7 @@ const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, select
                                             {adjustmentRequests.map((adj, index) => (
                                                 <tr key={index}>
                                                     <td>{adj.accountNum}</td>
+                                                    <td>{adj.invoiceNum}</td>
                                                     <td>{adj.serviceNum}</td>
                                                     <td>{adj.adjustmentTypeName}</td>
                                                     <td align='center'>{adj.disputeMny.toFixed(2)}</td>
