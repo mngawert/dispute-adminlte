@@ -1,18 +1,16 @@
 import React from "react";
+import { useLocation } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 
 export default function Sidebar() {
-
-
+  const location = useLocation();
   const token = localStorage.getItem('authToken');
-  //console.log('token:', token);
-  let decodedToken = null
+  let decodedToken = null;
   let roles = [];
 
   if (token) {
     decodedToken = jwtDecode(token);
     roles = decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || [];
-    //console.log('decodedToken:', decodedToken);
   }
 
   const userHasRole = (role) => {
@@ -22,6 +20,10 @@ export default function Sidebar() {
   const handleLogout = () => {
     localStorage.removeItem("authToken");
     window.location.href = "/login"; // Redirect to login page
+  };
+
+  const isActive = (path) => {
+    return location.pathname === path ? 'active' : '';
   };
 
   return (
@@ -34,12 +36,12 @@ export default function Sidebar() {
         <nav className="mt-2">
           <ul className="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
             <li className="nav-item">
-              <a href="/" className="nav-link">
+              <a href="/" className={`nav-link ${isActive('/')}`}>
                 <i className="nav-icon fas fa-th"></i>
                 <p>Home</p>
               </a>
             </li>
- 
+
             {/* Creation Tasks */}
             {(userHasRole("Admin") || userHasRole("Creator")) && 
               <li className="nav-item menu-is-opening menu-open">
@@ -49,71 +51,18 @@ export default function Sidebar() {
                   </p>
                 </a>
                 <ul className="nav nav-treeview">
-                  {/* <li className="nav-item">
-                    <a href="/AdjustMinus" className="nav-link">
-                      <i className="far fa-circle nav-icon" />
-                      <p>Adjust - </p>
-                    </a>
-                  </li>
                   <li className="nav-item">
-                    <a href="/AdjustPlus" className="nav-link">
-                      <i className="far fa-circle nav-icon" />
-                      <p>Adjust + </p>
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a href="/AdjustP31" className="nav-link">
-                      <i className="far fa-circle nav-icon" />
-                      <p>P31 </p>
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a href="/AdjustP32" className="nav-link">
-                      <i className="far fa-circle nav-icon" />
-                      <p>P32 </p>
-                    </a>
-                  </li> */}
-                  <li className="nav-item">
-                    <a href="/AdjustP35" className="nav-link">
+                    <a href="/AdjustP35" className={`nav-link ${isActive('/AdjustP35')}`}>
                       <i className="far fa-circle nav-icon" />
                       <p>P35 </p>
                     </a>
                   </li>
                   <li className="nav-item">
-                    <a href="/AdjustP36" className="nav-link">
+                    <a href="/AdjustP36" className={`nav-link ${isActive('/AdjustP36')}`}>
                       <i className="far fa-circle nav-icon" />
                       <p>P36 </p>
                     </a>
                   </li>
-                  {/* <li className="nav-item">
-                    <a href="/AdjustP3Plus" className="nav-link">
-                      <i className="far fa-circle nav-icon" />
-                      <p>P3 + </p>
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a href="/AdjustP3Minus" className="nav-link">
-                      <i className="far fa-circle nav-icon" />
-                      <p>P3 - </p>
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a href="/AdjustB" className="nav-link">
-                      <i className="far fa-circle nav-icon" />
-                      <p>B +/- </p>
-                    </a>
-                  </li> */}
-
-
-
-
-
-                  {/* <li className="nav-item">
-                    <a href="/Create" className="nav-link">
-                      <i className="far fa-circle nav-icon" />
-                      <p>Create Adjustments </p>
-                    </a>
-                  </li> */}
                 </ul>
               </li>
             }
@@ -128,7 +77,7 @@ export default function Sidebar() {
               </a>
               <ul className="nav nav-treeview">
                 <li className="nav-item">
-                  <a href="/Review" className="nav-link">
+                  <a href="/Review" className={`nav-link ${isActive('/Review')}`}>
                     <i className="far fa-circle nav-icon" />
                     <p>Review Adjustments </p>
                   </a>
@@ -147,7 +96,7 @@ export default function Sidebar() {
                 </a>
                 <ul className="nav nav-treeview">
                   <li className="nav-item">
-                    <a href="/Approve" className="nav-link">
+                    <a href="/Approve" className={`nav-link ${isActive('/Approve')}`}>
                       <i className="far fa-circle nav-icon" />
                       <p>Approve Adjustments</p>
                     </a>
@@ -166,7 +115,7 @@ export default function Sidebar() {
                 </a>
                 <ul className="nav nav-treeview">
                   <li className="nav-item">
-                    <a href="/Finance" className="nav-link">
+                    <a href="/Finance" className={`nav-link ${isActive('/Finance')}`}>
                       <i className="far fa-circle nav-icon" />
                       <p>Review Financially</p>
                     </a>
@@ -175,7 +124,6 @@ export default function Sidebar() {
               </li>
             }
 
-
             {/* User Management */}
             <li className="nav-item menu-is-opening menu-open">
               <a href="#" className="nav-link">
@@ -183,26 +131,22 @@ export default function Sidebar() {
                   User Management
                 </p>
               </a>
-
               <ul className="nav nav-treeview">
-
                 <li className="nav-item">
-                  <a href="/MyAdj" className="nav-link">
+                  <a href="/MyAdj" className={`nav-link ${isActive('/MyAdj')}`}>
                     <i className="far fa-circle nav-icon" />
                     <p>My Adjustments</p>
                   </a>
                 </li>                            
-
                 <li className="nav-item">
-                  <a href="/SearchAdj" className="nav-link">
+                  <a href="/SearchAdj" className={`nav-link ${isActive('/SearchAdj')}`}>
                     <i className="far fa-circle nav-icon" />
                     <p>Search Adjustments</p>
                   </a>
                 </li>                            
-
                 {(userHasRole("AdminXX") || userHasRole("ApproverXX")) && 
                   <li className="nav-item">
-                    <a href="/User" className="nav-link">
+                    <a href="/User" className={`nav-link ${isActive('/User')}`}>
                       <i className="far fa-circle nav-icon" />
                       <p>Users</p>
                     </a>
@@ -215,9 +159,7 @@ export default function Sidebar() {
                   </a>
                 </li>
               </ul>
-
             </li>
-
           </ul>
         </nav>
       </div>
