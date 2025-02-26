@@ -256,7 +256,11 @@ export const DocumentProvider = ({ children }) => {
     const validateInputsAdjustMinus = (documentType) => {
 
         console.log('documentType:', documentType);
+        console.log('adjustmentAmount:', adjustmentAmount)
         console.log('selectedInvoice:', selectedInvoice);
+
+        let remainingAmount = (parseFloat(selectedInvoice?.invoiceNetMny) - parseFloat(selectedInvoice?.adjustedMny) - parseFloat(selectedInvoice?.pendingAdjustmentMny));
+        console.log('remainingAmount:', remainingAmount);
 
         if (!accountNum) {
             return getTranslation('enterAccountNumber', language);
@@ -288,7 +292,7 @@ export const DocumentProvider = ({ children }) => {
         if (parseFloat(adjustmentAmount) > parseFloat(selectedInvoiceDataRC?.aggAmount ?? selectedInvoiceDataUsage?.aggAmount)) {
             return getTranslation('adjustmentAmountLessThanCharge', language);
         }
-        if (parseFloat(adjustmentAmount) > parseFloat(selectedInvoice?.invoiceNetMny)) {
+        if (parseFloat(adjustmentAmount) > (parseFloat(selectedInvoice?.invoiceNetMny) - parseFloat(selectedInvoice?.adjustedMny) - parseFloat(selectedInvoice?.pendingAdjustmentMny))) {
             return getTranslation('adjustmentAmountLessThanInvoice', language);
         }
         if (parseFloat(selectedInvoice?.writeOffMny) > 0) {
@@ -421,6 +425,10 @@ export const DocumentProvider = ({ children }) => {
             // setSelectedAccount(null);
             // setServices([]); setSelectedService({}); 
             // setInvoices([]); 
+
+            /** Reload pending adjust amount in Invoices */
+            getInvoicesByAccountNum(selectedAccount.accountNum);
+
             setSelectedInvoice({}); 
             setInvoiceDataServices([]); setInvoiceDataRC([]); setInvoiceDataUsage([]); setSelectedInvoiceDataService({}); setSelectedInvoiceDataRC({}); setSelectedInvoiceDataUsage({}); 
             setCostedEvents([]); setSelectedCostedEvent({});
@@ -467,6 +475,8 @@ export const DocumentProvider = ({ children }) => {
                 }
             });
             setAdjustmentRequests(adjustmentRequests.filter(request => request.documentSeq !== documentSeq));
+            /** Reload pending adjust amount in Invoices */
+            getInvoicesByAccountNum(selectedAccount.accountNum);
         } catch (error) {
             console.error('Error deleting adjustment request:', error);
         }
