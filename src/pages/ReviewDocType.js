@@ -1,6 +1,8 @@
 import { CPS_MAP_HASH } from '../contexts/Constants';
+import React, { useState } from 'react';
 
 const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, selectedDocument, reviewType, handleSelectDocument, handleUpdateDocumentStatus }) => {
+    const [myNote, setMyNote] = useState('');
 
     const filterDocumentsByType = (type) => {
         return documents.filter(doc => doc.documentTypeDesc === type);
@@ -15,6 +17,20 @@ const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, select
             minute: '2-digit',
             second: '2-digit'
         });
+    };
+
+    const getNoteContent = () => {
+        const notes = [
+            selectedDocument?.createNote,
+            selectedDocument?.reviewNote,
+            selectedDocument?.approveNote,
+            selectedDocument?.financeNote
+        ];
+        return notes.filter(note => note).join('\n');
+    };
+
+    const resetMyNote = () => {
+        setMyNote('');
     };
 
     return (
@@ -95,13 +111,13 @@ const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, select
                             <div className="col-sm-6">
                                 <div className="form-group">
                                     <label>Note</label>
-                                    <textarea className="form-control" rows={5} readOnly defaultValue={""} />
+                                    <textarea className="form-control" rows={5} readOnly value={getNoteContent()} />
                                 </div>
                             </div>
                             <div className="col-sm-6">
                                 <div className="form-group">
                                     <label>My Note</label>
-                                    <textarea className="form-control" rows={5} defaultValue={""} />
+                                    <textarea className="form-control" rows={5} value={myNote} onChange={(e) => setMyNote(e.target.value)} />
                                 </div>
                             </div>
                         </div>
@@ -109,8 +125,8 @@ const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, select
                             <div className="col-12">
                                 <div className="form-inline mt-4">
                                     <p className="ml-auto mr-auto flex-column">
-                                        <button type="button" className="btn btn-primary mr-1" onClick={() => { handleUpdateDocumentStatus(selectedDocument, `${reviewType}-Accept`) }} >Accept Selected</button>
-                                        <button type="button" className="btn btn-default" onClick={() => { handleUpdateDocumentStatus(selectedDocument, `${reviewType}-Reject`) }} >Reject Selected</button>
+                                        <button type="button" className="btn btn-primary mr-1" onClick={() => handleUpdateDocumentStatus(selectedDocument, `${reviewType}-Accept`, myNote, resetMyNote)} >Accept Selected</button>
+                                        <button type="button" className="btn btn-default" onClick={() => handleUpdateDocumentStatus(selectedDocument, `${reviewType}-Reject`, myNote, resetMyNote)} >Reject Selected</button>
                                     </p>
                                 </div>
                             </div>

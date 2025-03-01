@@ -415,7 +415,8 @@ export const DocumentProvider = ({ children }) => {
                 invoiceNum: selectedInvoice?.invoiceNum,
                 disputeSeq: null,
                 adjustmentSeq: null,
-                requestStatus: "Create-Pending"
+                requestStatus: "Create-Pending",
+                note: adjustmentNote
             });
             console.log('Adjustment Request Created:', response.data);
             alert(getTranslation('adjustmentRequestCreated', language));
@@ -487,6 +488,7 @@ export const DocumentProvider = ({ children }) => {
             const response = await api.put(`/api/Document/UpdateDocument${reviewType}Status/${documentNum}`, {
                 documentNum: documentNum,
                 documentStatus: documentStatus,
+                note: '',
                 updatedBy: JSON.parse(localStorage.getItem('userLogin'))?.userId
             });
         } catch (error) {
