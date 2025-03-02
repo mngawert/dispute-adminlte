@@ -34,6 +34,10 @@ const InvoiceSearch = ({ accountNum, invoices, getInvoicesByAccountNum, selected
         return null;
     };
 
+    const formatNumber = (value) => {
+        return Number(value).toLocaleString();
+    };
+
     return (
         <>
             <div className="d-flex">
@@ -67,11 +71,11 @@ const InvoiceSearch = ({ accountNum, invoices, getInvoicesByAccountNum, selected
                                         <td>{invoice.invoiceNum}</td>
                                         <td>{new Date(invoice.billDtm).toLocaleDateString('en-GB')}</td>
                                         <td>{new Date(invoice.actualBillDtm).toLocaleDateString('en-GB')}</td>
-                                        <td>{invoice.invoiceNetMny}</td>
-                                        <td>{invoice.invoiceTaxMny}</td>
-                                        <td>{invoice.adjustedMny}</td>
-                                        <td>{invoice.writeOffMny}</td>
-                                        <td>{invoice.pendingAdjustmentMny}</td>
+                                        <td>{formatNumber(invoice.invoiceNetMny)}</td>
+                                        <td>{formatNumber(invoice.invoiceTaxMny)}</td>
+                                        <td>{formatNumber(invoice.adjustedMny)}</td>
+                                        <td>{formatNumber(invoice.writeOffMny)}</td>
+                                        <td>{formatNumber(invoice.pendingAdjustmentMny)}</td>
                                     </tr>
                                 ))}
                             </tbody>

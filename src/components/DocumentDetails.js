@@ -35,6 +35,10 @@ const DocumentDetails = ({ selectedDocument, adjustmentRequests }) => {
         return null;
     };
 
+    const formatNumber = (value) => {
+        return Number(value).toLocaleString();
+    };
+
     const totalAmount = sortedAdjustmentRequests.reduce((sum, adj) => sum + adj.disputeMny, 0).toFixed(2);
     const totalVAT = sortedAdjustmentRequests.reduce((sum, adj) => sum + (adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100)), 0).toFixed(2);
     const total = sortedAdjustmentRequests.reduce((sum, adj) => sum + (adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100)), 0).toFixed(2);
@@ -73,16 +77,16 @@ const DocumentDetails = ({ selectedDocument, adjustmentRequests }) => {
                                 <td>{adj.invoiceNum}</td>
                                 <td>{adj.serviceNum}</td>
                                 <td>{adj.adjustmentTypeName}</td>
-                                <td align='center'>{adj.disputeMny.toFixed(2)}</td>
-                                <td align='center'>{(adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100)).toFixed(2)}</td>
-                                <td align='center'>{(adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100)).toFixed(2)}</td>
+                                <td align='center'>{formatNumber(adj.disputeMny.toFixed(2))}</td>
+                                <td align='center'>{formatNumber((adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100)).toFixed(2))}</td>
+                                <td align='center'>{formatNumber((adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100)).toFixed(2))}</td>
                             </tr>
                         ))}
                         <tr>
                             <td colSpan="4" align='right'><strong>Total</strong></td>
-                            <td align='center'><strong>{totalAmount}</strong></td>
-                            <td align='center'><strong>{totalVAT}</strong></td>
-                            <td align='center'><strong>{total}</strong></td>
+                            <td align='center'><strong>{formatNumber(totalAmount)}</strong></td>
+                            <td align='center'><strong>{formatNumber(totalVAT)}</strong></td>
+                            <td align='center'><strong>{formatNumber(total)}</strong></td>
                         </tr>
                     </tbody>
                 </table>

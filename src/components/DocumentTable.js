@@ -34,6 +34,10 @@ const DocumentTable = ({ documents, selectedDocument, handleSelectDocument }) =>
         return null;
     };
 
+    const formatNumber = (value) => {
+        return Number(value).toLocaleString();
+    };
+
     return (
         <>
             <label className="mb-3">Documents:</label>
@@ -54,7 +58,7 @@ const DocumentTable = ({ documents, selectedDocument, handleSelectDocument }) =>
                             <tr key={index} onClick={() => handleSelectDocument(document)} className={document.documentNum === selectedDocument?.documentNum ? 'selected' : ''}>
                                 <td>{document.documentNum}</td>
                                 <td>{document.documentTypeDesc}</td>
-                                <td>{document.totalMny}</td>
+                                <td>{formatNumber(document.totalMny)}</td>
                                 <td>{document.createdByName}</td>
                                 <td>{new Date(document.createdDtm).toLocaleString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' })}</td>
                                 <td>{document.homeLocationCode}</td>
