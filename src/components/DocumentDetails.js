@@ -5,9 +5,18 @@ const DocumentDetails = ({ selectedDocument, adjustmentRequests }) => {
     const totalVAT = adjustmentRequests.reduce((sum, adj) => sum + (adj.disputeMny * 0.07), 0).toFixed(2);
     const total = adjustmentRequests.reduce((sum, adj) => sum + (adj.disputeMny * 1.07), 0).toFixed(2);
 
+    const getNoteContent = () => {
+        const notes = [
+            selectedDocument?.createNote,
+            selectedDocument?.reviewNote,
+            selectedDocument?.approveNote,
+            selectedDocument?.financeNote
+        ];
+        return notes.filter(note => note).join('\n');
+    };
+
     return (
         <>
-
             <label className="mb-3">Adjustments:</label>
 
             <div className="table-responsive" style={{ height: 300 }}>
@@ -45,7 +54,6 @@ const DocumentDetails = ({ selectedDocument, adjustmentRequests }) => {
                 </table>
             </div>
 
-            
             <label className="mb-3">Approval:</label>
             
             <div className="row">
@@ -109,6 +117,12 @@ const DocumentDetails = ({ selectedDocument, adjustmentRequests }) => {
                     <div className="form-group">
                         <label>Status</label>
                         <input type="text" className="form-control" readOnly value={selectedDocument?.documentStatus || ''} />
+                    </div>
+                </div>
+                <div className="col-sm-8">
+                    <div className="form-group">
+                        <label>Notes</label>
+                        <textarea className="form-control" rows={5} readOnly value={getNoteContent()} />
                     </div>
                 </div>
             </div>                        
