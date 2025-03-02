@@ -1,6 +1,39 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const DocumentTable = ({ documents, selectedDocument, handleSelectDocument }) => {
+    const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
+
+    const sortedDocuments = React.useMemo(() => {
+        let sortableDocuments = [...documents];
+        if (sortConfig.key !== null) {
+            sortableDocuments.sort((a, b) => {
+                if (a[sortConfig.key] < b[sortConfig.key]) {
+                    return sortConfig.direction === 'ascending' ? -1 : 1;
+                }
+                if (a[sortConfig.key] > b[sortConfig.key]) {
+                    return sortConfig.direction === 'ascending' ? 1 : -1;
+                }
+                return 0;
+            });
+        }
+        return sortableDocuments;
+    }, [documents, sortConfig]);
+
+    const requestSort = (key) => {
+        let direction = 'ascending';
+        if (sortConfig.key === key && sortConfig.direction === 'ascending') {
+            direction = 'descending';
+        }
+        setSortConfig({ key, direction });
+    };
+
+    const getSortIndicator = (key) => {
+        if (sortConfig.key === key) {
+            return sortConfig.direction === 'ascending' ? '▲' : '▼';
+        }
+        return null;
+    };
+
     return (
         <>
             <label className="mb-3">Documents:</label>
@@ -8,16 +41,16 @@ const DocumentTable = ({ documents, selectedDocument, handleSelectDocument }) =>
                 <table className="table table-head-fixed text-nowrap table-bordered table-hover">
                     <thead>
                         <tr>
-                            <th>Document Number</th>
-                            <th>Type</th>
-                            <th>Total Amount</th>
-                            <th>Created by</th>
-                            <th>Created date</th>
-                            <th>Location</th>
+                            <th className="sortable" onClick={() => requestSort('documentNum')}>Document Number {getSortIndicator('documentNum')}</th>
+                            <th className="sortable" onClick={() => requestSort('documentTypeDesc')}>Type {getSortIndicator('documentTypeDesc')}</th>
+                            <th className="sortable" onClick={() => requestSort('totalMny')}>Total Amount {getSortIndicator('totalMny')}</th>
+                            <th className="sortable" onClick={() => requestSort('createdByName')}>Created by {getSortIndicator('createdByName')}</th>
+                            <th className="sortable" onClick={() => requestSort('createdDtm')}>Created date {getSortIndicator('createdDtm')}</th>
+                            <th className="sortable" onClick={() => requestSort('homeLocationCode')}>Location {getSortIndicator('homeLocationCode')}</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {documents.map((document, index) => (
+                        {sortedDocuments.map((document, index) => (
                             <tr key={index} onClick={() => handleSelectDocument(document)} className={document.documentNum === selectedDocument?.documentNum ? 'selected' : ''}>
                                 <td>{document.documentNum}</td>
                                 <td>{document.documentTypeDesc}</td>

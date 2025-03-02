@@ -49,15 +49,15 @@ const InvoiceSearch = ({ accountNum, invoices, getInvoicesByAccountNum, selected
                         <table className="table table-head-fixed text-nowrap table-bordered table-hover">
                             <thead>
                                 <tr>
-                                    <th onClick={() => requestSort('billSeq')}>Bill {getSortIndicator('billSeq')}</th>
-                                    <th onClick={() => requestSort('invoiceNum')}>Invoice Number {getSortIndicator('invoiceNum')}</th>
-                                    <th onClick={() => requestSort('billDtm')}>Bill Month {getSortIndicator('billDtm')}</th>
-                                    <th onClick={() => requestSort('actualBillDtm')}>Actual Bill {getSortIndicator('actualBillDtm')}</th>
-                                    <th onClick={() => requestSort('invoiceNetMny')}>Invoice Amount {getSortIndicator('invoiceNetMny')}</th>
-                                    <th onClick={() => requestSort('invoiceTaxMny')}>VAT Amount {getSortIndicator('invoiceTaxMny')}</th>
-                                    <th onClick={() => requestSort('adjustedMny')}>Adjusted {getSortIndicator('adjustedMny')}</th>
-                                    <th onClick={() => requestSort('writeOffMny')}>Write Off {getSortIndicator('writeOffMny')}</th>
-                                    <th onClick={() => requestSort('pendingAdjustmentMny')}>Pending Adjust Amount {getSortIndicator('pendingAdjustmentMny')}</th>
+                                    <th className="sortable" onClick={() => requestSort('billSeq')}>Bill {getSortIndicator('billSeq')}</th>
+                                    <th className="sortable" onClick={() => requestSort('invoiceNum')}>Invoice Number {getSortIndicator('invoiceNum')}</th>
+                                    <th className="sortable" onClick={() => requestSort('billDtm')}>Bill Month {getSortIndicator('billDtm')}</th>
+                                    <th className="sortable" onClick={() => requestSort('actualBillDtm')}>Actual Bill {getSortIndicator('actualBillDtm')}</th>
+                                    <th className="sortable" onClick={() => requestSort('invoiceNetMny')}>Invoice Amount {getSortIndicator('invoiceNetMny')}</th>
+                                    <th className="sortable" onClick={() => requestSort('invoiceTaxMny')}>VAT Amount {getSortIndicator('invoiceTaxMny')}</th>
+                                    <th className="sortable" onClick={() => requestSort('adjustedMny')}>Adjusted {getSortIndicator('adjustedMny')}</th>
+                                    <th className="sortable" onClick={() => requestSort('writeOffMny')}>Write Off {getSortIndicator('writeOffMny')}</th>
+                                    <th className="sortable" onClick={() => requestSort('pendingAdjustmentMny')}>Pending Adjust Amount {getSortIndicator('pendingAdjustmentMny')}</th>
                                 </tr>
                             </thead>
                             <tbody>

@@ -100,3 +100,8 @@ textarea.form-control {
   font-size: 0.875rem; /* Adjust textarea font size */
   padding: 0.25rem 0.5rem; /* Adjust textarea padding */
 }
+
+
+.table th.sortable {
+  cursor: pointer;
+}
