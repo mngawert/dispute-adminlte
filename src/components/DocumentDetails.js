@@ -1,9 +1,10 @@
 import React from 'react';
+import { CPS_MAP_HASH } from '../contexts/Constants';
 
 const DocumentDetails = ({ selectedDocument, adjustmentRequests }) => {
     const totalAmount = adjustmentRequests.reduce((sum, adj) => sum + adj.disputeMny, 0).toFixed(2);
-    const totalVAT = adjustmentRequests.reduce((sum, adj) => sum + (adj.disputeMny * 0.07), 0).toFixed(2);
-    const total = adjustmentRequests.reduce((sum, adj) => sum + (adj.disputeMny * 1.07), 0).toFixed(2);
+    const totalVAT = adjustmentRequests.reduce((sum, adj) => sum + (adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100)), 0).toFixed(2);
+    const total = adjustmentRequests.reduce((sum, adj) => sum + (adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100)), 0).toFixed(2);
 
     const getNoteContent = () => {
         const notes = [
@@ -40,8 +41,8 @@ const DocumentDetails = ({ selectedDocument, adjustmentRequests }) => {
                                 <td>{adj.serviceNum}</td>
                                 <td>{adj.adjustmentTypeName}</td>
                                 <td align='center'>{adj.disputeMny.toFixed(2)}</td>
-                                <td align='center'>{(adj.disputeMny * 0.07).toFixed(2)}</td>
-                                <td align='center'>{(adj.disputeMny * 1.07).toFixed(2)}</td>
+                                <td align='center'>{(adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100)).toFixed(2)}</td>
+                                <td align='center'>{(adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100)).toFixed(2)}</td>
                             </tr>
                         ))}
                         <tr>

@@ -2,6 +2,10 @@ import React from "react";
 import { CPS_MAP_HASH } from '../contexts/Constants';
 
 const PendingDocument = ({ pendingDocument, adjustmentRequests, fetchPendingDocumentAndRequests, deleteAdjustmentRequest, updateDocumentStatus }) => {
+    const totalAmount = adjustmentRequests.reduce((sum, adj) => sum + adj.disputeMny, 0).toFixed(2);
+    const totalVAT = adjustmentRequests.reduce((sum, adj) => sum + (adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100)), 0).toFixed(2);
+    const total = adjustmentRequests.reduce((sum, adj) => sum + (adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100)), 0).toFixed(2);
+
     return (
         <div className="card">
             <div className="card-header border-0">
@@ -51,8 +55,8 @@ const PendingDocument = ({ pendingDocument, adjustmentRequests, fetchPendingDocu
                                     <td>{adj.invoiceNum}</td>
                                     <td>{adj.serviceNum}</td>
                                     <td align='center'>{adj.disputeMny.toFixed(2)}</td>
-                                    <td align='center'>{(adj.disputeMny * (  CPS_MAP_HASH[adj.cpsId]/100)).toFixed(2)}</td>
-                                    <td align='center'>{(adj.disputeMny * (1+CPS_MAP_HASH[adj.cpsId]/100)).toFixed(2)}</td>
+                                    <td align='center'>{(adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100)).toFixed(2)}</td>
+                                    <td align='center'>{(adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100)).toFixed(2)}</td>
                                     <td>
                                         <button className="btn btn-sm" onClick={() => deleteAdjustmentRequest(adj.documentSeq)}>
                                             <i className="fas fa-trash-alt"></i>
@@ -60,6 +64,13 @@ const PendingDocument = ({ pendingDocument, adjustmentRequests, fetchPendingDocu
                                     </td>
                                 </tr>
                             ))}
+                            <tr>
+                                <td colSpan="4" align='right'><strong>Total</strong></td>
+                                <td align='center'><strong>{totalAmount}</strong></td>
+                                <td align='center'><strong>{totalVAT}</strong></td>
+                                <td align='center'><strong>{total}</strong></td>
+                                <td></td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
