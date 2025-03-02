@@ -10,7 +10,7 @@ const MakeAdjustment = ({ adjustmentTypes, selectedAdjustmentType, setSelectedAd
 
     const handleAmountChange = (e) => {
         const value = e.target.value;
-        if (!isNaN(value) && value >= 0) {
+        if (!isNaN(value) && value >= 1 && value <= 9999) {
             setAdjustmentAmount(value);
         }
     }
@@ -35,7 +35,7 @@ const MakeAdjustment = ({ adjustmentTypes, selectedAdjustmentType, setSelectedAd
                     </div>
                     <div className="col-sm-3 form-group">
                         <label>Amount</label>
-                        <input type="number" className="form-control" value={adjustmentAmount} onChange={handleAmountChange} />
+                        <input type="number" className="form-control" value={adjustmentAmount} onChange={handleAmountChange} min="1" max="9999" />
                         <small>Thai Baht (excl VAT).</small>
                     </div>
                     <div className="col-sm-3 form-group">
