@@ -289,6 +289,9 @@ export const DocumentProvider = ({ children }) => {
         if (parseFloat(adjustmentAmount) <= 0) {
             return getTranslation('adjustmentAmountGreaterThanZero', language);
         }
+        if (parseFloat(adjustmentAmount) > 9999) {
+            return getTranslation('adjustmentAmountLessThanOrEqualTo9999', language);
+        }
         if (parseFloat(adjustmentAmount) > parseFloat(selectedInvoiceDataRC?.aggAmount ?? selectedInvoiceDataUsage?.aggAmount)) {
             return getTranslation('adjustmentAmountLessThanCharge', language);
         }

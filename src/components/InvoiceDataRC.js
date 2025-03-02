@@ -1,5 +1,10 @@
+import React from 'react';
 
 const InvoiceDataRC = ({ invoiceDataRC, selectedInvoiceDataRC, handleSelectInvoiceRC }) => {
+
+    const formatNumber = (value) => {
+        return Number(value).toLocaleString();
+    };
 
     return (
         <div className="form-group">
@@ -22,9 +27,9 @@ const InvoiceDataRC = ({ invoiceDataRC, selectedInvoiceDataRC, handleSelectInvoi
                             <td>{invoice.serviceNumber}</td>
                             <td>{invoice.productName}</td>
                             <td>{invoice.tariffName}</td>
-                            <td>{invoice.aggAmount}</td>
-                            <td>{invoice.costedAmount}</td>
-                            <td>{invoice.discountAmount}</td>
+                            <td>{formatNumber(invoice.aggAmount)}</td>
+                            <td>{formatNumber(invoice.costedAmount)}</td>
+                            <td>{formatNumber(invoice.discountAmount)}</td>
                         </tr>
                     ))}
                     </tbody>
