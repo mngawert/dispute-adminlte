@@ -5,6 +5,7 @@ import ContentHeader from '../components/ContentHeader'; // Adjust the import pa
 import DocumentTable from '../components/DocumentTable';
 import DocumentDetails from '../components/DocumentDetails';
 import SearchBox from '../components/SearchBox';
+import * as XLSX from 'xlsx';
 
 const SearchAdj = ({ myAdjust, title, fetchDataAtStart }) => {
     const [documentNum, setDocumentNum] = useState('');
@@ -86,6 +87,61 @@ const SearchAdj = ({ myAdjust, title, fetchDataAtStart }) => {
         }
     }
 
+    const exportToExcel = () => {
+        if (!selectedDocument || adjustmentRequests.length === 0) {
+            alert('Please select a document and ensure there are adjustment requests to export.');
+            return;
+        }
+
+        const workbook = XLSX.utils.book_new();
+
+        // Add selectedDocument sheet
+        const documentSheet = XLSX.utils.json_to_sheet([selectedDocument]);
+        XLSX.utils.book_append_sheet(workbook, documentSheet, 'Document');
+
+        // Add adjustmentRequests sheet
+        const adjustmentRequestsSheet = XLSX.utils.json_to_sheet(adjustmentRequests);
+        XLSX.utils.book_append_sheet(workbook, adjustmentRequestsSheet, 'Adjustments');
+
+        // Export to Excel
+        XLSX.writeFile(workbook, 'ExportedData.xlsx');
+    };
+
+    const exportAllToExcel = async () => {
+        if (documents.length === 0) {
+            alert('No documents to export.');
+            return;
+        }
+
+        const workbook = XLSX.utils.book_new();
+
+        // Add documents sheet
+        const documentsSheet = XLSX.utils.json_to_sheet(documents);
+        XLSX.utils.book_append_sheet(workbook, documentsSheet, 'Documents');
+
+        // Fetch adjustment requests for each document
+        const allAdjustmentRequests = [];
+        for (const doc of documents) {
+            try {
+                const response = await api.get(`/api/Adjustment/GetAdjustmentRequests`, {
+                    params: {
+                        documentNum: doc.documentNum
+                    }
+                });
+                allAdjustmentRequests.push(...response.data);
+            } catch (error) {
+                console.error(`Error fetching adjustment requests for document ${doc.documentNum}`, error);
+            }
+        }
+
+        // Add adjustmentRequests sheet
+        const allAdjustmentRequestsSheet = XLSX.utils.json_to_sheet(allAdjustmentRequests);
+        XLSX.utils.book_append_sheet(workbook, allAdjustmentRequestsSheet, 'Adjustments');
+
+        // Export to Excel
+        XLSX.writeFile(workbook, 'AllExportedData.xlsx');
+    };
+
     return (
         <div className="content-wrapper-x">
             {/* Content Header (Page header) */}
@@ -114,6 +170,10 @@ const SearchAdj = ({ myAdjust, title, fetchDataAtStart }) => {
                             />
                             <div className="card">
                                 <div className="card-body">
+                                    <div className="d-flex justify-content-end mb-3">
+                                        <button className="btn btn-default mr-2" onClick={exportToExcel}>Export Current</button>
+                                        <button className="btn btn-default" onClick={exportAllToExcel}>Export All Documents</button>
+                                    </div>
                                     <DocumentTable documents={documents} selectedDocument={selectedDocument} handleSelectDocument={handleSelectDocument} />
                                     <DocumentDetails selectedDocument={selectedDocument} adjustmentRequests={adjustmentRequests} />
                                 </div>
