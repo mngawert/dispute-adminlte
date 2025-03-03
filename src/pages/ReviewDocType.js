@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 
 const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, selectedDocument, reviewType, handleSelectDocument, handleUpdateDocumentStatus }) => {
     const [myNote, setMyNote] = useState('');
+    const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
 
     const filterDocumentsByType = (type) => {
         return documents.filter(doc => doc.documentTypeDesc === type);
@@ -37,9 +38,40 @@ const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, select
         return Number(value).toLocaleString();
     };
 
-    const totalAmount = adjustmentRequests.reduce((sum, adj) => sum + adj.disputeMny, 0).toFixed(2);
-    const totalVAT = adjustmentRequests.reduce((sum, adj) => sum + (adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100)), 0).toFixed(2);
-    const total = adjustmentRequests.reduce((sum, adj) => sum + (adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100)), 0).toFixed(2);
+    const sortedAdjustmentRequests = React.useMemo(() => {
+        let sortableAdjustmentRequests = [...adjustmentRequests];
+        if (sortConfig.key !== null) {
+            sortableAdjustmentRequests.sort((a, b) => {
+                if (a[sortConfig.key] < b[sortConfig.key]) {
+                    return sortConfig.direction === 'ascending' ? -1 : 1;
+                }
+                if (a[sortConfig.key] > b[sortConfig.key]) {
+                    return sortConfig.direction === 'ascending' ? 1 : -1;
+                }
+                return 0;
+            });
+        }
+        return sortableAdjustmentRequests;
+    }, [adjustmentRequests, sortConfig]);
+
+    const requestSort = (key) => {
+        let direction = 'ascending';
+        if (sortConfig.key === key && sortConfig.direction === 'ascending') {
+            direction = 'descending';
+        }
+        setSortConfig({ key, direction });
+    };
+
+    const getSortIndicator = (key) => {
+        if (sortConfig.key === key) {
+            return sortConfig.direction === 'ascending' ? '▲' : '▼';
+        }
+        return null;
+    };
+
+    const totalAmount = sortedAdjustmentRequests.reduce((sum, adj) => sum + adj.disputeMny, 0).toFixed(2);
+    const totalVAT = sortedAdjustmentRequests.reduce((sum, adj) => sum + (adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100)), 0).toFixed(2);
+    const total = sortedAdjustmentRequests.reduce((sum, adj) => sum + (adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100)), 0).toFixed(2);
 
     return (
         <div className="card">
@@ -89,17 +121,17 @@ const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, select
                                     <table className="table table-head-fixed text-nowrap table-bordered table-hover">
                                         <thead>
                                             <tr>
-                                                <th>Account Number</th>
-                                                <th>Invoice Number</th>
-                                                <th>Service Number</th>
-                                                <th>Adjustment Type</th>
-                                                <th>Amount</th>
-                                                <th>VAT</th>
-                                                <th>Total</th>
+                                                <th className="sortable" onClick={() => requestSort('accountNum')}>Account Number {getSortIndicator('accountNum')}</th>
+                                                <th className="sortable" onClick={() => requestSort('invoiceNum')}>Invoice Number {getSortIndicator('invoiceNum')}</th>
+                                                <th className="sortable" onClick={() => requestSort('serviceNum')}>Service Number {getSortIndicator('serviceNum')}</th>
+                                                <th className="sortable" onClick={() => requestSort('adjustmentTypeName')}>Adjustment Type {getSortIndicator('adjustmentTypeName')}</th>
+                                                <th className="sortable" onClick={() => requestSort('disputeMny')}>Amount {getSortIndicator('disputeMny')}</th>
+                                                <th className="sortable" onClick={() => requestSort('vat')}>VAT {getSortIndicator('vat')}</th>
+                                                <th className="sortable" onClick={() => requestSort('total')}>Total {getSortIndicator('total')}</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {adjustmentRequests.map((adj, index) => (
+                                            {sortedAdjustmentRequests.map((adj, index) => (
                                                 <tr key={index}>
                                                     <td>{adj.accountNum}</td>
                                                     <td>{adj.invoiceNum}</td>
