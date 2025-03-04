@@ -77,8 +77,10 @@ const AdjustMinus = ({documentType=DOCUMENT_TYPE.ADJUST_MINUS, documentTypeName=
         setSelectedInvoiceDataUsage({});
         setCostedEvents([]); setSelectedCostedEvent({});
         setSelectedInvoiceDataRC(data);
-        getAdjustmentTypesByProductCodeAndRevenueCode(data);
-        setAdjustmentAmount(data?.aggAmount);
+        getAdjustmentTypesByProductCodeAndRevenueCode(data);        
+
+        /** Dont need to set amount */
+        //setAdjustmentAmount(data?.aggAmount);
     }
 
     const handleSelectInvoiceUsage = (data) => {
@@ -86,12 +88,16 @@ const AdjustMinus = ({documentType=DOCUMENT_TYPE.ADJUST_MINUS, documentTypeName=
         setSelectedInvoiceDataUsage(data);
         setCostedEvents([]); setSelectedCostedEvent({});
         getAdjustmentTypesByProductCodeAndRevenueCode(data);
-        setAdjustmentAmount(data?.aggAmount);
+
+        /** Dont need to set amount */
+        //setAdjustmentAmount(data?.aggAmount);
     }
 
     const handleSelectCostedEvent = (data) => {
         setSelectedCostedEvent(data);
-        setAdjustmentAmount(data?.eventCostMny);
+
+        /** Dont need to set amount */
+        //setAdjustmentAmount(data?.eventCostMny);
     }
 
     const handleCreateAdjustmentRequest = async () => {

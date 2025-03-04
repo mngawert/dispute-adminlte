@@ -1,10 +1,7 @@
 import React from 'react';
+import { formatNumber } from '../utils/utils'; // Import the utility function
 
 const InvoiceDataUsage = ({ invoiceDataUsage, selectedInvoiceDataUsage, handleSelectInvoiceUsage }) => {
-
-    const formatNumber = (value) => {
-        return Number(value).toLocaleString();
-    };
 
     return (
         <div className="form-group">

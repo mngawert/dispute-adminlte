@@ -1,5 +1,6 @@
 import { CPS_MAP_HASH } from '../contexts/Constants';
 import React, { useState } from 'react';
+import { formatNumber } from '../utils/utils'; // Import the utility function
 
 const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, selectedDocument, reviewType, handleSelectDocument, handleUpdateDocumentStatus }) => {
     const [myNote, setMyNote] = useState('');
@@ -32,10 +33,6 @@ const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, select
 
     const resetMyNote = () => {
         setMyNote('');
-    };
-
-    const formatNumber = (value) => {
-        return Number(value).toLocaleString();
     };
 
     const sortedAdjustmentRequests = React.useMemo(() => {

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { formatNumber } from '../utils/utils'; // Import the utility function
 
 const InvoiceSearch = ({ accountNum, invoices, getInvoicesByAccountNum, selectedInvoice, handleSelectInvoice }) => {
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
@@ -32,10 +33,6 @@ const InvoiceSearch = ({ accountNum, invoices, getInvoicesByAccountNum, selected
             return sortConfig.direction === 'ascending' ? '▲' : '▼';
         }
         return null;
-    };
-
-    const formatNumber = (value) => {
-        return Number(value).toLocaleString();
     };
 
     return (

@@ -1,10 +1,7 @@
 import React from 'react';
+import { formatNumber } from '../utils/utils'; // Import the utility function
 
 const InvoiceDataRC = ({ invoiceDataRC, selectedInvoiceDataRC, handleSelectInvoiceRC }) => {
-
-    const formatNumber = (value) => {
-        return Number(value).toLocaleString();
-    };
 
     return (
         <div className="form-group">
@@ -23,7 +20,7 @@ const InvoiceDataRC = ({ invoiceDataRC, selectedInvoiceDataRC, handleSelectInvoi
                     </thead>
                     <tbody>
                     {invoiceDataRC.map((invoice, idx) => (
-                        <tr key={idx} onClick={() => handleSelectInvoiceRC(invoice)} className={invoice.productSeq === selectedInvoiceDataRC.productSeq && invoice.tariffName === selectedInvoiceDataRC.tariffName && invoice.callType === selectedInvoiceDataRC.callType ? 'selected' : ''} >
+                        <tr key={idx} onClick={() => handleSelectInvoiceRC(invoice)} className={invoice.productSeq === selectedInvoiceDataRC.productSeq && invoice.tariffName === selectedInvoiceDataRC.tariffName && invoice.callType === selectedInvoiceDataRC.callType ? 'selected' : ''}>
                             <td>{invoice.serviceNumber}</td>
                             <td>{invoice.productName}</td>
                             <td>{invoice.tariffName}</td>
