@@ -105,6 +105,11 @@ const SearchAdj = ({ myAdjust, title, fetchDataAtStart }) => {
         const adjustmentRequestsSheet = XLSX.utils.json_to_sheet(adjustmentRequestsWithTotal);
         XLSX.utils.book_append_sheet(workbook, adjustmentRequestsSheet, 'Adjustments');
 
+        // Add "Total" text in column C
+        const totalRowIndex = adjustmentRequestsWithTotal.length + 1;
+        adjustmentRequestsSheet[`C${totalRowIndex}`] = { t: 's', v: 'Total' };
+        //adjustmentRequestsSheet[`D${totalRowIndex}`] = { t: 'n', v: totalDisputeMny };
+
         // Export to Excel
         XLSX.writeFile(workbook, 'ExportedData.xlsx');
     };
@@ -141,6 +146,11 @@ const SearchAdj = ({ myAdjust, title, fetchDataAtStart }) => {
         const allAdjustmentRequestsWithTotal = [...allAdjustmentRequests, { disputeMny: totalDisputeMny }];
         const allAdjustmentRequestsSheet = XLSX.utils.json_to_sheet(allAdjustmentRequestsWithTotal);
         XLSX.utils.book_append_sheet(workbook, allAdjustmentRequestsSheet, 'Adjustments');
+
+        // Add "Total" text in column C
+        const totalRowIndex = allAdjustmentRequestsWithTotal.length + 1;
+        allAdjustmentRequestsSheet[`C${totalRowIndex}`] = { t: 's', v: 'Total' };
+        //allAdjustmentRequestsSheet[`D${totalRowIndex}`] = { t: 'n', v: totalDisputeMny };
 
         // Export to Excel
         XLSX.writeFile(workbook, 'AllExportedData.xlsx');
