@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { CPS_MAP_HASH } from '../contexts/Constants';
+import { formatNumber } from '../utils/utils'; // Import the utility function
 
 const DocumentDetails = ({ selectedDocument, adjustmentRequests }) => {
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
@@ -33,10 +34,6 @@ const DocumentDetails = ({ selectedDocument, adjustmentRequests }) => {
             return sortConfig.direction === 'ascending' ? '▲' : '▼';
         }
         return null;
-    };
-
-    const formatNumber = (value) => {
-        return Number(value).toLocaleString();
     };
 
     const totalAmount = sortedAdjustmentRequests.reduce((sum, adj) => sum + adj.disputeMny, 0).toFixed(2);

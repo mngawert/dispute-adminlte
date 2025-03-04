@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { formatNumber } from '../utils/utils'; // Import the utility function
 
 const DocumentTable = ({ documents, selectedDocument, handleSelectDocument }) => {
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
@@ -32,10 +33,6 @@ const DocumentTable = ({ documents, selectedDocument, handleSelectDocument }) =>
             return sortConfig.direction === 'ascending' ? '▲' : '▼';
         }
         return null;
-    };
-
-    const formatNumber = (value) => {
-        return Number(value).toLocaleString();
     };
 
     return (
