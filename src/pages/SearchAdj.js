@@ -100,7 +100,9 @@ const SearchAdj = ({ myAdjust, title, fetchDataAtStart }) => {
         XLSX.utils.book_append_sheet(workbook, documentSheet, 'Document');
 
         // Add adjustmentRequests sheet
-        const adjustmentRequestsSheet = XLSX.utils.json_to_sheet(adjustmentRequests);
+        const totalDisputeMny = adjustmentRequests.reduce((sum, adj) => sum + adj.disputeMny, 0);
+        const adjustmentRequestsWithTotal = [...adjustmentRequests, { disputeMny: totalDisputeMny }];
+        const adjustmentRequestsSheet = XLSX.utils.json_to_sheet(adjustmentRequestsWithTotal);
         XLSX.utils.book_append_sheet(workbook, adjustmentRequestsSheet, 'Adjustments');
 
         // Export to Excel
@@ -135,7 +137,9 @@ const SearchAdj = ({ myAdjust, title, fetchDataAtStart }) => {
         }
 
         // Add adjustmentRequests sheet
-        const allAdjustmentRequestsSheet = XLSX.utils.json_to_sheet(allAdjustmentRequests);
+        const totalDisputeMny = allAdjustmentRequests.reduce((sum, adj) => sum + adj.disputeMny, 0);
+        const allAdjustmentRequestsWithTotal = [...allAdjustmentRequests, { disputeMny: totalDisputeMny }];
+        const allAdjustmentRequestsSheet = XLSX.utils.json_to_sheet(allAdjustmentRequestsWithTotal);
         XLSX.utils.book_append_sheet(workbook, allAdjustmentRequestsSheet, 'Adjustments');
 
         // Export to Excel
