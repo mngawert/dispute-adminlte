@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { formatNumber } from '../utils/utils'; // Import the utility function
+import { formatNumber, formatDate } from '../utils/utils'; // Import the utility functions
 
 const DocumentTable = ({ documents, selectedDocument, handleSelectDocument }) => {
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
@@ -57,7 +57,7 @@ const DocumentTable = ({ documents, selectedDocument, handleSelectDocument }) =>
                                 <td>{document.documentTypeDesc}</td>
                                 <td>{formatNumber(document.totalMny)}</td>
                                 <td>{document.createdByName}</td>
-                                <td>{new Date(document.createdDtm).toLocaleString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' })}</td>
+                                <td>{formatDate(document.createdDtm)}</td>
                                 <td>{document.homeLocationCode}</td>
                             </tr>
                         ))}

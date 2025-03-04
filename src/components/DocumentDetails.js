@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { CPS_MAP_HASH } from '../contexts/Constants';
-import { formatNumber } from '../utils/utils'; // Import the utility function
+import { formatNumber, formatDate } from '../utils/utils'; // Import the utility functions
 
 const DocumentDetails = ({ selectedDocument, adjustmentRequests }) => {
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
@@ -98,7 +98,7 @@ const DocumentDetails = ({ selectedDocument, adjustmentRequests }) => {
                         <input type="text" className="form-control" readOnly value={selectedDocument?.reviewedByName || ''} />
                     </div>
                     <div className="form-group">
-                        <input type="text" className="form-control" readOnly value={selectedDocument?.reviewedDtm ? new Date(selectedDocument.reviewedDtm).toLocaleString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' }) : ''} />
+                        <input type="text" className="form-control" readOnly value={selectedDocument?.reviewedDtm ? formatDate(selectedDocument.reviewedDtm) : ''} />
                     </div>
                 </div>
                 <div className="col-sm-6 col-md-4 col-lg-2">
@@ -107,7 +107,7 @@ const DocumentDetails = ({ selectedDocument, adjustmentRequests }) => {
                         <input type="text" className="form-control" readOnly value={selectedDocument?.approvedByName || ''} />
                     </div>
                     <div className="form-group">
-                        <input type="text" className="form-control" readOnly value={selectedDocument?.approvedDtm ? new Date(selectedDocument.approvedDtm).toLocaleString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' }) : ''} />
+                        <input type="text" className="form-control" readOnly value={selectedDocument?.approvedDtm ? formatDate(selectedDocument.approvedDtm) : ''} />
                     </div>
                 </div>
                 <div className="col-sm-6 col-md-4 col-lg-2">
@@ -116,7 +116,7 @@ const DocumentDetails = ({ selectedDocument, adjustmentRequests }) => {
                         <input type="text" className="form-control" readOnly value={selectedDocument?.financeReviewedByName || ''} />
                     </div>
                     <div className="form-group">
-                        <input type="text" className="form-control" readOnly value={selectedDocument?.financeReviewedDtm ? new Date(selectedDocument.financeReviewedDtm).toLocaleString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' }) : ''} />
+                        <input type="text" className="form-control" readOnly value={selectedDocument?.financeReviewedDtm ? formatDate(selectedDocument.financeReviewedDtm) : ''} />
                     </div>
                 </div>
                 <div className="col-sm-6 col-md-4 col-lg-2">
