@@ -1,4 +1,6 @@
+import React from 'react';
 import { CPS_MAP_HASH } from "../contexts/Constants";
+import { formatNumber } from '../utils/utils'; // Import the utility function
 
 const MakeAdjustment = ({ adjustmentTypes, selectedAdjustmentType, setSelectedAdjustmentType, selectedCostedEvent, adjustmentNote, setAdjustmentNote, adjustmentAmount, setAdjustmentAmount, handleCreateAdjustmentRequest, documentType, selectedAccount }) => {
 
@@ -40,11 +42,11 @@ const MakeAdjustment = ({ adjustmentTypes, selectedAdjustmentType, setSelectedAd
                     </div>
                     <div className="col-sm-3 form-group">
                         <label>VAT</label>
-                        <input type="text" className="form-control" readOnly value={vat} />
+                        <input type="text" className="form-control" readOnly value={formatNumber(vat)} />
                     </div>
                     <div className="col-sm-3 form-group">
                         <label>Total</label>
-                        <input type="text" className="form-control" readOnly value={total} />
+                        <input type="text" className="form-control" readOnly value={formatNumber(total)} />
                     </div>
                 </div>
                 <div className="row">
