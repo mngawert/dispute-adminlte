@@ -5,7 +5,7 @@ import ContentHeader from '../components/ContentHeader'; // Adjust the import pa
 import DocumentTable from '../components/DocumentTable';
 import DocumentDetails from '../components/DocumentDetails';
 import SearchBox from '../components/SearchBox';
-import * as XLSX from 'xlsx';
+import { exportAdjustmentRequestsToExcel } from '../utils/exportUtils'; // Import the new export function
 
 const SearchAdj = ({ myAdjust, title, fetchDataAtStart }) => {
     const [documentNum, setDocumentNum] = useState('');
@@ -87,31 +87,13 @@ const SearchAdj = ({ myAdjust, title, fetchDataAtStart }) => {
         }
     }
 
-    const exportToExcel = () => {
-        if (!selectedDocument || adjustmentRequests.length === 0) {
-            alert('Please select a document and ensure there are adjustment requests to export.');
+    const exportToExcel = async () => {
+        if (!selectedDocument) {
+            alert('Please select a document to export.');
             return;
         }
 
-        const workbook = XLSX.utils.book_new();
-
-        // Add selectedDocument sheet
-        const documentSheet = XLSX.utils.json_to_sheet([selectedDocument]);
-        XLSX.utils.book_append_sheet(workbook, documentSheet, 'Document');
-
-        // Add adjustmentRequests sheet
-        const totalDisputeMny = adjustmentRequests.reduce((sum, adj) => sum + adj.disputeMny, 0);
-        const adjustmentRequestsWithTotal = [...adjustmentRequests, { disputeMny: totalDisputeMny }];
-        const adjustmentRequestsSheet = XLSX.utils.json_to_sheet(adjustmentRequestsWithTotal);
-        XLSX.utils.book_append_sheet(workbook, adjustmentRequestsSheet, 'Adjustments');
-
-        // Add "Total" text in column C
-        const totalRowIndex = adjustmentRequestsWithTotal.length + 1;
-        adjustmentRequestsSheet[`C${totalRowIndex}`] = { t: 's', v: 'Total' };
-        //adjustmentRequestsSheet[`D${totalRowIndex}`] = { t: 'n', v: totalDisputeMny };
-
-        // Export to Excel
-        XLSX.writeFile(workbook, 'ExportedData.xlsx');
+        await exportAdjustmentRequestsToExcel([selectedDocument.documentNum], 'ExportedData.xlsx');
     };
 
     const exportAllToExcel = async () => {
@@ -120,40 +102,8 @@ const SearchAdj = ({ myAdjust, title, fetchDataAtStart }) => {
             return;
         }
 
-        const workbook = XLSX.utils.book_new();
-
-        // Add documents sheet
-        const documentsSheet = XLSX.utils.json_to_sheet(documents);
-        XLSX.utils.book_append_sheet(workbook, documentsSheet, 'Documents');
-
-        // Fetch adjustment requests for each document
-        const allAdjustmentRequests = [];
-        for (const doc of documents) {
-            try {
-                const response = await api.get(`/api/Adjustment/GetAdjustmentRequests`, {
-                    params: {
-                        documentNum: doc.documentNum
-                    }
-                });
-                allAdjustmentRequests.push(...response.data);
-            } catch (error) {
-                console.error(`Error fetching adjustment requests for document ${doc.documentNum}`, error);
-            }
-        }
-
-        // Add adjustmentRequests sheet
-        const totalDisputeMny = allAdjustmentRequests.reduce((sum, adj) => sum + adj.disputeMny, 0);
-        const allAdjustmentRequestsWithTotal = [...allAdjustmentRequests, { disputeMny: totalDisputeMny }];
-        const allAdjustmentRequestsSheet = XLSX.utils.json_to_sheet(allAdjustmentRequestsWithTotal);
-        XLSX.utils.book_append_sheet(workbook, allAdjustmentRequestsSheet, 'Adjustments');
-
-        // Add "Total" text in column C
-        const totalRowIndex = allAdjustmentRequestsWithTotal.length + 1;
-        allAdjustmentRequestsSheet[`C${totalRowIndex}`] = { t: 's', v: 'Total' };
-        //allAdjustmentRequestsSheet[`D${totalRowIndex}`] = { t: 'n', v: totalDisputeMny };
-
-        // Export to Excel
-        XLSX.writeFile(workbook, 'AllExportedData.xlsx');
+        const documentNums = documents.map(doc => doc.documentNum);
+        await exportAdjustmentRequestsToExcel(documentNums, 'AllExportedData.xlsx');
     };
 
     return (
