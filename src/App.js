@@ -43,8 +43,8 @@ function App() {
           </Route>
 
           <Route element={ <MainLayout /> }>
-            <Route path="/" element={<Home />} />
-            <Route path="/home" element={<Home />} />
+            <Route path="/" element={<PrivateRoute element={<Home />} allowedRoles={['Admin', 'Creator', 'Reviewer', 'Approver', 'Finance']} />} />
+            <Route path="/home" element={<PrivateRoute element={<Home />} allowedRoles={['Admin', 'Creator', 'Reviewer', 'Approver', 'Finance']} />} />
             <Route path="/dispute" element={<Dispute />} />
             <Route path="/disputeBak" element={<DisputeBak />} />
             <Route path="/Create" element={ <PrivateRoute element={<Review reviewType="Create" prevDocumentStatus='Create-Pending' />} allowedRoles={['Admin', 'Creator']} /> } />
