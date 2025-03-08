@@ -1,10 +1,12 @@
 import { CPS_MAP_HASH } from '../contexts/Constants';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { formatNumber } from '../utils/utils'; // Import the utility function
 
 const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, selectedDocument, reviewType, handleSelectDocument, handleUpdateDocumentStatus }) => {
     const [myNote, setMyNote] = useState('');
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
+    const [selectedAdjustmentRequest, setSelectedAdjustmentRequest] = useState(null);
+    const [noteContent, setNoteContent] = useState('');
 
     const filterDocumentsByType = (type) => {
         return documents.filter(doc => doc.documentTypeDesc === type);
@@ -23,13 +25,22 @@ const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, select
 
     const getNoteContent = () => {
         const notes = [
-            selectedDocument?.createNote,
-            selectedDocument?.reviewNote,
-            selectedDocument?.approveNote,
-            selectedDocument?.financeNote
+            selectedAdjustmentRequest?.note ? `[Create] - ${selectedAdjustmentRequest.note}` : null,
+            selectedDocument?.reviewNote ? `[Review] - ${selectedDocument.reviewNote}` : null,
+            selectedDocument?.approveNote ? `[Approve] - ${selectedDocument.approveNote}` : null,
+            selectedDocument?.financeNote ? `[Finance] - ${selectedDocument.financeNote}` : null,
         ];
+
         return notes.filter(note => note).join('\n');
     };
+
+    useEffect(() => {
+        setNoteContent(getNoteContent());
+    }, [selectedAdjustmentRequest, selectedDocument]);
+
+    useEffect(() => {
+        setSelectedAdjustmentRequest(null);
+    }, [selectedDocument]);
 
     const resetMyNote = () => {
         setMyNote('');
@@ -64,6 +75,10 @@ const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, select
             return sortConfig.direction === 'ascending' ? '▲' : '▼';
         }
         return null;
+    };
+
+    const handleSelectAdjustmentRequest = (adj) => {
+        setSelectedAdjustmentRequest(adj);
     };
 
     const totalAmount = sortedAdjustmentRequests.reduce((sum, adj) => sum + adj.disputeMny, 0).toFixed(2);
@@ -129,7 +144,7 @@ const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, select
                                         </thead>
                                         <tbody>
                                             {sortedAdjustmentRequests.map((adj, index) => (
-                                                <tr key={index}>
+                                                <tr key={index} onClick={() => handleSelectAdjustmentRequest(adj)} className={selectedAdjustmentRequest === adj ? 'selected' : ''}>
                                                     <td>{adj.accountNum}</td>
                                                     <td>{adj.invoiceNum}</td>
                                                     <td>{adj.serviceNum}</td>
@@ -154,7 +169,7 @@ const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, select
                             <div className="col-sm-6">
                                 <div className="form-group">
                                     <label>Note</label>
-                                    <textarea className="form-control" rows={5} readOnly value={getNoteContent()} />
+                                    <textarea className="form-control" rows={5} readOnly value={noteContent} />
                                 </div>
                             </div>
                             <div className="col-sm-6">
