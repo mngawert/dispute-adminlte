@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { CPS_MAP_HASH } from '../contexts/Constants';
 import { formatNumber, formatDate } from '../utils/utils'; // Import the utility functions
 
 const DocumentDetails = ({ selectedDocument, adjustmentRequests }) => {
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
 
-    const sortedAdjustmentRequests = React.useMemo(() => {
+    const sortedAdjustmentRequests = useMemo(() => {
         let sortableAdjustmentRequests = [...adjustmentRequests];
         if (sortConfig.key !== null) {
             sortableAdjustmentRequests.sort((a, b) => {
@@ -42,10 +42,10 @@ const DocumentDetails = ({ selectedDocument, adjustmentRequests }) => {
 
     const getNoteContent = () => {
         const notes = [
-            selectedDocument?.createNote,
-            selectedDocument?.reviewNote,
-            selectedDocument?.approveNote,
-            selectedDocument?.financeNote
+            ...adjustmentRequests.map(adj => adj.note ? `[Create] - ${adj.note}` : null),
+            selectedDocument?.reviewNote ? `[Review] - ${selectedDocument.reviewNote}` : null,
+            selectedDocument?.approveNote ? `[Approve] - ${selectedDocument.approveNote}` : null,
+            selectedDocument?.financeNote ? `[Finance] - ${selectedDocument.financeNote}` : null,
         ];
         return notes.filter(note => note).join('\n');
     };
