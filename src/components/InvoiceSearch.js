@@ -3,9 +3,38 @@ import { formatNumber } from '../utils/utils'; // Import the utility function
 
 const InvoiceSearch = ({ accountNum, invoices, getInvoicesByAccountNum, selectedInvoice, handleSelectInvoice }) => {
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
+    const [filters, setFilters] = useState({
+        billSeq: '',
+        invoiceNum: '',
+        billDtm: '',
+        actualBillDtm: '',
+        invoiceNetMny: '',
+        invoiceTaxMny: '',
+        adjustedMny: '',
+        writeOffMny: '',
+        pendingAdjustmentMny: ''
+    });
+
+    const handleFilterChange = (e) => {
+        const { name, value } = e.target;
+        setFilters({
+            ...filters,
+            [name]: value
+        });
+    };
+
+    const filteredInvoices = invoices.filter(invoice => {
+        return Object.keys(filters).every(key => {
+            if (!filters[key]) return true;
+            if (key === 'billDtm' || key === 'actualBillDtm') {
+                return new Date(invoice[key]).toLocaleDateString('en-GB').includes(filters[key]);
+            }
+            return invoice[key].toString().toLowerCase().includes(filters[key].toLowerCase());
+        });
+    });
 
     const sortedInvoices = React.useMemo(() => {
-        let sortableInvoices = [...invoices];
+        let sortableInvoices = [...filteredInvoices];
         if (sortConfig.key !== null) {
             sortableInvoices.sort((a, b) => {
                 if (a[sortConfig.key] < b[sortConfig.key]) {
@@ -18,7 +47,7 @@ const InvoiceSearch = ({ accountNum, invoices, getInvoicesByAccountNum, selected
             });
         }
         return sortableInvoices;
-    }, [invoices, sortConfig]);
+    }, [filteredInvoices, sortConfig]);
 
     const requestSort = (key) => {
         let direction = 'ascending';
@@ -59,6 +88,17 @@ const InvoiceSearch = ({ accountNum, invoices, getInvoicesByAccountNum, selected
                                     <th className="sortable" onClick={() => requestSort('adjustedMny')}>Adjusted {getSortIndicator('adjustedMny')}</th>
                                     <th className="sortable" onClick={() => requestSort('writeOffMny')}>Write Off {getSortIndicator('writeOffMny')}</th>
                                     <th className="sortable" onClick={() => requestSort('pendingAdjustmentMny')}>Pending Adjust Amount {getSortIndicator('pendingAdjustmentMny')}</th>
+                                </tr>
+                                <tr>
+                                    <th><input type="text" name="billSeq" value={filters.billSeq} onChange={handleFilterChange} placeholder="Filter" className="form-control" /></th>
+                                    <th><input type="text" name="invoiceNum" value={filters.invoiceNum} onChange={handleFilterChange} placeholder="Filter" className="form-control" /></th>
+                                    <th><input type="text" name="billDtm" value={filters.billDtm} onChange={handleFilterChange} placeholder="Filter" className="form-control" /></th>
+                                    <th><input type="text" name="actualBillDtm" value={filters.actualBillDtm} onChange={handleFilterChange} placeholder="Filter" className="form-control" /></th>
+                                    <th><input type="text" name="invoiceNetMny" value={filters.invoiceNetMny} onChange={handleFilterChange} placeholder="Filter" className="form-control" /></th>
+                                    <th><input type="text" name="invoiceTaxMny" value={filters.invoiceTaxMny} onChange={handleFilterChange} placeholder="Filter" className="form-control" /></th>
+                                    <th><input type="text" name="adjustedMny" value={filters.adjustedMny} onChange={handleFilterChange} placeholder="Filter" className="form-control" /></th>
+                                    <th><input type="text" name="writeOffMny" value={filters.writeOffMny} onChange={handleFilterChange} placeholder="Filter" className="form-control" /></th>
+                                    <th><input type="text" name="pendingAdjustmentMny" value={filters.pendingAdjustmentMny} onChange={handleFilterChange} placeholder="Filter" className="form-control" /></th>
                                 </tr>
                             </thead>
                             <tbody>
