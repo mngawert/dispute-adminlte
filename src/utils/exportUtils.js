@@ -2,24 +2,27 @@ import * as XLSX from 'xlsx';
 import api from '../api';
 
 const headers = {
-    accountNum: 'Account Num',
-    disputeDtm: 'Dispute Date Time',
-    billSeq: 'Bill Sequence',
-    disputeMny: 'Dispute Money',
-    productId: 'Product ID',
-    cpsId: 'CPS ID',
-    productSeq: 'Product Sequence',
-    eventRef: 'Event Reference',
-    eventTypeId: 'Event Type ID',
-    adjustmentTypeId: 'Adjustment Type ID',
-    serviceNum: 'Service Number',
-    invoiceNum: 'Invoice Number',
-    disputeSeq: 'Dispute Sequence',
-    adjustmentSeq: 'Adjustment Sequence',
     documentNum: 'Document Number',
-    requestStatus: 'Request Status',
-    documentSeq: 'Document Sequence',
-    adjustmentTypeName: 'Adjustment Type Name',
+    createdBy: 'Created By',
+    createdDtm: 'Created Date Time',
+    reviewedBy: 'Reviewed By',
+    reviewedDtm: 'Reviewed Date Time',
+    approvedBy: 'Approved By',
+    approvedDtm: 'Approved Date Time',
+    financeReviewedBy: 'Finance Reviewed By',
+    financeReviewedDtm: 'Finance Reviewed Date Time',
+    sapDocNum: 'SAP Document Number',
+    sapDocDate: 'SAP Document Date',
+    idx: 'Index',
+    accountNum: 'Account Number',
+    serviceNum: 'Service Number',
+    adjustmentTypeName: 'Adjustment Type',
+    amount: 'Amount',
+    vat: 'VAT',
+    total: 'Total',
+    status: 'Status',
+    comments: 'Comments',
+    errorMessage: 'Error Message',
     // Add other headers as needed
 };
 
@@ -41,7 +44,7 @@ export const exportAdjustmentRequestsToExcel = async (documentNums, fileName) =>
         const allAdjustmentRequests = [];
         for (const documentNum of documentNums) {
             try {
-                const response = await api.get(`/api/Adjustment/GetAdjustmentRequests`, {
+                const response = await api.get(`/api/Adjustment/GetAdjustmentRequestsReport`, {
                     params: {
                         documentNum: documentNum
                     }
@@ -72,24 +75,33 @@ export const exportAdjustmentRequestsToExcel = async (documentNums, fileName) =>
         // Convert headers
         const convertedData = convertHeaders(allAdjustmentRequests);
 
+        // Calculate totals
+        const totalAmount = allAdjustmentRequests.reduce((sum, adj) => sum + (adj.amount || 0), 0);
+        const totalVAT = allAdjustmentRequests.reduce((sum, adj) => sum + (adj.vat || 0), 0);
+        const totalOverall = allAdjustmentRequests.reduce((sum, adj) => sum + (adj.total || 0), 0);
+
+        // Add totals row
+        const allAdjustmentRequestsWithTotal = [
+            ...convertedData,
+            {
+                'Adjustment Type': 'Summary',
+                'Amount': totalAmount,
+                'VAT': totalVAT,
+                'Total': totalOverall
+            }
+        ];
+
         // Add adjustmentRequests sheet
-        const totalDisputeMny = allAdjustmentRequests.reduce((sum, adj) => sum + (adj.disputeMny || 0), 0);
-        const allAdjustmentRequestsWithTotal = [...convertedData, { 'Dispute Money': totalDisputeMny }];
         const allAdjustmentRequestsSheet = XLSX.utils.json_to_sheet(allAdjustmentRequestsWithTotal);
         XLSX.utils.book_append_sheet(workbook, allAdjustmentRequestsSheet, 'Adjustments');
 
-        // Add "Total" text in column C
-        const totalRowIndex = allAdjustmentRequestsWithTotal.length + 1;
-        allAdjustmentRequestsSheet[`C${totalRowIndex}`] = { t: 's', v: 'Total' };
-        allAdjustmentRequestsSheet[`D${totalRowIndex}`] = { t: 'n', v: totalDisputeMny };
-
-        // Set column widths considering headers
+        // Set column widths considering headers and adding extra width
         const headerKeys = Object.keys(headers);
-        const maxWidths = headerKeys.map(key => headers[key].length);
+        const maxWidths = headerKeys.map(key => headers[key].length + 5); // Adding extra width
         allAdjustmentRequestsWithTotal.forEach(row => {
             Object.keys(row).forEach((key, colIdx) => {
                 const value = row[key] ? row[key].toString() : '';
-                maxWidths[colIdx] = Math.max(maxWidths[colIdx], value.length);
+                maxWidths[colIdx] = Math.max(maxWidths[colIdx], value.length + 5); // Adding extra width
             });
         });
         allAdjustmentRequestsSheet['!cols'] = maxWidths.map(width => ({ wch: width }));

@@ -142,14 +142,10 @@ const SearchAdj = ({ myAdjust, title, fetchDataAtStart }) => {
                                     <DocumentDetails selectedDocument={selectedDocument} adjustmentRequests={adjustmentRequests} />
                                 </div>
                             </div>
-                            {/* END CONTENT */}
                         </div>
                     </div>
-                    {/* /.row */}
                 </div>
-                {/* /.container-fluid */}
             </div>
-            {/* /.content */}
         </div>
     );
 }
