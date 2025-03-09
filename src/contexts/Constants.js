@@ -24,7 +24,7 @@ export const DOCUMENT_STATUS_LIST = [
 ];
 
 export const SEARCH_BY_LIST = [
-  { name: 'Document Number', value: 'DocumentNum' },
+  { name: 'Document Sequence', value: 'DocumentNum' },
   { name: 'Account Number', value: 'AccountNum' },
   { name: 'Invoice Number', value: 'InvoiceNum' },
   { name: 'Service Number', value: 'ServiceNum' }

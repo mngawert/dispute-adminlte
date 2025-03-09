@@ -42,10 +42,10 @@ const DocumentDetails = ({ selectedDocument, adjustmentRequests }) => {
 
     const getNoteContent = () => {
         const notes = [
-            ...adjustmentRequests.map(adj => adj.note ? `[Create] - ${adj.note}` : null),
-            selectedDocument?.reviewNote ? `[Review] - ${selectedDocument.reviewNote}` : null,
-            selectedDocument?.approveNote ? `[Approve] - ${selectedDocument.approveNote}` : null,
-            selectedDocument?.financeNote ? `[Finance] - ${selectedDocument.financeNote}` : null,
+            ...adjustmentRequests.map(adj => adj.note ? `[Creator]: ${adj.note}` : null),
+            selectedDocument?.reviewNote ? `[Reviewer]: ${selectedDocument.reviewNote}` : null,
+            selectedDocument?.approveNote ? `[Approver]: ${selectedDocument.approveNote}` : null,
+            selectedDocument?.financeNote ? `[Financial Reviewer]: ${selectedDocument.financeNote}` : null,
         ];
         return notes.filter(note => note).join('\n');
     };
@@ -124,10 +124,10 @@ const DocumentDetails = ({ selectedDocument, adjustmentRequests }) => {
                 <div className="col-sm-6 col-md-4 col-lg-2">
                     <div className="form-group mb-2">
                         <label>Rejected by</label>
-                        <input type="text" className="form-control" readOnly />
+                        <input type="text" className="form-control" readOnly value={selectedDocument?.rejectedByName || ''} />
                     </div>
                     <div className="form-group">
-                        <input type="text" className="form-control" readOnly />
+                        <input type="text" className="form-control" readOnly value={selectedDocument?.rejectedDtm ? formatDate(selectedDocument.rejectedDtm) : ''} />
                     </div>
                 </div>
                 <div className="col-sm-6 col-md-4 col-lg-2">

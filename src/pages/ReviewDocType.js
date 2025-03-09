@@ -25,10 +25,10 @@ const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, select
 
     const getNoteContent = () => {
         const notes = [
-            selectedAdjustmentRequest?.note ? `[Create] - ${selectedAdjustmentRequest.note}` : null,
-            selectedDocument?.reviewNote ? `[Review] - ${selectedDocument.reviewNote}` : null,
-            selectedDocument?.approveNote ? `[Approve] - ${selectedDocument.approveNote}` : null,
-            selectedDocument?.financeNote ? `[Finance] - ${selectedDocument.financeNote}` : null,
+            selectedAdjustmentRequest?.note ? `[Creator]: ${selectedAdjustmentRequest.note}` : null,
+            selectedDocument?.reviewNote ? `[Reviewer]: ${selectedDocument.reviewNote}` : null,
+            selectedDocument?.approveNote ? `[Approver]: ${selectedDocument.approveNote}` : null,
+            selectedDocument?.financeNote ? `[Financial Reviewer]: ${selectedDocument.financeNote}` : null,
         ];
 
         return notes.filter(note => note).join('\n');
@@ -84,6 +84,14 @@ const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, select
     const totalAmount = sortedAdjustmentRequests.reduce((sum, adj) => sum + adj.disputeMny, 0).toFixed(2);
     const totalVAT = sortedAdjustmentRequests.reduce((sum, adj) => sum + (adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100)), 0).toFixed(2);
     const total = sortedAdjustmentRequests.reduce((sum, adj) => sum + (adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100)), 0).toFixed(2);
+
+    const handleReject = () => {
+        if (!myNote.trim()) {
+            alert('My Note is required to reject the document.');
+            return;
+        }
+        handleUpdateDocumentStatus(selectedDocument, `${reviewType}-Reject`, myNote, resetMyNote);
+    };
 
     return (
         <div className="card">
@@ -184,7 +192,7 @@ const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, select
                                 <div className="form-inline mt-4">
                                     <p className="ml-auto mr-auto flex-column">
                                         <button type="button" className="btn btn-primary mr-1" onClick={() => handleUpdateDocumentStatus(selectedDocument, `${reviewType}-Accept`, myNote, resetMyNote)} >Accept Selected</button>
-                                        <button type="button" className="btn btn-default" onClick={() => handleUpdateDocumentStatus(selectedDocument, `${reviewType}-Reject`, myNote, resetMyNote)} >Reject Selected</button>
+                                        <button type="button" className="btn btn-default" onClick={handleReject} >Reject Selected</button>
                                     </p>
                                 </div>
                             </div>
