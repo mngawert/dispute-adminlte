@@ -53,21 +53,8 @@ const PendingDocument = ({ pendingDocument, adjustmentRequests, fetchPendingDocu
                     <div className="form-group col-sm-4">
                         <strong>Current sequence:</strong> {pendingDocument?.documentNum}
                     </div>
-                    <div className="form-group col-sm-4" align="right">
-                        <button 
-                            type="button" 
-                            className="btn btn-default" 
-                            onClick={async () => {
-                                await updateDocumentStatus(pendingDocument.documentNum, 'Create', 'Create-Accept');
-                                await fetchPendingDocumentAndRequests(pendingDocument.documentType);
-                            }} 
-                            disabled={adjustmentRequests.length === 0}
-                        >
-                            Submit document
-                        </button>
-                    </div>
                 </div>
-                <div className="table-responsive" style={{ height: 300 }}>
+                <div className="table-responsive" style={{ maxHeight: 300 }}>
                     <table className="table table-head-fixed text-nowrap table-bordered table-hover">
                         <thead>
                             <tr>
@@ -107,6 +94,21 @@ const PendingDocument = ({ pendingDocument, adjustmentRequests, fetchPendingDocu
                             </tr>
                         </tbody>
                     </table>
+                </div>
+                <div className="row mt-3">
+                    <div className="col-12 text-left">
+                        <button 
+                            type="button" 
+                            className="btn btn-default" 
+                            onClick={async () => {
+                                await updateDocumentStatus(pendingDocument.documentNum, 'Create', 'Create-Accept');
+                                await fetchPendingDocumentAndRequests(pendingDocument.documentType);
+                            }} 
+                            disabled={adjustmentRequests.length === 0}
+                        >
+                            Submit document
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
