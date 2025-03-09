@@ -61,7 +61,7 @@ const InvoiceSearch = ({ accountNum, invoices, getInvoicesByAccountNum, selected
         if (sortConfig.key === key) {
             return sortConfig.direction === 'ascending' ? '▲' : '▼';
         }
-        return null;
+        return '⇅';
     };
 
     return (
@@ -79,26 +79,17 @@ const InvoiceSearch = ({ accountNum, invoices, getInvoicesByAccountNum, selected
                         <table className="table table-head-fixed text-nowrap table-bordered table-hover">
                             <thead>
                                 <tr>
-                                    <th className="sortable" onClick={() => requestSort('billSeq')}>Bill {getSortIndicator('billSeq')}</th>
-                                    <th className="sortable" onClick={() => requestSort('invoiceNum')}>Invoice Number {getSortIndicator('invoiceNum')}</th>
-                                    <th className="sortable" onClick={() => requestSort('billDtm')}>Bill Month {getSortIndicator('billDtm')}</th>
-                                    <th className="sortable" onClick={() => requestSort('actualBillDtm')}>Actual Bill {getSortIndicator('actualBillDtm')}</th>
-                                    <th className="sortable" onClick={() => requestSort('invoiceNetMny')}>Invoice Amount {getSortIndicator('invoiceNetMny')}</th>
-                                    <th className="sortable" onClick={() => requestSort('invoiceTaxMny')}>VAT Amount {getSortIndicator('invoiceTaxMny')}</th>
-                                    <th className="sortable" onClick={() => requestSort('adjustedMny')}>Adjusted {getSortIndicator('adjustedMny')}</th>
-                                    <th className="sortable" onClick={() => requestSort('writeOffMny')}>Write Off {getSortIndicator('writeOffMny')}</th>
-                                    <th className="sortable" onClick={() => requestSort('pendingAdjustmentMny')}>Pending Adjust Amount {getSortIndicator('pendingAdjustmentMny')}</th>
-                                </tr>
-                                <tr>
-                                    <th><input type="text" name="billSeq" value={filters.billSeq} onChange={handleFilterChange} placeholder="Filter" className="form-control" /></th>
-                                    <th><input type="text" name="invoiceNum" value={filters.invoiceNum} onChange={handleFilterChange} placeholder="Filter" className="form-control" /></th>
-                                    <th><input type="text" name="billDtm" value={filters.billDtm} onChange={handleFilterChange} placeholder="Filter" className="form-control" /></th>
-                                    <th><input type="text" name="actualBillDtm" value={filters.actualBillDtm} onChange={handleFilterChange} placeholder="Filter" className="form-control" /></th>
-                                    <th><input type="text" name="invoiceNetMny" value={filters.invoiceNetMny} onChange={handleFilterChange} placeholder="Filter" className="form-control" /></th>
-                                    <th><input type="text" name="invoiceTaxMny" value={filters.invoiceTaxMny} onChange={handleFilterChange} placeholder="Filter" className="form-control" /></th>
-                                    <th><input type="text" name="adjustedMny" value={filters.adjustedMny} onChange={handleFilterChange} placeholder="Filter" className="form-control" /></th>
-                                    <th><input type="text" name="writeOffMny" value={filters.writeOffMny} onChange={handleFilterChange} placeholder="Filter" className="form-control" /></th>
-                                    <th><input type="text" name="pendingAdjustmentMny" value={filters.pendingAdjustmentMny} onChange={handleFilterChange} placeholder="Filter" className="form-control" /></th>
+                                    {['billSeq', 'invoiceNum', 'billDtm', 'actualBillDtm', 'invoiceNetMny', 'invoiceTaxMny', 'adjustedMny', 'writeOffMny', 'pendingAdjustmentMny'].map((key) => (
+                                        <th key={key} className="sortable">
+                                            <div className="d-flex flex-column">
+                                                <div className="d-flex justify-content-between align-items-center">
+                                                    <span onClick={() => requestSort(key)} style={{ cursor: 'pointer' }}>{key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
+                                                     {getSortIndicator(key)}</span>
+                                                </div>
+                                                <input type="text" name={key} value={filters[key]} onChange={handleFilterChange} placeholder="Filter" className="form-control" />
+                                            </div>
+                                        </th>
+                                    ))}
                                 </tr>
                             </thead>
                             <tbody>
