@@ -61,7 +61,8 @@ const InvoiceSearch = ({ accountNum, invoices, getInvoicesByAccountNum, selected
         if (sortConfig.key === key) {
             return sortConfig.direction === 'ascending' ? '▲' : '▼';
         }
-        return '⇅';
+        //return '⇅';
+        return null;
     };
 
     return (
