@@ -106,7 +106,7 @@ const Review = ({ reviewType, prevDocumentStatus }) => {
               {/* START CONTENT */}
               <div className="form-inline">
                 <p className="ml-auto flex-column text-right">
-                  <input type="text" className="form-control mr-1" placeholder="Document Number" onChange={handleInputChange} value={documentNum} />
+                  <input type="text" className="form-control mr-1" placeholder="Document Sequence" onChange={handleInputChange} value={documentNum} />
                   <button type="button" className="btn btn-primary mr-1" onClick={handleSearch} >Search</button>
                   {/* <button type="button" className="btn btn-default">Get more</button> */}
                 </p>

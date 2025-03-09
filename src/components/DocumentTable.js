@@ -42,7 +42,7 @@ const DocumentTable = ({ documents, selectedDocument, handleSelectDocument }) =>
                 <table className="table table-head-fixed text-nowrap table-bordered table-hover">
                     <thead>
                         <tr>
-                            <th className="sortable" onClick={() => requestSort('documentNum')}>Document Number {getSortIndicator('documentNum')}</th>
+                            <th className="sortable" onClick={() => requestSort('documentNum')}>Document Sequence {getSortIndicator('documentNum')}</th>
                             <th className="sortable" onClick={() => requestSort('documentTypeDesc')}>Type {getSortIndicator('documentTypeDesc')}</th>
                             <th className="sortable" onClick={() => requestSort('totalMny')}>Total Amount {getSortIndicator('totalMny')}</th>
                             <th className="sortable" onClick={() => requestSort('createdByName')}>Created by {getSortIndicator('createdByName')}</th>

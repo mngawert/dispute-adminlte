@@ -93,7 +93,7 @@ const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, select
                         <p className="mb-4">Select adjustments you wish to Accept action or Reject:</p>
                         <div className="row">
                             <div className="col-sm-4 col-lg-3">
-                                <label>Document Number</label>
+                                <label>Document Sequence</label>
                                 <div className="table-responsive" style={{ height: 400, border: '1px solid #dee2e6' }}>
                                     <table className="table table-as-list text-nowrap table-hover">
                                         <tbody>
@@ -110,7 +110,7 @@ const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, select
                                 <div className="row">
                                     <div className="col-sm-6">
                                         <div className="form-group">
-                                            <label>Document Number</label>
+                                            <label>Document Sequence</label>
                                             <input type="text" className="form-control" readOnly value={selectedDocument?.documentNum ?? ''} />
                                         </div>
                                         <div className="form-group">
