@@ -15,6 +15,7 @@ const headers = {
     sapDocDate: 'SAP Doc Date',
     idx: 'Index',
     accountNum: 'Account Number',
+    invoiceNum: 'Invoice Number',
     serviceNum: 'Service Number',
     adjustmentTypeName: 'Adjustment Type',
     amount: 'Amount',
