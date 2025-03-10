@@ -24,19 +24,29 @@ const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, select
     };
 
     const getNoteContent = () => {
-        const notes = [
-            selectedAdjustmentRequest?.note ? `[Creator]: ${selectedAdjustmentRequest.note}` : null,
-            selectedDocument?.reviewNote ? `[Reviewer]: ${selectedDocument.reviewNote}` : null,
-            selectedDocument?.approveNote ? `[Approver]: ${selectedDocument.approveNote}` : null,
-            selectedDocument?.financeNote ? `[Financial Reviewer]: ${selectedDocument.financeNote}` : null,
-        ];
-
-        return notes.filter(note => note).join('\n');
+        if (selectedAdjustmentRequest) {
+            const notes = [
+                selectedAdjustmentRequest?.note ? `[Creator]: ${selectedAdjustmentRequest.note}` : null,
+                selectedDocument?.reviewNote ? `[Reviewer]: ${selectedDocument.reviewNote}` : null,
+                selectedDocument?.approveNote ? `[Approver]: ${selectedDocument.approveNote}` : null,
+                selectedDocument?.financeNote ? `[Financial Reviewer]: ${selectedDocument.financeNote}` : null,
+            ];
+            return notes.filter(note => note).join('\n');
+        } else if (selectedDocument) {
+            const notes = [
+                ...adjustmentRequests.map(adj => adj.note ? `[Creator]: ${adj.note}` : null),
+                selectedDocument?.reviewNote ? `[Reviewer]: ${selectedDocument.reviewNote}` : null,
+                selectedDocument?.approveNote ? `[Approver]: ${selectedDocument.approveNote}` : null,
+                selectedDocument?.financeNote ? `[Financial Reviewer]: ${selectedDocument.financeNote}` : null,
+            ];
+            return notes.filter(note => note).join('\n');
+        }
+        return '';
     };
 
     useEffect(() => {
         setNoteContent(getNoteContent());
-    }, [selectedAdjustmentRequest, selectedDocument]);
+    }, [selectedAdjustmentRequest, selectedDocument, adjustmentRequests]);
 
     useEffect(() => {
         setSelectedAdjustmentRequest(null);
