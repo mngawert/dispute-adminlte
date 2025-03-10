@@ -14,6 +14,7 @@ const InvoiceSearch = ({ accountNum, invoices, getInvoicesByAccountNum, selected
         writeOffMny: '',
         pendingAdjustmentMny: ''
     });
+    const [showFilters, setShowFilters] = useState(false);
 
     const handleFilterChange = (e) => {
         const { name, value } = e.target;
@@ -61,8 +62,11 @@ const InvoiceSearch = ({ accountNum, invoices, getInvoicesByAccountNum, selected
         if (sortConfig.key === key) {
             return sortConfig.direction === 'ascending' ? '▲' : '▼';
         }
-        //return '⇅';
         return null;
+    };
+
+    const toggleFilters = () => {
+        setShowFilters(!showFilters);
     };
 
     return (
@@ -72,6 +76,9 @@ const InvoiceSearch = ({ accountNum, invoices, getInvoicesByAccountNum, selected
                     <button type="button" className="btn btn-default" onClick={() => getInvoicesByAccountNum(accountNum)}>View Account's Invoices</button>
                 </p>
                 <p className="ml-auto d-flex flex-column text-right">
+                    <button type="button" className="btn btn-default" onClick={toggleFilters}>
+                        <i className={`fas ${showFilters ? 'fa-times' : 'fa-filter'}`}></i>
+                    </button>
                 </p>
             </div>
             <div className="row mb-5">
@@ -82,16 +89,22 @@ const InvoiceSearch = ({ accountNum, invoices, getInvoicesByAccountNum, selected
                                 <tr>
                                     {['billSeq', 'invoiceNum', 'billDtm', 'actualBillDtm', 'invoiceNetMny', 'invoiceTaxMny', 'adjustedMny', 'writeOffMny', 'pendingAdjustmentMny'].map((key) => (
                                         <th key={key} className="sortable">
-                                            <div className="d-flex flex-column">
-                                                <div className="d-flex justify-content-between align-items-center">
-                                                    <span onClick={() => requestSort(key)} style={{ cursor: 'pointer' }}>{key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
-                                                     {getSortIndicator(key)}</span>
-                                                </div>
-                                                <input type="text" name={key} value={filters[key]} onChange={handleFilterChange} placeholder="Filter" className="form-control" />
+                                            <div className="d-flex justify-content-between align-items-center">
+                                                <span onClick={() => requestSort(key)} style={{ cursor: 'pointer' }}>{key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
+                                                 {getSortIndicator(key)}</span>
                                             </div>
                                         </th>
                                     ))}
                                 </tr>
+                                {showFilters && (
+                                    <tr>
+                                        {['billSeq', 'invoiceNum', 'billDtm', 'actualBillDtm', 'invoiceNetMny', 'invoiceTaxMny', 'adjustedMny', 'writeOffMny', 'pendingAdjustmentMny'].map((key) => (
+                                            <th key={key}>
+                                                <input type="text" name={key} value={filters[key]} onChange={handleFilterChange} placeholder="Filter" className="form-control" />
+                                            </th>
+                                        ))}
+                                    </tr>
+                                )}
                             </thead>
                             <tbody>
                                 {sortedInvoices.map((invoice, index) => (
