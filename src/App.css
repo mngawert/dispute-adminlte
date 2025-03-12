@@ -38,7 +38,6 @@
   }
 }
 
-
 /* Container for the table to make it scrollable */ 
 
 .table-container {
@@ -66,10 +65,8 @@ table thead th {
 
 table tbody tr.selected {
   background-color: #edf2c1 !important;
+  font-weight: bold; /* Make the font bold */
 }
-
-
-
 
 /* Adjust layout and font smaller */
 
@@ -100,7 +97,6 @@ textarea.form-control {
   font-size: 0.875rem; /* Adjust textarea font size */
   padding: 0.25rem 0.5rem; /* Adjust textarea padding */
 }
-
 
 .table th.sortable {
   cursor: pointer;
