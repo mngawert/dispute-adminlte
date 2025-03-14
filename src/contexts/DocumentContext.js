@@ -431,10 +431,20 @@ export const DocumentProvider = ({ children }) => {
             // setInvoices([]); 
 
             /** Reload pending adjust amount in Invoices */
-            getInvoicesByAccountNum(selectedAccount.accountNum);
+            await getInvoicesByAccountNum(selectedAccount.accountNum);
 
-            setSelectedInvoice({}); 
-            setInvoiceDataServices([]); setInvoiceDataRC([]); setInvoiceDataUsage([]); setSelectedInvoiceDataService({}); setSelectedInvoiceDataRC({}); setSelectedInvoiceDataUsage({}); 
+            /** Update selectedInvoice based on the updated data */
+            //setSelectedInvoice({}); 
+            const updatedInvoice = invoices.find(invoice => invoice.billSeq === selectedInvoice.billSeq && invoice.invoiceNum === selectedInvoice.invoiceNum);
+            setSelectedInvoice(updatedInvoice);
+
+            /** Fetch Invoice Data */
+            //setInvoiceDataServices([]); 
+            getInvoiceDataServices(updatedInvoice);
+
+
+            setInvoiceDataRC([]); setInvoiceDataUsage([]); 
+            setSelectedInvoiceDataService({}); setSelectedInvoiceDataRC({}); setSelectedInvoiceDataUsage({}); 
             setCostedEvents([]); setSelectedCostedEvent({});
             setAdjustmentTypes([]); setSelectedAdjustmentType({}); 
             setAdjustmentNote('');
