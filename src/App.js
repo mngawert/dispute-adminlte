@@ -28,7 +28,7 @@ import AdjustB from "./pages/AdjustB";
 
 import { DocumentProvider } from "./contexts/DocumentContext";
 import SearchAdj from "./pages/SearchAdj";
-import User from "./pages/User";
+import UserBak from "./pages/UserBak";
 import NotAuthorized from "./pages/NotAuthorized";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -64,7 +64,7 @@ function App() {
             <Route path="/AdjustB" element={<AdjustB />} />
             <Route path="/MyAdj" element={<SearchAdj myAdjust="Yes" title="My Adjustments" fetchDataAtStart="Yes" />} />
             <Route path="/SearchAdj" element={<SearchAdj myAdjust="No" title="Search Adjustments" fetchDataAtStart="No" />} />
-            <Route path="/User" element={<User />} />
+            <Route path="/UserBak" element={<UserBak />} />
             <Route path="/not-authorized" element={<NotAuthorized /> } />
 
             <Route path="/test" element={<Test />} />
