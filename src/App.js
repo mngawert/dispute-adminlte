@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
- import "./App.css";
+import "./App.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Dashboard from "./pages/Dashboard";
@@ -25,6 +25,7 @@ import AdjustP36 from "./pages/AdjustP36";
 import AdjustP3Plus from "./pages/AdjustP3Plus";
 import AdjustP3Minus from "./pages/AdjustP3Minus";
 import AdjustB from "./pages/AdjustB";
+import User from "./pages/User"; // Import the new User page
 
 import { DocumentProvider } from "./contexts/DocumentContext";
 import SearchAdj from "./pages/SearchAdj";
@@ -34,7 +35,6 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
-
     <DocumentProvider>
       <Router>
         <Routes>
@@ -66,7 +66,7 @@ function App() {
             <Route path="/SearchAdj" element={<SearchAdj myAdjust="No" title="Search Adjustments" fetchDataAtStart="No" />} />
             <Route path="/UserBak" element={<UserBak />} />
             <Route path="/not-authorized" element={<NotAuthorized /> } />
-
+            <Route path="/user" element={<PrivateRoute element={<User />} allowedRoles={['Admin']} />} /> {/* Add the new User page route */}
             <Route path="/test" element={<Test />} />
             <Route path="/dashboard" element={<PrivateRoute element={<Dashboard />} allowedRoles={['Admin']} />} />
             <Route path="/disputedata" element={<DisputeData />} />
