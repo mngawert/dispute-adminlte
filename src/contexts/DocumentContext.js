@@ -439,14 +439,19 @@ export const DocumentProvider = ({ children }) => {
             setSelectedInvoice(updatedInvoice);
 
             /** Fetch Invoice Data */
+            //getInvoiceDataServices(updatedInvoice);
+
             //setInvoiceDataServices([]); 
-            getInvoiceDataServices(updatedInvoice);
-
-
-            setInvoiceDataRC([]); setInvoiceDataUsage([]); 
-            setSelectedInvoiceDataService({}); setSelectedInvoiceDataRC({}); setSelectedInvoiceDataUsage({}); 
-            setCostedEvents([]); setSelectedCostedEvent({});
-            setAdjustmentTypes([]); setSelectedAdjustmentType({}); 
+            //setInvoiceDataRC([]); 
+            //setInvoiceDataUsage([]); 
+            //setSelectedInvoiceDataService({}); 
+            //setSelectedInvoiceDataRC({}); 
+            //setSelectedInvoiceDataUsage({}); 
+            //setCostedEvents([]); 
+            //setSelectedCostedEvent({});
+            //setAdjustmentTypes([]); 
+            //setSelectedAdjustmentType({}); 
+            
             setAdjustmentNote('');
             setAdjustmentAmount(0);
         } catch (error) {
