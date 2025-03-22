@@ -144,6 +144,12 @@ export default function Sidebar() {
                     <p>Search Adjustments</p>
                   </a>
                 </li>                            
+                <li className="nav-item">
+                  <a href="/change-password" className={`nav-link ${isActive('/change-password')}`}>
+                    <i className="far fa-circle nav-icon" />
+                    <p>Change Password</p>
+                  </a>
+                </li>                            
                 {(userHasRole("AdminXX") || userHasRole("ApproverXX")) && 
                   <li className="nav-item">
                     <a href="/UserBak" className={`nav-link ${isActive('/UserBak')}`}>

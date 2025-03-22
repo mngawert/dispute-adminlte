@@ -32,6 +32,7 @@ import SearchAdj from "./pages/SearchAdj";
 import UserBak from "./pages/UserBak";
 import NotAuthorized from "./pages/NotAuthorized";
 import ProtectedRoute from "./components/ProtectedRoute";
+import ChangePassword from './pages/ChangePassword'; // Import the ChangePassword page
 
 function App() {
   return (
@@ -67,6 +68,7 @@ function App() {
             <Route path="/UserBak" element={<UserBak />} />
             <Route path="/not-authorized" element={<NotAuthorized /> } />
             <Route path="/user" element={<PrivateRoute element={<User />} allowedRoles={['Admin']} />} /> {/* Add the new User page route */}
+            <Route path="/change-password" element={<PrivateRoute element={<ChangePassword />} allowedRoles={['Admin', 'Creator', 'Reviewer', 'Approver', 'Finance']} />} />
             <Route path="/test" element={<Test />} />
             <Route path="/dashboard" element={<PrivateRoute element={<Dashboard />} allowedRoles={['Admin']} />} />
             <Route path="/disputedata" element={<DisputeData />} />
