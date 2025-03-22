@@ -45,7 +45,7 @@ const translations = {
     adjustmentAmountGreaterThanZero: "จำนวนเงินที่ต้องการปรับปรุงต้องมากกว่า 0",
     adjustmentAmountLessThanCharge: "จำนวนเงินที่ต้องการปรับปรุงต้องน้อยกว่าหรือเท่ากับจำนวนเงินที่เรียกเก็บ",
     adjustmentAmountLessThanInvoice: "จำนวนเงินที่ต้องการปรับปรุงต้องน้อยกว่าหรือเท่ากับจำนวนเงินในใบแจ้งหนี้",
-    adjustmentAmountLessThanOrEqualTo9999: "จำนวนเงินที่ต้องการปรับปรุงต้องไม่เกิน 9999",
+    adjustmentAmountLessThanOrEqualToCreditLimit: "จำนวนเงินที่ต้องการปรับปรุงต้องไม่เกิน {creditLimit} บาท",
     invoiceWrittenOff: "ไม่สามารถสร้างการปรับปรุงนี้ได้ ใบแจ้งหนี้ถูกตัดบัญชีแล้ว",
     p35InvoiceDate: "ไม่สามารถสร้างการปรับปรุงนี้ได้ P35 ปรับปรุงได้เฉพาะใบแจ้งหนี้ที่จัดทำระหว่างเดือน พฤศจิกายน ถึง ธันวาคม {lastYear}",
     p35AdjustmentDate: "ไม่สามารถสร้างการปรับปรุงนี้ได้ P35 การปรับปรุงสามารถสร้างได้ระหว่างเดือน มกราคม ถึง มีนาคม ของ {startYear}",
