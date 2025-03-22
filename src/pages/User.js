@@ -136,10 +136,10 @@ const User = () => {
                                                         <td>{user.creditLimit}</td>
                                                         <td>
                                                             <button
-                                                                className="btn btn-sm btn-warning mr-2"
+                                                                className="btn btn-sm mr-2"
                                                                 onClick={() => openEditModal(user)}
                                                             >
-                                                                <i className="fa fa-pencil-alt" aria-hidden="true"></i>
+                                                                <i className="fa fa-pencil-alt" aria-hidden="true"></i> Edit
                                                             </button>
                                                         </td>
                                                     </tr>
