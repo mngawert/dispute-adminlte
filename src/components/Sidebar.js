@@ -149,12 +149,12 @@ export default function Sidebar() {
                     <i className="far fa-circle nav-icon" />
                     <p>Change Password</p>
                   </a>
-                </li>                            
-                {(userHasRole("AdminXX") || userHasRole("ApproverXX")) && 
+                </li>
+                {(userHasRole("Admin") || userHasRole("ApproverXX")) && 
                   <li className="nav-item">
-                    <a href="/UserBak" className={`nav-link ${isActive('/UserBak')}`}>
+                    <a href="/User" className={`nav-link ${isActive('/User')}`}>
                       <i className="far fa-circle nav-icon" />
-                      <p>UsersBak</p>
+                      <p>Users</p>
                     </a>
                   </li>                            
                 }
