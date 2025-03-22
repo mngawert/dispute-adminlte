@@ -4,6 +4,8 @@ import ContentHeader from '../components/ContentHeader';
 
 const User = () => {
     const [users, setUsers] = useState([]);
+    const [filteredUsers, setFilteredUsers] = useState([]); // State for filtered users
+    const [searchText, setSearchText] = useState(''); // State for search text
     const [userForm, setUserForm] = useState({
         username: '',
         password: '',
@@ -22,6 +24,7 @@ const User = () => {
         try {
             const response = await api.get('/api/User/GetAllUsers');
             setUsers(response.data);
+            setFilteredUsers(response.data); // Initialize filtered users
         } catch (error) {
             console.error('Error fetching users:', error);
         }
@@ -33,6 +36,19 @@ const User = () => {
             ...userForm,
             [name]: name === 'creditLimit' ? parseFloat(value) || '' : value
         });
+    };
+
+    const handleSearchChange = (e) => {
+        const value = e.target.value;
+        setSearchText(value);
+
+        // Filter users based on the search text
+        const filtered = users.filter(user =>
+            (user.username || '').toLowerCase().includes(value.toLowerCase()) ||
+            (user.userStatus || '').toLowerCase().includes(value.toLowerCase()) ||
+            (user.homeLocationCode || '').toLowerCase().includes(value.toLowerCase())
+        );
+        setFilteredUsers(filtered);
     };
 
     const handleCreateUser = async () => {
@@ -90,7 +106,14 @@ const User = () => {
                             {/* START CONTENT */}
                             <div className="card">
                                 <div className="card-body">
-                                    <div className="d-flex justify-content-end mb-3">
+                                    <div className="d-flex justify-content-between mb-3">
+                                        <input
+                                            type="text"
+                                            className="form-control w-50"
+                                            placeholder="Search by username, status, or location"
+                                            value={searchText}
+                                            onChange={handleSearchChange}
+                                        />
                                         <button className="btn btn-primary" onClick={openCreateModal}>Create User</button>
                                     </div>
                                     <div className="table-responsive" style={{ height: 500, overflowY: 'auto' }}>
@@ -105,7 +128,7 @@ const User = () => {
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {users.map(user => (
+                                                {filteredUsers.map(user => (
                                                     <tr key={user.userId}>
                                                         <td>{user.username}</td>
                                                         <td>{user.userStatus}</td>
@@ -113,10 +136,10 @@ const User = () => {
                                                         <td>{user.creditLimit}</td>
                                                         <td>
                                                             <button
-                                                                className="btn btn-sm mr-2"
+                                                                className="btn btn-sm btn-warning mr-2"
                                                                 onClick={() => openEditModal(user)}
                                                             >
-                                                                <i className="fa fa-pencil-alt" aria-hidden="true"></i> Edit {/* Edit Icon */}
+                                                                <i className="fa fa-pencil-alt" aria-hidden="true"></i>
                                                             </button>
                                                         </td>
                                                     </tr>
