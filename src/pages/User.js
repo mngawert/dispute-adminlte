@@ -114,7 +114,7 @@ const User = () => {
                                             value={searchText}
                                             onChange={handleSearchChange}
                                         />
-                                        <button className="btn btn-primary" onClick={openCreateModal}>Create User</button>
+                                        {/* <button className="btn btn-primary" onClick={openCreateModal} >Create User</button> */}
                                     </div>
                                     <div className="table-responsive" style={{ height: 500, overflowY: 'auto' }}>
                                         <table className="table table-head-fixed text-nowrap table-bordered table-hover">
@@ -175,6 +175,7 @@ const User = () => {
                                         value={userForm.username}
                                         onChange={handleInputChange}
                                         className="form-control"
+                                        disabled
                                     />
                                 </div>
                                 {!isEditMode && (
@@ -197,6 +198,7 @@ const User = () => {
                                         value={userForm.userStatus}
                                         onChange={handleInputChange}
                                         className="form-control"
+                                        disabled
                                     />
                                 </div>
                                 <div className="form-group">
