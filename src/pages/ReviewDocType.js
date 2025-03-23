@@ -201,8 +201,22 @@ const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, select
                             <div className="col-12">
                                 <div className="form-inline mt-4">
                                     <p className="ml-auto mr-auto flex-column">
-                                        <button type="button" className="btn btn-primary mr-1" onClick={() => handleUpdateDocumentStatus(selectedDocument, `${reviewType}-Accept`, myNote, resetMyNote)} >Accept Selected</button>
-                                        <button type="button" className="btn btn-default" onClick={handleReject} >Reject Selected</button>
+                                        <button
+                                            type="button"
+                                            className="btn btn-primary mr-1"
+                                            onClick={() => handleUpdateDocumentStatus(selectedDocument, `${reviewType}-Accept`, myNote, resetMyNote)}
+                                        >
+                                            {reviewType === 'Cancel' ? 'Cancel Selected' : 'Accept Selected'}
+                                        </button>
+                                        {reviewType !== 'Cancel' && (
+                                            <button
+                                                type="button"
+                                                className="btn btn-default"
+                                                onClick={handleReject}
+                                            >
+                                                Reject Selected
+                                            </button>
+                                        )}
                                     </p>
                                 </div>
                             </div>

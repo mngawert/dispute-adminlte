@@ -124,6 +124,25 @@ export default function Sidebar() {
               </li>
             }
 
+            {/* Cancel Tasks */}
+            {(userHasRole("Admin") || userHasRole("Finance")) && 
+              <li className="nav-item menu-is-opening menu-open">
+                <a href="#" className="nav-link">
+                  <p>
+                  Cancel Tasks
+                  </p>
+                </a>
+                <ul className="nav nav-treeview">
+                  <li className="nav-item">
+                    <a href="/Cancel" className={`nav-link ${isActive('/Cancel')}`}>
+                      <i className="far fa-circle nav-icon" />
+                      <p>Cancel</p>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+            }
+
             {/* User Management */}
             <li className="nav-item menu-is-opening menu-open">
               <a href="#" className="nav-link">

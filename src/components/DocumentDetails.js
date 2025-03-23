@@ -46,6 +46,7 @@ const DocumentDetails = ({ selectedDocument, adjustmentRequests }) => {
             selectedDocument?.reviewNote ? `[Reviewer]: ${selectedDocument.reviewNote}` : null,
             selectedDocument?.approveNote ? `[Approver]: ${selectedDocument.approveNote}` : null,
             selectedDocument?.financeNote ? `[Financial Reviewer]: ${selectedDocument.financeNote}` : null,
+            selectedDocument?.cancelNote ? `[Canceller]: ${selectedDocument.cancelNote}` : null
         ];
         return notes.filter(note => note).join('\n');
     };
@@ -133,10 +134,10 @@ const DocumentDetails = ({ selectedDocument, adjustmentRequests }) => {
                 <div className="col-sm-6 col-md-4 col-lg-2">
                     <div className="form-group mb-2">
                         <label>Cancelled by</label>
-                        <input type="text" className="form-control" readOnly />
+                        <input type="text" className="form-control" readOnly value={selectedDocument?.canceledByName || ''} />
                     </div>
                     <div className="form-group">
-                        <input type="text" className="form-control" readOnly />
+                        <input type="text" className="form-control" readOnly value={selectedDocument?.canceledDtm ? formatDate(selectedDocument.canceledDtm) : ''} />
                     </div>
                 </div>
                 <div className="col-sm-6 col-md-4 col-lg-2">
