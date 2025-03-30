@@ -24,7 +24,7 @@ const Login = () => {
       localStorage.setItem("userLogin", JSON.stringify(response.data.user));
 
       // Redirect to the earlier wanted URL or default to "/home"
-      const redirectUrl = '/home';
+      const redirectUrl = '/NTAdjustor/home';
       localStorage.removeItem('redirectUrl');
       window.location.href = redirectUrl;      
     } catch (error) {

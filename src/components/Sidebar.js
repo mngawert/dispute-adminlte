@@ -19,7 +19,7 @@ export default function Sidebar() {
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");
-    window.location.href = "/login"; // Redirect to login page
+    window.location.href = "/NTAdjustor/login"; // Redirect to login page with basepath
   };
 
   const isActive = (path) => {
@@ -28,7 +28,7 @@ export default function Sidebar() {
 
   return (
     <aside className="main-sidebar sidebar-dark-primary elevation-4">
-      <a href="/" className="brand-link">
+      <a href="/NTAdjustor/" className="brand-link"> {/* Add basepath */}
         <img src="dist/img/logo_nt.svg" alt="NT" className="brand-image" />
         <span className="brand-text font-weight-light"> Adjustor Online</span>
       </a>
@@ -36,7 +36,7 @@ export default function Sidebar() {
         <nav className="mt-2">
           <ul className="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
             <li className="nav-item">
-              <a href="/" className={`nav-link ${isActive('/')}`}>
+              <a href="/NTAdjustor/" className={`nav-link ${isActive('/')}`}> {/* Add basepath */}
                 <i className="nav-icon fas fa-th"></i>
                 <p>Home</p>
               </a>
@@ -52,13 +52,13 @@ export default function Sidebar() {
                 </a>
                 <ul className="nav nav-treeview">
                   <li className="nav-item">
-                    <a href="/AdjustP35" className={`nav-link ${isActive('/AdjustP35')}`}>
+                    <a href="/NTAdjustor/AdjustP35" className={`nav-link ${isActive('/AdjustP35')}`}> {/* Add basepath */}
                       <i className="far fa-circle nav-icon" />
                       <p>P35 </p>
                     </a>
                   </li>
                   <li className="nav-item">
-                    <a href="/AdjustP36" className={`nav-link ${isActive('/AdjustP36')}`}>
+                    <a href="/NTAdjustor/AdjustP36" className={`nav-link ${isActive('/AdjustP36')}`}> {/* Add basepath */}
                       <i className="far fa-circle nav-icon" />
                       <p>P36 </p>
                     </a>
@@ -77,7 +77,7 @@ export default function Sidebar() {
               </a>
               <ul className="nav nav-treeview">
                 <li className="nav-item">
-                  <a href="/Review" className={`nav-link ${isActive('/Review')}`}>
+                  <a href="/NTAdjustor/Review" className={`nav-link ${isActive('/Review')}`}> {/* Add basepath */}
                     <i className="far fa-circle nav-icon" />
                     <p>Review Adjustments </p>
                   </a>
@@ -96,7 +96,7 @@ export default function Sidebar() {
                 </a>
                 <ul className="nav nav-treeview">
                   <li className="nav-item">
-                    <a href="/Approve" className={`nav-link ${isActive('/Approve')}`}>
+                    <a href="/NTAdjustor/Approve" className={`nav-link ${isActive('/Approve')}`}> {/* Add basepath */}
                       <i className="far fa-circle nav-icon" />
                       <p>Approve Adjustments</p>
                     </a>
@@ -115,7 +115,7 @@ export default function Sidebar() {
                 </a>
                 <ul className="nav nav-treeview">
                   <li className="nav-item">
-                    <a href="/Finance" className={`nav-link ${isActive('/Finance')}`}>
+                    <a href="/NTAdjustor/Finance" className={`nav-link ${isActive('/Finance')}`}> {/* Add basepath */}
                       <i className="far fa-circle nav-icon" />
                       <p>Review Financially</p>
                     </a>
@@ -134,7 +134,7 @@ export default function Sidebar() {
                 </a>
                 <ul className="nav nav-treeview">
                   <li className="nav-item">
-                    <a href="/Cancel" className={`nav-link ${isActive('/Cancel')}`}>
+                    <a href="/NTAdjustor/Cancel" className={`nav-link ${isActive('/Cancel')}`}> {/* Add basepath */}
                       <i className="far fa-circle nav-icon" />
                       <p>Cancel</p>
                     </a>
@@ -152,26 +152,26 @@ export default function Sidebar() {
               </a>
               <ul className="nav nav-treeview">
                 <li className="nav-item">
-                  <a href="/MyAdj" className={`nav-link ${isActive('/MyAdj')}`}>
+                  <a href="/NTAdjustor/MyAdj" className={`nav-link ${isActive('/MyAdj')}`}> {/* Add basepath */}
                     <i className="far fa-circle nav-icon" />
                     <p>My Adjustments</p>
                   </a>
                 </li>                            
                 <li className="nav-item">
-                  <a href="/SearchAdj" className={`nav-link ${isActive('/SearchAdj')}`}>
+                  <a href="/NTAdjustor/SearchAdj" className={`nav-link ${isActive('/SearchAdj')}`}> {/* Add basepath */}
                     <i className="far fa-circle nav-icon" />
                     <p>Search Adjustments</p>
                   </a>
                 </li>                            
                 <li className="nav-item">
-                  <a href="/change-password" className={`nav-link ${isActive('/change-password')}`}>
+                  <a href="/NTAdjustor/change-password" className={`nav-link ${isActive('/change-password')}`}> {/* Add basepath */}
                     <i className="far fa-circle nav-icon" />
                     <p>Change Password</p>
                   </a>
                 </li>
                 {(userHasRole("Admin") || userHasRole("ApproverXX")) && 
                   <li className="nav-item">
-                    <a href="/User" className={`nav-link ${isActive('/User')}`}>
+                    <a href="/NTAdjustor/User" className={`nav-link ${isActive('/User')}`}> {/* Add basepath */}
                       <i className="far fa-circle nav-icon" />
                       <p>Users</p>
                     </a>

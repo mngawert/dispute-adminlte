@@ -37,7 +37,7 @@ import ChangePassword from './pages/ChangePassword'; // Import the ChangePasswor
 function App() {
   return (
     <DocumentProvider>
-      <Router>
+      <Router basename="/NTAdjustor"> {/* Set the basename here */}
         <Routes>
           <Route element={ <AuthLayout /> }>
             <Route path="/login" element={<Login />} />

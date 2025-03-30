@@ -31,17 +31,17 @@ export default function Home() {
                     <h5>เอกสาร Download :</h5>
                     <ul>
                       <li>
-                        <a href="/files/presentation_p35_p36.pdf" target="_blank" rel="noopener noreferrer">
+                        <a href="/NTAdjustor/files/presentation_p35_p36.pdf" target="_blank" rel="noopener noreferrer">
                           เอกสารนำเสนอ ระบบปรับปรุงบิล (Web Adjustor) P35, P36
                         </a>
                       </li>
                       <li>
-                        <a href="/files/user_manual_p35_p36.pdf" target="_blank" rel="noopener noreferrer">
+                        <a href="/NTAdjustor/files/user_manual_p35_p36.pdf" target="_blank" rel="noopener noreferrer">
                           คู่มือการใช้งาน ระบบปรับปรุงบิล (Web Adjustor) P35, P36
                         </a>
                       </li>
                       <li>
-                        <a href="/files/username_password_form.pdf" target="_blank" rel="noopener noreferrer">
+                        <a href="/NTAdjustor/files/username_password_form.pdf" target="_blank" rel="noopener noreferrer">
                           แบบฟอร์มขอ Username/Password Adjustment
                         </a>
                       </li>
@@ -49,7 +49,7 @@ export default function Home() {
                     <h5>ระเบียบ/วิธีปฏิบัติ :</h5>
                     <ul>
                       <li>
-                        <a href="/files/procedure_web_adjustor.pdf" target="_blank" rel="noopener noreferrer">
+                        <a href="/NTAdjustor/files/procedure_web_adjustor.pdf" target="_blank" rel="noopener noreferrer">
                           วิธีปฏิบัติ ระบบปรับปรุงบิล (Web Adjustor)
                         </a>
                       </li>
