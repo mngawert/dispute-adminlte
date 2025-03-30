@@ -68,6 +68,10 @@ table tbody tr.selected {
   font-weight: bold; /* Make the font bold */
 }
 
+.react-datepicker-popper {
+  z-index: 9999 !important;
+}
+
 /* Adjust layout and font smaller */
 
 .content-wrapper-x {

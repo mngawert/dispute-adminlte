@@ -1,4 +1,19 @@
 import React from 'react';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+
+const formatDateForDisplay = (date) => {
+    if (!date) return '';
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`; // Convert to dd/mm/yyyy format
+};
+
+const parseDateFromInput = (dateString) => {
+    const [day, month, year] = dateString.split('/');
+    return new Date(`${year}-${month}-${day}`);
+};
 
 const SearchBox = ({ searchBy, selectedSearchBy, handleSearchByChange, documentNum, handleInputChange, handleSearch, filterBy, handleFilterByChange, fromDate, toDate, handleFromDateChange, handleToDateChange, showSearchBy }) => {
     return (
@@ -42,16 +57,29 @@ const SearchBox = ({ searchBy, selectedSearchBy, handleSearchByChange, documentN
                                 </select>
                             </div>
                         </div>
-                        <div className="col-sm-3">
+                        <div className="col-sm-2">
                             <div className="form-group">
                                 <label>From Date:</label>
-                                <input type="date" className="form-control" onChange={handleFromDateChange} value={fromDate} />
+                                <DatePicker
+                                    selected={fromDate ? new Date(fromDate) : null}
+                                    onChange={(date) => handleFromDateChange({ target: { value: date.toISOString().split('T')[0] } })}
+                                    dateFormat="dd/MM/yyyy"
+                                    className="form-control"
+                                    placeholderText="dd/mm/yyyy"
+                                    style={{ zIndex: 1050 }}
+                                />
                             </div>
                         </div>
-                        <div className="col-sm-3">
+                        <div className="col-sm-2">
                             <div className="form-group">
                                 <label>To Date:</label>
-                                <input type="date" className="form-control" onChange={handleToDateChange} value={toDate} />
+                                <DatePicker
+                                    selected={toDate ? new Date(toDate) : null}
+                                    onChange={(date) => handleToDateChange({ target: { value: date.toISOString().split('T')[0] } })}
+                                    dateFormat="dd/MM/yyyy"
+                                    className="form-control"
+                                    placeholderText="dd/mm/yyyy"
+                                />
                             </div>
                         </div>
                     </div>
