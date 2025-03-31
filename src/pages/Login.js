@@ -23,6 +23,13 @@ const Login = () => {
       localStorage.setItem("authToken", response.data.token);
       localStorage.setItem("userLogin", JSON.stringify(response.data.user));
 
+      // Check if password has been changed
+      if (response.data.user.pwdChanged !== "Y") {
+        // Redirect to the change-password page
+        window.location.href = "/NTAdjustor/change-password";
+        return;
+      }
+
       // Redirect to the earlier wanted URL or default to "/home"
       const redirectUrl = '/NTAdjustor/home';
       localStorage.removeItem('redirectUrl');
@@ -38,7 +45,7 @@ const Login = () => {
       <div className="login-box">
         <div className="card card-outline">
           <div className="card-header text-center">
-            <a href="../../index2.html" className="h1"><b>Adjustor</b> NT</a>
+            <a href="#" className="h1"><b>Adjustor</b> NT</a>
           </div>
           <div className="card-body">
             <p className="login-box-msg">Sign in to start your session</p>
