@@ -15,6 +15,7 @@ const InvoiceDataUsage = ({ invoiceDataUsage, selectedInvoiceDataUsage, handleSe
                         <th>Call Type</th>
                         <th>Costed</th>
                         <th>Discount</th>
+                        <th>Adjusted</th>                        
                         <th>Amount</th>
                     </tr>
                     </thead>
@@ -26,6 +27,7 @@ const InvoiceDataUsage = ({ invoiceDataUsage, selectedInvoiceDataUsage, handleSe
                             <td>{invoice.callType}</td>
                             <td>{formatNumber(invoice.costedAmount)}</td>
                             <td>{formatNumber(invoice.discountAmount)}</td>
+                            <td>{formatNumber(invoice.adjustedAmount)}</td>
                             <td>{formatNumber(invoice.aggAmount)}</td>
                         </tr>
                     ))}

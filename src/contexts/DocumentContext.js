@@ -352,10 +352,12 @@ export const DocumentProvider = ({ children }) => {
                 billSeq: selectedInvoice?.billSeq,
                 disputeMny: disputeAmount,
                 productId: selectedInvoiceDataRC?.productId ?? selectedInvoiceDataUsage?.productId,
+                tariffId: selectedInvoiceDataRC?.tariffId ?? selectedInvoiceDataUsage?.tariffId,
+                callType: selectedInvoiceDataUsage?.callType,
                 cpsId: selectedAccount.cpsId,
                 productSeq: selectedInvoiceDataRC?.productSeq ?? selectedInvoiceDataUsage?.productSeq,
                 eventRef: selectedCostedEvent?.eventRef,
-                eventTypeId: selectedCostedEvent?.eventTypeId,
+                eventTypeId: selectedCostedEvent?.eventTypeId ?? selectedInvoiceDataUsage?.eventTypeId,
                 adjustmentTypeId: selectedAdjustmentType.adjustmentTypeId,
                 serviceNum: selectedInvoiceDataService?.serviceNumber || selectedService?.serviceNum,
                 invoiceNum: selectedInvoice?.invoiceNum,
@@ -380,6 +382,11 @@ export const DocumentProvider = ({ children }) => {
             //setSelectedInvoice({}); 
             const updatedInvoice = invoices.find(invoice => invoice.billSeq === selectedInvoice.billSeq && invoice.invoiceNum === selectedInvoice.invoiceNum);
             setSelectedInvoice(updatedInvoice);
+
+            await getInvoiceDataRC(selectedInvoiceDataService);
+            await getInvoiceDataUsage(selectedInvoiceDataService);
+            setSelectedInvoiceDataRC({});
+            setSelectedInvoiceDataUsage({});
 
             /** Fetch Invoice Data */
             //getInvoiceDataServices(updatedInvoice);
