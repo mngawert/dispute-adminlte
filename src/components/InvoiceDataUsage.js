@@ -13,9 +13,9 @@ const InvoiceDataUsage = ({ invoiceDataUsage, selectedInvoiceDataUsage, handleSe
                         <th>Service number</th>
                         <th>Product name</th>
                         <th>Call Type</th>
-                        <th>Amount</th>
                         <th>Costed</th>
                         <th>Discount</th>
+                        <th>Amount</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -24,9 +24,9 @@ const InvoiceDataUsage = ({ invoiceDataUsage, selectedInvoiceDataUsage, handleSe
                             <td>{invoice.serviceNumber}</td>
                             <td>{invoice.productName}</td>
                             <td>{invoice.callType}</td>
-                            <td>{formatNumber(invoice.aggAmount)}</td>
                             <td>{formatNumber(invoice.costedAmount)}</td>
                             <td>{formatNumber(invoice.discountAmount)}</td>
+                            <td>{formatNumber(invoice.aggAmount)}</td>
                         </tr>
                     ))}
                     </tbody>

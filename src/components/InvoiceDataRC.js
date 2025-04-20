@@ -13,9 +13,9 @@ const InvoiceDataRC = ({ invoiceDataRC, selectedInvoiceDataRC, handleSelectInvoi
                         <th>Service number</th>
                         <th>Product name</th>
                         <th>Price plan</th>
-                        <th>Amount</th>
                         <th>Costed</th>
                         <th>Discount</th>
+                        <th>Amount</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -24,9 +24,9 @@ const InvoiceDataRC = ({ invoiceDataRC, selectedInvoiceDataRC, handleSelectInvoi
                             <td>{invoice.serviceNumber}</td>
                             <td>{invoice.productName}</td>
                             <td>{invoice.tariffName}</td>
-                            <td>{formatNumber(invoice.aggAmount)}</td>
                             <td>{formatNumber(invoice.costedAmount)}</td>
                             <td>{formatNumber(invoice.discountAmount)}</td>
+                            <td>{formatNumber(invoice.aggAmount)}</td>
                         </tr>
                     ))}
                     </tbody>

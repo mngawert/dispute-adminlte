@@ -64,6 +64,7 @@ const DocumentDetails = ({ selectedDocument, adjustmentRequests }) => {
                             <th className="sortable" onClick={() => requestSort('serviceNum')}>Service Number {getSortIndicator('serviceNum')}</th>
                             <th className="sortable" onClick={() => requestSort('adjustmentTypeName')}>Adjustment Type {getSortIndicator('adjustmentTypeName')}</th>
                             <th className="sortable" onClick={() => requestSort('requestStatus')}>Status {getSortIndicator('requestStatus')}</th>
+                            <th className="sortable" onClick={() => requestSort('errorMessages')}>Error Messages</th> {/* New column */}
                             <th className="sortable" onClick={() => requestSort('disputeMny')}>Amount {getSortIndicator('disputeMny')}</th>
                             <th className="sortable" onClick={() => requestSort('vat')}>VAT {getSortIndicator('vat')}</th>
                             <th className="sortable" onClick={() => requestSort('total')}>Total {getSortIndicator('total')}</th>
@@ -77,13 +78,14 @@ const DocumentDetails = ({ selectedDocument, adjustmentRequests }) => {
                                 <td>{adj.serviceNum}</td>
                                 <td>{adj.adjustmentTypeName}</td>
                                 <td>{adj.requestStatus}</td>
+                                <td>{adj.errorMessages || '-'}</td> {/* New column data */}
                                 <td align='center'>{formatNumber(adj.disputeMny.toFixed(2))}</td>
                                 <td align='center'>{formatNumber((adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100)).toFixed(2))}</td>
                                 <td align='center'>{formatNumber((adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100)).toFixed(2))}</td>
                             </tr>
                         ))}
                         <tr>
-                            <td colSpan="5" align='right'><strong>Total</strong></td>
+                            <td colSpan="6" align='right'><strong>Total</strong></td> {/* Adjusted colspan */}
                             <td align='center'><strong>{formatNumber(totalAmount)}</strong></td>
                             <td align='center'><strong>{formatNumber(totalVAT)}</strong></td>
                             <td align='center'><strong>{formatNumber(total)}</strong></td>
