@@ -26,22 +26,27 @@ export default function Home() {
                   <div className="col-12">
                     <h5>ข่าวสาร/ประชาสัมพันธ์ :</h5>
                     <ul>
-                      <li>ระบบปรับปรุงบิล (Web Adjustor) เปิดใช้งาน P35,P36 ในวันที่ 9 มี.ค. 2568</li>
+                      <li>ระบบปรับปรุงบิล (Web Adjustor) เปิดใช้งาน P35,P36 ในวันที่ 23 เม.ย. 2568</li>
                     </ul>
                     <h5>เอกสาร Download :</h5>
                     <ul>
                       <li>
-                        <a href="/NTAdjustor/files/presentation_p35_p36.pdf" target="_blank" rel="noopener noreferrer">
-                          เอกสารนำเสนอ ระบบปรับปรุงบิล (Web Adjustor) P35, P36
+                        <a href="/NTAdjustor/files/adj_present220468_intro.pdf" target="_blank" rel="noopener noreferrer">
+                          เอกสารนำเสนอระบบปรับปรุงบิล (Web Adjustor) P35, P36
                         </a>
                       </li>
                       <li>
-                        <a href="/NTAdjustor/files/user_manual_p35_p36.pdf" target="_blank" rel="noopener noreferrer">
-                          คู่มือการใช้งาน ระบบปรับปรุงบิล (Web Adjustor) P35, P36
+                        <a href="/NTAdjustor/files/adj_present220468_use.pdf" target="_blank" rel="noopener noreferrer">
+                          เอกสารการใช้งานระบบปรับปรุงบิล (Web Adjustor) P35, P36
                         </a>
                       </li>
                       <li>
-                        <a href="/NTAdjustor/files/username_password_form.pdf" target="_blank" rel="noopener noreferrer">
+                        <a href="/NTAdjustor/files/adj_present_p35p36220468_manual.pdf" target="_blank" rel="noopener noreferrer">
+                          คู่มือการใช้งานระบบปรับปรุงบิล (Web Adjustor) P35, P36
+                        </a>
+                      </li>
+                      <li>
+                        <a href="/NTAdjustor/files/Adjust_user_password.doc" target="_blank" rel="noopener noreferrer">
                           แบบฟอร์มขอ Username/Password Adjustment
                         </a>
                       </li>
@@ -49,8 +54,8 @@ export default function Home() {
                     <h5>ระเบียบ/วิธีปฏิบัติ :</h5>
                     <ul>
                       <li>
-                        <a href="/NTAdjustor/files/procedure_web_adjustor.pdf" target="_blank" rel="noopener noreferrer">
-                          วิธีปฏิบัติ ระบบปรับปรุงบิล (Web Adjustor)
+                        <a href="/NTAdjustor/files/order_business_P31_P32.pdf" target="_blank" rel="noopener noreferrer">
+                        หลักเกณฑ์การบันทึกรายการรายการปรับปรุงบิล โดย P31/P31M (เดิม)
                         </a>
                       </li>
                     </ul>
