@@ -257,6 +257,7 @@ export const DocumentProvider = ({ children }) => {
         console.log('documentType:', documentType);
         console.log('adjustmentAmount:', adjustmentAmount);
         console.log('selectedInvoice:', selectedInvoice);
+        console.log('selectedCostedEvent:', selectedCostedEvent);
     
         let remainingAmount = (parseFloat(selectedInvoice?.invoiceNetMny) - parseFloat(selectedInvoice?.adjustedMny) - parseFloat(selectedInvoice?.pendingAdjustmentMny));
         console.log('remainingAmount:', remainingAmount);
@@ -295,6 +296,9 @@ export const DocumentProvider = ({ children }) => {
             return getTranslation('adjustmentAmountLessThanOrEqualToCreditLimit', language, { creditLimit });
         }
         if (parseFloat(adjustmentAmount) > parseFloat(selectedInvoiceDataRC?.aggAmount ?? selectedInvoiceDataUsage?.aggAmount)) {
+            return getTranslation('adjustmentAmountLessThanCharge', language);
+        }
+        if (parseFloat(adjustmentAmount) > parseFloat(selectedCostedEvent?.eventCostMny)) {
             return getTranslation('adjustmentAmountLessThanCharge', language);
         }
         if (parseFloat(adjustmentAmount) > (parseFloat(selectedInvoice?.invoiceNetMny) - parseFloat(selectedInvoice?.adjustedMny) - parseFloat(selectedInvoice?.pendingAdjustmentMny))) {
