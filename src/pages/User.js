@@ -71,6 +71,17 @@ const User = () => {
         }
     };
 
+    const handleResetPassword = async () => {
+        try {
+            await api.put(`/api/User/ResetPassword/${userForm.userId}`);
+            alert('Password has been reset successfully.');
+            closeModal(); // Close the modal after successful reset
+        } catch (error) {
+            console.error('Error resetting password:', error);
+            alert('Failed to reset password. Please try again.');
+        }
+    };
+
     const openCreateModal = () => {
         setUserForm({
             username: '',
@@ -223,15 +234,24 @@ const User = () => {
                                 </div>
                             </div>
                             <div className="modal-footer">
-                                <button type="button" className="btn btn-secondary" onClick={closeModal}>
-                                    Cancel
-                                </button>
                                 <button
                                     type="button"
                                     className="btn btn-primary"
                                     onClick={isEditMode ? handleEditUser : handleCreateUser}
                                 >
                                     {isEditMode ? 'Update User' : 'Create User'}
+                                </button>
+                                {isEditMode && (
+                                    <button
+                                        type="button"
+                                        className="btn btn-primary"
+                                        onClick={handleResetPassword}
+                                    >
+                                        Reset Password
+                                    </button>
+                                )}
+                                <button type="button" className="btn btn-secondary" onClick={closeModal}>
+                                    Cancel
                                 </button>
                             </div>
                         </div>
