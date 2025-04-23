@@ -11,7 +11,7 @@ api.interceptors.request.use((config) => {
     localStorage.removeItem('authToken');
     // Store the current URL before redirecting to login
     localStorage.setItem('redirectUrl', window.location.href);
-    window.location.href = '/login';
+    window.location.href = '/NTAdjustor/login';
   }
   config.headers.Authorization = token ? `Bearer ${token}` : '';
   return config;
@@ -26,7 +26,7 @@ api.interceptors.response.use((response) => {
     localStorage.removeItem('authToken');
     // Store the current URL before redirecting to login
     localStorage.setItem('redirectUrl', window.location.href);
-    window.location.href = '/login';
+    window.location.href = '/NTAdjustor/login';
   }
   return Promise.reject(error);
 });
