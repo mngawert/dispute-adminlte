@@ -308,8 +308,70 @@ export const DocumentProvider = ({ children }) => {
             return getTranslation('invoiceWrittenOff', language);
         }
     
-        // Additional validations for specific document types...
-        // (e.g., P35, P36, ADJUST_MINUS)
+
+        if (documentType === DOCUMENT_TYPE.P35) {
+
+            console.log('process.env.REACT_APP_OVERRIDE_CURRENT_DATE_FLAG:', process.env.REACT_APP_OVERRIDE_CURRENT_DATE_FLAG);
+            console.log('process.env.REACT_APP_OVERRIDE_CURRENT_DATE_VALUE:', process.env.REACT_APP_OVERRIDE_CURRENT_DATE_VALUE);
+            
+            const currentDate = process.env.REACT_APP_OVERRIDE_CURRENT_DATE_FLAG === 'Y' ? new Date(process.env.REACT_APP_OVERRIDE_CURRENT_DATE_VALUE) : new Date();
+
+            console.log('currentDate:', currentDate);
+
+            const actualBillDtm = new Date(selectedInvoice.actualBillDtm);
+            const lastYear = currentDate.getFullYear() - 1;
+            const startDate = new Date(lastYear, 10, 1); // November 1st of last year
+            const endDate = new Date(lastYear, 11, 31); // December 31st of last year
+
+            const billDtm = new Date(selectedInvoice.billDtm);
+            if (billDtm.getMonth() === 11) { // December
+                endDate.setMonth(0); // January
+                endDate.setFullYear(currentDate.getFullYear()); // Current year
+            }
+
+            console.log('actualBillDtm:', actualBillDtm);
+            console.log('billDtm:', billDtm);
+            console.log('startDate:', startDate);
+            console.log('endDate:', endDate);
+
+            if (actualBillDtm < startDate || actualBillDtm > endDate) {
+                return getTranslation('p35InvoiceDate', language, { lastYear });
+            }
+
+            const startYear = currentDate.getFullYear();
+            const startJan = new Date(startYear, 0, 1); // January 1st of current year
+            const endMar = new Date(startYear, 2, 31); // March 31st of current year
+
+            if (currentDate < startJan || currentDate > endMar) {
+                return getTranslation('p35AdjustmentDate', language, { startYear });
+            }
+
+        }
+        if (documentType === DOCUMENT_TYPE.P36) {
+
+            const currentDate = process.env.REACT_APP_OVERRIDE_CURRENT_DATE_FLAG === 'Y' ? new Date(process.env.REACT_APP_OVERRIDE_CURRENT_DATE_VALUE) : new Date();
+
+            const actualBillDtm = new Date(selectedInvoice.actualBillDtm);
+            const lastYear = currentDate.getFullYear() - 1;
+            const endOfOctoberLastYear = new Date(lastYear, 9, 31); // October 31st of last year
+
+            if (actualBillDtm > endOfOctoberLastYear) {
+                return getTranslation('p36InvoiceDate', language, { lastYear });
+            }
+
+        }
+        if (documentType === DOCUMENT_TYPE.ADJUST_MINUS) {
+
+            const currentDate = process.env.REACT_APP_OVERRIDE_CURRENT_DATE_FLAG === 'Y' ? new Date(process.env.REACT_APP_OVERRIDE_CURRENT_DATE_VALUE) : new Date();
+            const currentYear = currentDate.getFullYear();
+            const actualBillDtmYear = new Date(selectedInvoice.actualBillDtm).getFullYear();
+
+            if (actualBillDtmYear !== currentYear) {
+                return getTranslation('adjustMinusInvoiceDate', language);
+            }
+
+        }
+
     
         return '';
     };
