@@ -338,13 +338,13 @@ export const DocumentProvider = ({ children }) => {
                 return getTranslation('p35InvoiceDate', language, { lastYear });
             }
 
-            const startYear = currentDate.getFullYear();
-            const startJan = new Date(startYear, 0, 1); // January 1st of current year
-            const endMar = new Date(startYear, 2, 31); // March 31st of current year
+            // const startYear = currentDate.getFullYear();
+            // const startJan = new Date(startYear, 0, 1); // January 1st of current year
+            // const endMar = new Date(startYear, 2, 31); // March 31st of current year
 
-            if (currentDate < startJan || currentDate > endMar) {
-                return getTranslation('p35AdjustmentDate', language, { startYear });
-            }
+            // if (currentDate < startJan || currentDate > endMar) {
+            //     return getTranslation('p35AdjustmentDate', language, { startYear });
+            // }
 
         }
         if (documentType === DOCUMENT_TYPE.P36) {
@@ -353,10 +353,20 @@ export const DocumentProvider = ({ children }) => {
 
             const actualBillDtm = new Date(selectedInvoice.actualBillDtm);
             const lastYear = currentDate.getFullYear() - 1;
+            const currentYear = currentDate.getFullYear();
             const endOfOctoberLastYear = new Date(lastYear, 9, 31); // October 31st of last year
+            const endOfDecemberLastYear = new Date(lastYear, 11, 31); // December 31st of last year
 
-            if (actualBillDtm > endOfOctoberLastYear) {
+            const startNov = new Date(lastYear, 10, 1); // November 1st of last year
+            const endDec = new Date(lastYear, 11, 31); // December 31st of last year
+            const startMarch = new Date(currentYear, 2, 1); // March 1st of current year
+
+            if (actualBillDtm > endOfDecemberLastYear) {
                 return getTranslation('p36InvoiceDate', language, { lastYear });
+            }
+
+            if (startNov <= actualBillDtm && actualBillDtm <= endDec && currentDate < startMarch) {
+                return getTranslation('p36AdjustmentDate', language, { lastYear });
             }
 
         }
