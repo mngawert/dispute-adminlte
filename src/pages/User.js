@@ -4,8 +4,8 @@ import ContentHeader from '../components/ContentHeader';
 
 const User = () => {
     const [users, setUsers] = useState([]);
-    const [filteredUsers, setFilteredUsers] = useState([]); // State for filtered users
-    const [searchText, setSearchText] = useState(''); // State for search text
+    const [filteredUsers, setFilteredUsers] = useState([]);
+    const [searchText, setSearchText] = useState('');
     const [userForm, setUserForm] = useState({
         username: '',
         password: '',
@@ -15,18 +15,60 @@ const User = () => {
     });
     const [isEditMode, setIsEditMode] = useState(false);
     const [showModal, setShowModal] = useState(false);
+    const [groups, setGroups] = useState([]);
+    const [userGroups, setUserGroups] = useState([]);
+    const [selectedUserId, setSelectedUserId] = useState(null);
+    const [showGroupModal, setShowGroupModal] = useState(false);
+    const [availableGroupFilter, setAvailableGroupFilter] = useState('');
 
     useEffect(() => {
         fetchUsers();
+        fetchAllGroups();
     }, []);
 
     const fetchUsers = async () => {
         try {
             const response = await api.get('/api/User/GetAllUsers');
             setUsers(response.data);
-            setFilteredUsers(response.data); // Initialize filtered users
+            setFilteredUsers(response.data);
         } catch (error) {
             console.error('Error fetching users:', error);
+        }
+    };
+
+    const fetchAllGroups = async () => {
+        try {
+            const response = await api.get('/api/Group/GetAllGroups'); // Assuming this endpoint exists
+            setGroups(response.data);
+        } catch (error) {
+            console.error('Error fetching groups:', error);
+        }
+    };
+
+    const fetchUserGroups = async (userId) => {
+        try {
+            const response = await api.get(`/api/User/GetUserGroups/${userId}`);
+            setUserGroups(response.data);
+        } catch (error) {
+            console.error('Error fetching user groups:', error);
+        }
+    };
+
+    const handleAddGroupToUser = async (groupId) => {
+        try {
+            await api.post('/api/User/AddUserToGroup', { userId: selectedUserId, groupId });
+            fetchUserGroups(selectedUserId);
+        } catch (error) {
+            console.error('Error adding group to user:', error);
+        }
+    };
+
+    const handleRemoveGroupFromUser = async (groupId) => {
+        try {
+            await api.delete(`/api/User/RemoveUserFromGroup/${selectedUserId}/${groupId}`);
+            fetchUserGroups(selectedUserId);
+        } catch (error) {
+            console.error('Error removing group from user:', error);
         }
     };
 
@@ -42,7 +84,6 @@ const User = () => {
         const value = e.target.value;
         setSearchText(value);
 
-        // Filter users based on the search text
         const filtered = users.filter(user =>
             (user.username || '').toLowerCase().includes(value.toLowerCase()) ||
             (user.userStatus || '').toLowerCase().includes(value.toLowerCase()) ||
@@ -75,7 +116,7 @@ const User = () => {
         try {
             await api.put(`/api/User/ResetPassword/${userForm.userId}`);
             alert('Password has been reset successfully.');
-            closeModal(); // Close the modal after successful reset
+            closeModal();
         } catch (error) {
             console.error('Error resetting password:', error);
             alert('Failed to reset password. Please try again.');
@@ -100,21 +141,29 @@ const User = () => {
         setShowModal(true);
     };
 
+    const openGroupModal = (userId) => {
+        setSelectedUserId(userId);
+        fetchUserGroups(userId);
+        setShowGroupModal(true);
+    };
+
     const closeModal = () => {
         setShowModal(false);
     };
 
+    const closeGroupModal = () => {
+        setShowGroupModal(false);
+        setUserGroups([]);
+        setSelectedUserId(null);
+    };
+
     return (
         <div className="content-wrapper-x">
-            {/* Content Header (Page header) */}
             <ContentHeader title="User Management" />
-            {/* /.content-header */}
-            {/* Main content */}
             <div className="content">
                 <div className="container-fluid">
                     <div className="row">
                         <div className="col-12">
-                            {/* START CONTENT */}
                             <div className="card">
                                 <div className="card-body">
                                     <div className="d-flex justify-content-between mb-3">
@@ -125,7 +174,6 @@ const User = () => {
                                             value={searchText}
                                             onChange={handleSearchChange}
                                         />
-                                        {/* <button className="btn btn-primary" onClick={openCreateModal} >Create User</button> */}
                                     </div>
                                     <div className="table-responsive" style={{ height: 500, overflowY: 'auto' }}>
                                         <table className="table table-head-fixed text-nowrap table-bordered table-hover">
@@ -152,6 +200,12 @@ const User = () => {
                                                             >
                                                                 <i className="fa fa-pencil-alt" aria-hidden="true"></i> Edit
                                                             </button>
+                                                            <button
+                                                                className="btn btn-sm btn-info"
+                                                                onClick={() => openGroupModal(user.userId)}
+                                                            >
+                                                                <i className="fa fa-users" aria-hidden="true"></i> Manage Groups
+                                                            </button>
                                                         </td>
                                                     </tr>
                                                 ))}
@@ -160,7 +214,6 @@ const User = () => {
                                     </div>
                                 </div>
                             </div>
-                            {/* END CONTENT */}
                         </div>
                     </div>
                 </div>
@@ -252,6 +305,78 @@ const User = () => {
                                 )}
                                 <button type="button" className="btn btn-secondary" onClick={closeModal}>
                                     Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Group Management Modal */}
+            {showGroupModal && (
+                <div className="modal" style={{ display: 'block' }}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title">
+                                    Manage Groups for User: <strong>{users.find(user => user.userId === selectedUserId)?.username}</strong>
+                                </h5>
+                                <button type="button" className="close" onClick={closeGroupModal}>
+                                    <span>&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body">
+                                <h6>Assigned Groups</h6>
+                                <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                                    <ul className="list-group">
+                                        {userGroups.map(group => (
+                                            <li key={group.groupId} className="list-group-item d-flex align-items-center justify-content-between">
+                                                <span>{group.groupName}</span>
+                                                <button
+                                                    className="btn btn-sm btn-danger"
+                                                    onClick={() => handleRemoveGroupFromUser(group.groupId)}
+                                                    title="Remove Group"
+                                                >
+                                                    <i className="fa fa-minus-circle" aria-hidden="true"></i>
+                                                </button>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                                <h6 className="mt-3">Available Groups</h6>
+                                {/* Filter Input for Available Groups */}
+                                <input
+                                    type="text"
+                                    className="form-control mb-2"
+                                    placeholder="Filter available groups"
+                                    value={availableGroupFilter}
+                                    onChange={(e) => setAvailableGroupFilter(e.target.value)}
+                                />
+                                <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                                    <ul className="list-group">
+                                        {groups
+                                            .filter(group =>
+                                                group.groupName.toLowerCase().includes(availableGroupFilter.toLowerCase()) &&
+                                                !userGroups.some(ug => ug.groupId === group.groupId)
+                                            )
+                                            .map(group => (
+                                                <li key={group.groupId} className="list-group-item d-flex align-items-center justify-content-between">
+                                                    <span>{group.groupName}</span>
+                                                    <button
+                                                        className="btn btn-sm btn-primary"
+                                                        onClick={() => handleAddGroupToUser(group.groupId)}
+                                                        title="Add Group"
+                                                    >
+                                                        <i className="fa fa-plus-circle" aria-hidden="true"></i>
+                                                    </button>
+                                                </li>
+                                            ))}
+                                    </ul>
+                                </div>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-secondary" onClick={closeGroupModal}>
+                                    Close
                                 </button>
                             </div>
                         </div>
