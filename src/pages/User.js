@@ -95,10 +95,12 @@ const User = () => {
     const handleCreateUser = async () => {
         try {
             await api.post('/api/User/CreateUser', userForm);
-            fetchUsers();
-            closeModal();
+            alert('User created successfully.');
+            fetchUsers(); // Refresh the user list
+            closeModal(); // Close the modal
         } catch (error) {
             console.error('Error creating user:', error);
+            alert('Failed to create user. Please try again.');
         }
     };
 
@@ -174,6 +176,9 @@ const User = () => {
                                             value={searchText}
                                             onChange={handleSearchChange}
                                         />
+                                        <button className="btn btn-primary" onClick={openCreateModal}>
+                                            Create User
+                                        </button>
                                     </div>
                                     <div className="table-responsive" style={{ height: 500, overflowY: 'auto' }}>
                                         <table className="table table-head-fixed text-nowrap table-bordered table-hover">
@@ -239,7 +244,7 @@ const User = () => {
                                         value={userForm.username}
                                         onChange={handleInputChange}
                                         className="form-control"
-                                        disabled
+                                        disabled={isEditMode} // Disable username field in edit mode
                                     />
                                 </div>
                                 {!isEditMode && (
@@ -256,14 +261,15 @@ const User = () => {
                                 )}
                                 <div className="form-group">
                                     <label>Status</label>
-                                    <input
-                                        type="text"
+                                    <select
                                         name="userStatus"
                                         value={userForm.userStatus}
                                         onChange={handleInputChange}
                                         className="form-control"
-                                        disabled
-                                    />
+                                    >
+                                        <option value="Active">Active</option>
+                                        <option value="Inactive">Inactive</option>
+                                    </select>
                                 </div>
                                 <div className="form-group">
                                     <label>Home Location Code</label>
@@ -294,15 +300,6 @@ const User = () => {
                                 >
                                     {isEditMode ? 'Update User' : 'Create User'}
                                 </button>
-                                {isEditMode && (
-                                    <button
-                                        type="button"
-                                        className="btn btn-primary"
-                                        onClick={handleResetPassword}
-                                    >
-                                        Reset Password
-                                    </button>
-                                )}
                                 <button type="button" className="btn btn-secondary" onClick={closeModal}>
                                     Cancel
                                 </button>
