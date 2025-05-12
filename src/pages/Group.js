@@ -12,11 +12,16 @@ const Group = () => {
         groupDescription: '',
         status: 'T'
     });
+    const [roles, setRoles] = useState([]);
+    const [groupRoles, setGroupRoles] = useState([]);
+    const [selectedGroupId, setSelectedGroupId] = useState(null);
+    const [showRoleModal, setShowRoleModal] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
     const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
         fetchGroups();
+        fetchAllRoles();
     }, []);
 
     const fetchGroups = async () => {
@@ -27,6 +32,54 @@ const Group = () => {
         } catch (error) {
             console.error('Error fetching groups:', error);
         }
+    };
+
+    const fetchAllRoles = async () => {
+        try {
+            const response = await api.get('/api/Group/GetAllRoles');
+            setRoles(response.data);
+        } catch (error) {
+            console.error('Error fetching roles:', error);
+        }
+    };
+
+    const fetchGroupRoles = async (groupId) => {
+        try {
+            const response = await api.get(`/api/Group/GetGroupRoles/${groupId}`);
+            setGroupRoles(response.data);
+        } catch (error) {
+            console.error('Error fetching group roles:', error);
+        }
+    };
+
+    const handleAddRoleToGroup = async (roleId) => {
+        try {
+            await api.post('/api/Group/AddGroupRole', { groupId: selectedGroupId, roleId });
+            fetchGroupRoles(selectedGroupId);
+        } catch (error) {
+            console.error('Error adding role to group:', error);
+        }
+    };
+
+    const handleRemoveRoleFromGroup = async (roleId) => {
+        try {
+            await api.delete(`/api/Group/DeleteGroupRole/${selectedGroupId}/${roleId}`);
+            fetchGroupRoles(selectedGroupId);
+        } catch (error) {
+            console.error('Error removing role from group:', error);
+        }
+    };
+
+    const openRoleModal = (groupId) => {
+        setSelectedGroupId(groupId);
+        fetchGroupRoles(groupId);
+        setShowRoleModal(true);
+    };
+
+    const closeRoleModal = () => {
+        setShowRoleModal(false);
+        setGroupRoles([]);
+        setSelectedGroupId(null);
     };
 
     const handleInputChange = (e) => {
@@ -43,7 +96,7 @@ const Group = () => {
 
         const filtered = groups.filter(group =>
             (group.groupName || '').toLowerCase().includes(value.toLowerCase()) ||
-            (group.groupDescription || '').toLowerCase().includes(value.toLowerCase()) // Updated field name
+            (group.groupDescription || '').toLowerCase().includes(value.toLowerCase())
         );
         setFilteredGroups(filtered);
     };
@@ -65,17 +118,6 @@ const Group = () => {
             closeModal();
         } catch (error) {
             console.error('Error updating group:', error);
-        }
-    };
-
-    const handleDeleteGroup = async (groupId) => {
-        if (!window.confirm('Are you sure you want to delete this group?')) return;
-
-        try {
-            await api.delete(`/api/Group/DeleteGroup/${groupId}`);
-            fetchGroups();
-        } catch (error) {
-            console.error('Error deleting group:', error);
         }
     };
 
@@ -142,13 +184,12 @@ const Group = () => {
                                                             >
                                                                 <i className="fa fa-pencil-alt" aria-hidden="true"></i> Edit
                                                             </button>
-                                                            {/* Delete button is hidden for now */}
-                                                            {/* <button
-                                                                className="btn btn-sm btn-danger"
-                                                                onClick={() => handleDeleteGroup(group.groupId)}
+                                                            <button
+                                                                className="btn btn-sm btn-info"
+                                                                onClick={() => openRoleModal(group.groupId)}
                                                             >
-                                                                <i className="fa fa-trash" aria-hidden="true"></i> Delete
-                                                            </button> */}
+                                                                <i className="fa fa-users" aria-hidden="true"></i> Manage Roles
+                                                            </button>
                                                         </td>
                                                     </tr>
                                                 ))}
@@ -162,6 +203,64 @@ const Group = () => {
                 </div>
             </div>
 
+            {/* Role Management Modal */}
+            {showRoleModal && (
+                <div className="modal" style={{ display: 'block' }}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title">
+                                    Manage Roles for Group: <strong>{groups.find(group => group.groupId === selectedGroupId)?.groupName}</strong>
+                                </h5>
+                                <button type="button" className="close" onClick={closeRoleModal}>
+                                    <span>&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body">
+                                <h6>Assigned Roles</h6>
+                                <ul className="list-group">
+                                    {groupRoles.map(role => (
+                                        <li key={role.roleId} className="list-group-item d-flex align-items-center justify-content-between">
+                                            <span>{role.roleId}</span>
+                                            <button
+                                                className="btn btn-sm btn-danger"
+                                                onClick={() => handleRemoveRoleFromGroup(role.roleId)}
+                                                title="Remove Role"
+                                            >
+                                                <i className="fa fa-minus-circle" aria-hidden="true"></i>
+                                            </button>
+                                        </li>
+                                    ))}
+                                </ul>
+                                <h6 className="mt-3">Available Roles</h6>
+                                <ul className="list-group">
+                                    {roles
+                                        .filter(role => !groupRoles.some(gr => gr.roleId === role.roleId))
+                                        .map(role => (
+                                            <li key={role.roleId} className="list-group-item d-flex align-items-center justify-content-between">
+                                                <span>{role.roleId}</span>
+                                                <button
+                                                    className="btn btn-sm btn-primary"
+                                                    onClick={() => handleAddRoleToGroup(role.roleId)}
+                                                    title="Add Role"
+                                                >
+                                                    <i className="fa fa-plus-circle" aria-hidden="true"></i>
+                                                </button>
+                                            </li>
+                                        ))}
+                                </ul>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-secondary" onClick={closeRoleModal}>
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Create/Edit Group Modal */}
             {showModal && (
                 <div className="modal" style={{ display: 'block' }}>
                     <div className="modal-dialog">
@@ -187,7 +286,7 @@ const Group = () => {
                                     <label>Description</label>
                                     <textarea
                                         name="groupDescription"
-                                        value={groupForm.groupDescription || ''} // Ensure value is never null
+                                        value={groupForm.groupDescription || ''}
                                         onChange={handleInputChange}
                                         className="form-control"
                                         rows="3"
