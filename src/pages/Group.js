@@ -14,14 +14,18 @@ const Group = () => {
     });
     const [roles, setRoles] = useState([]);
     const [groupRoles, setGroupRoles] = useState([]);
+    const [locations, setLocations] = useState([]);
+    const [groupLocations, setGroupLocations] = useState([]);
     const [selectedGroupId, setSelectedGroupId] = useState(null);
     const [showRoleModal, setShowRoleModal] = useState(false);
+    const [showLocationModal, setShowLocationModal] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
     const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
         fetchGroups();
         fetchAllRoles();
+        fetchAllLocations();
     }, []);
 
     const fetchGroups = async () => {
@@ -43,12 +47,30 @@ const Group = () => {
         }
     };
 
+    const fetchAllLocations = async () => {
+        try {
+            const response = await api.get('/api/Group/GetHomeLocationCodes');
+            setLocations(response.data);
+        } catch (error) {
+            console.error('Error fetching locations:', error);
+        }
+    };
+
     const fetchGroupRoles = async (groupId) => {
         try {
             const response = await api.get(`/api/Group/GetGroupRoles/${groupId}`);
             setGroupRoles(response.data);
         } catch (error) {
             console.error('Error fetching group roles:', error);
+        }
+    };
+
+    const fetchGroupLocations = async (groupId) => {
+        try {
+            const response = await api.get(`/api/Group/GetGroupLocations/${groupId}`);
+            setGroupLocations(response.data);
+        } catch (error) {
+            console.error('Error fetching group locations:', error);
         }
     };
 
@@ -61,6 +83,15 @@ const Group = () => {
         }
     };
 
+    const handleAddLocationToGroup = async (locationCode) => {
+        try {
+            await api.post('/api/Group/AddGroupLocation', { groupId: selectedGroupId, locationCode });
+            fetchGroupLocations(selectedGroupId);
+        } catch (error) {
+            console.error('Error adding location to group:', error);
+        }
+    };
+
     const handleRemoveRoleFromGroup = async (roleId) => {
         try {
             await api.delete(`/api/Group/DeleteGroupRole/${selectedGroupId}/${roleId}`);
@@ -70,15 +101,36 @@ const Group = () => {
         }
     };
 
+    const handleRemoveLocationFromGroup = async (locationCode) => {
+        try {
+            await api.delete(`/api/Group/DeleteGroupLocation/${selectedGroupId}/${locationCode}`);
+            fetchGroupLocations(selectedGroupId);
+        } catch (error) {
+            console.error('Error removing location from group:', error);
+        }
+    };
+
     const openRoleModal = (groupId) => {
         setSelectedGroupId(groupId);
         fetchGroupRoles(groupId);
         setShowRoleModal(true);
     };
 
+    const openLocationModal = (groupId) => {
+        setSelectedGroupId(groupId);
+        fetchGroupLocations(groupId);
+        setShowLocationModal(true);
+    };
+
     const closeRoleModal = () => {
         setShowRoleModal(false);
         setGroupRoles([]);
+        setSelectedGroupId(null);
+    };
+
+    const closeLocationModal = () => {
+        setShowLocationModal(false);
+        setGroupLocations([]);
         setSelectedGroupId(null);
     };
 
@@ -185,10 +237,16 @@ const Group = () => {
                                                                 <i className="fa fa-pencil-alt" aria-hidden="true"></i> Edit
                                                             </button>
                                                             <button
-                                                                className="btn btn-sm btn-info"
+                                                                className="btn btn-sm btn-info mr-2"
                                                                 onClick={() => openRoleModal(group.groupId)}
                                                             >
                                                                 <i className="fa fa-users" aria-hidden="true"></i> Manage Roles
+                                                            </button>
+                                                            <button
+                                                                className="btn btn-sm btn-info"
+                                                                onClick={() => openLocationModal(group.groupId)}
+                                                            >
+                                                                <i className="fa fa-map-marker" aria-hidden="true"></i> Manage Locations
                                                             </button>
                                                         </td>
                                                     </tr>
@@ -252,6 +310,67 @@ const Group = () => {
                             </div>
                             <div className="modal-footer">
                                 <button type="button" className="btn btn-secondary" onClick={closeRoleModal}>
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Location Management Modal */}
+            {showLocationModal && (
+                <div className="modal" style={{ display: 'block' }}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title">
+                                    Manage Locations for Group: <strong>{groups.find(group => group.groupId === selectedGroupId)?.groupName}</strong>
+                                </h5>
+                                <button type="button" className="close" onClick={closeLocationModal}>
+                                    <span>&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body">
+                                <h6>Assigned Locations</h6>
+                                <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                                    <ul className="list-group">
+                                        {groupLocations.map(location => (
+                                            <li key={location.locationCode} className="list-group-item d-flex align-items-center justify-content-between">
+                                                <span>{location.locationName}</span> {/* Updated to display locationName */}
+                                                <button
+                                                    className="btn btn-sm btn-danger"
+                                                    onClick={() => handleRemoveLocationFromGroup(location.locationCode)}
+                                                    title="Remove Location"
+                                                >
+                                                    <i className="fa fa-minus-circle" aria-hidden="true"></i>
+                                                </button>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                                <h6 className="mt-3">Available Locations</h6>
+                                <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                                    <ul className="list-group">
+                                        {locations
+                                            .filter(location => !groupLocations.some(gl => gl.locationCode === location.locationCode))
+                                            .map(location => (
+                                                <li key={location.locationCode} className="list-group-item d-flex align-items-center justify-content-between">
+                                                    <span>{location.locationName}</span> {/* Updated to display locationName */}
+                                                    <button
+                                                        className="btn btn-sm btn-primary"
+                                                        onClick={() => handleAddLocationToGroup(location.locationCode)}
+                                                        title="Add Location"
+                                                    >
+                                                        <i className="fa fa-plus-circle" aria-hidden="true"></i>
+                                                    </button>
+                                                </li>
+                                            ))}
+                                    </ul>
+                                </div>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-secondary" onClick={closeLocationModal}>
                                     Close
                                 </button>
                             </div>
