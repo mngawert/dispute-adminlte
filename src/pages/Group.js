@@ -21,6 +21,7 @@ const Group = () => {
     const [showLocationModal, setShowLocationModal] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
     const [showModal, setShowModal] = useState(false);
+    const [availableLocationFilter, setAvailableLocationFilter] = useState('');
 
     useEffect(() => {
         fetchGroups();
@@ -337,7 +338,7 @@ const Group = () => {
                                     <ul className="list-group">
                                         {groupLocations.map(location => (
                                             <li key={location.locationCode} className="list-group-item d-flex align-items-center justify-content-between">
-                                                <span>{location.locationName}</span> {/* Updated to display locationName */}
+                                                <span>{location.locationName}</span>
                                                 <button
                                                     className="btn btn-sm btn-danger"
                                                     onClick={() => handleRemoveLocationFromGroup(location.locationCode)}
@@ -350,13 +351,24 @@ const Group = () => {
                                     </ul>
                                 </div>
                                 <h6 className="mt-3">Available Locations</h6>
+                                {/* Filter Input for Available Locations */}
+                                <input
+                                    type="text"
+                                    className="form-control mb-2"
+                                    placeholder="Filter available locations"
+                                    value={availableLocationFilter}
+                                    onChange={(e) => setAvailableLocationFilter(e.target.value)}
+                                />
                                 <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
                                     <ul className="list-group">
                                         {locations
-                                            .filter(location => !groupLocations.some(gl => gl.locationCode === location.locationCode))
+                                            .filter(location =>
+                                                location.locationName.toLowerCase().includes(availableLocationFilter.toLowerCase()) &&
+                                                !groupLocations.some(gl => gl.locationCode === location.locationCode)
+                                            )
                                             .map(location => (
                                                 <li key={location.locationCode} className="list-group-item d-flex align-items-center justify-content-between">
-                                                    <span>{location.locationName}</span> {/* Updated to display locationName */}
+                                                    <span>{location.locationName}</span>
                                                     <button
                                                         className="btn btn-sm btn-primary"
                                                         onClick={() => handleAddLocationToGroup(location.locationCode)}
