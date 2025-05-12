@@ -177,6 +177,14 @@ export default function Sidebar() {
                     </a>
                   </li>                            
                 }
+                {(userHasRole("Admin") || userHasRole("ApproverXX")) && 
+                  <li className="nav-item">
+                    <a href="/NTAdjustor/Group" className={`nav-link ${isActive('/Group')}`}> {/* Add basepath */}
+                      <i className="far fa-circle nav-icon" />
+                      <p>Groups</p>
+                    </a>
+                  </li>                            
+                }
                 <li className="nav-item">
                   <a href="#" className="nav-link" onClick={() => { handleLogout() }} >
                     <i className="far fa-circle nav-icon"></i>

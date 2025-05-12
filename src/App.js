@@ -25,7 +25,8 @@ import AdjustP36 from "./pages/AdjustP36";
 import AdjustP3Plus from "./pages/AdjustP3Plus";
 import AdjustP3Minus from "./pages/AdjustP3Minus";
 import AdjustB from "./pages/AdjustB";
-import User from "./pages/User"; // Import the new User page
+import User from "./pages/User";
+import Group from "./pages/Group";
 
 import { DocumentProvider } from "./contexts/DocumentContext";
 import SearchAdj from "./pages/SearchAdj";
@@ -72,6 +73,7 @@ function App() {
             <Route path="/Not-authorized" element={<PrivateRoute element={<NotAuthorized />} allowedRoles={['Admin', 'Creator', 'Reviewer', 'Approver', 'Finance']} />} />
             {/* <Route path="/not-authorized2" element={<NotAuthorized /> } /> */}
             <Route path="/User" element={<PrivateRoute element={<User />} allowedRoles={['Admin']} />} /> {/* Add the new User page route */}
+            <Route path="/Group" element={<PrivateRoute element={<Group />} allowedRoles={['Admin']} />} /> {/* Add the new User page route */}
             <Route path="/Change-password" element={<PrivateRoute element={<ChangePassword />} allowedRoles={['Admin', 'Creator', 'Reviewer', 'Approver', 'Finance']} />} />
             {/* <Route path="/test" element={<Test />} /> */}
             {/* <Route path="/Dashboard" element={<PrivateRoute element={<Dashboard />} allowedRoles={['Admin']} />} /> */}
