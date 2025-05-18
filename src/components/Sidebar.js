@@ -52,6 +52,18 @@ export default function Sidebar() {
                 </a>
                 <ul className="nav nav-treeview">
                   <li className="nav-item">
+                    <a href="/NTAdjustor/AdjustMinus" className={`nav-link ${isActive('/AdjustMinus')}`}> {/* Add basepath */}
+                      <i className="far fa-circle nav-icon" />
+                      <p>Adjust-</p>
+                    </a>
+                  </li>
+                  <li className="nav-item">
+                    <a href="/NTAdjustor/AdjustPlus" className={`nav-link ${isActive('/AdjustPlus')}`}> {/* Add basepath */}
+                      <i className="far fa-circle nav-icon" />
+                      <p>Adjust+</p>
+                    </a>
+                  </li>
+                  <li className="nav-item">
                     <a href="/NTAdjustor/AdjustP35" className={`nav-link ${isActive('/AdjustP35')}`}> {/* Add basepath */}
                       <i className="far fa-circle nav-icon" />
                       <p>P35 </p>
