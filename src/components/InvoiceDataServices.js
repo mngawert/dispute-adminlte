@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const InvoiceDataServices = ({ invoiceDataServices, selectedInvoiceDataService, handleSelectInvoiceServices }) => {
+const InvoiceDataServices = ({ invoiceDataServices, selectedInvoiceDataService, handleSelectInvoiceServices, tableHeight = 500 }) => {
     const [filterText, setFilterText] = useState('');
 
     const handleFilterChange = (e) => {
@@ -21,7 +21,7 @@ const InvoiceDataServices = ({ invoiceDataServices, selectedInvoiceDataService, 
                 value={filterText}
                 onChange={handleFilterChange}
             />
-            <div className="table-responsive" style={{ height: 500, border: '1px solid #dee2e6' }}>
+            <div className="table-responsive" style={{ height: tableHeight, border: '1px solid #dee2e6' }}>
                 <table className="table table-as-list text-nowrap table-hover">
                     <tbody>
                         {filteredInvoiceDataServices.map((data, idx) => (

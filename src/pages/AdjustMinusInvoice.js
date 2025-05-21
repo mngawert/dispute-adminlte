@@ -11,7 +11,7 @@ import MakeAdjustment from '../components/MakeAdjustment';
 import DisputeEvent from '../components/DisputeEvent';
 import ContentHeader from '../components/ContentHeader';
 
-const AdjustMinus = ({documentType=DOCUMENT_TYPE.ADJUST_MINUS, documentTypeName='Adjust -'}) => {
+const AdjustMinusInvoice = ({documentType=DOCUMENT_TYPE.ADJUST_MINUS, documentTypeName='Adjust -', adjustmentTypeNames=['P31','P32','P3 -']}) => {
 
     const { 
         /** Account */
@@ -32,7 +32,7 @@ const AdjustMinus = ({documentType=DOCUMENT_TYPE.ADJUST_MINUS, documentTypeName=
         selectedInvoiceDataUsage, setSelectedInvoiceDataUsage,
 
         /** Adjustment */
-        adjustmentTypes, setAdjustmentTypes, getAdjustmentTypesByProductCodeAndRevenueCode,
+        adjustmentTypes, setAdjustmentTypes, getAdjustmentTypesByProductCodeAndRevenueCode,getAdjustmentTypes,
         selectedAdjustmentType, setSelectedAdjustmentType,
         adjustmentAmount, setAdjustmentAmount,
         adjustmentNote, setAdjustmentNote,
@@ -57,8 +57,10 @@ const AdjustMinus = ({documentType=DOCUMENT_TYPE.ADJUST_MINUS, documentTypeName=
         setInvoiceDataServices([]); setSelectedInvoiceDataService({}); 
         setInvoiceDataRC([]); setSelectedInvoiceDataRC({}); setInvoiceDataUsage([]); setSelectedInvoiceDataUsage({});
         setCostedEvents([]); setSelectedCostedEvent({});
-        setAdjustmentTypes([]); setSelectedAdjustmentType({}); 
+        // setAdjustmentTypes([]); setSelectedAdjustmentType({}); 
         setAdjustmentAmount(0); 
+
+        getAdjustmentTypes(adjustmentTypeNames)
     }
 
     const handleSelectInvoiceServices = (data) => {
@@ -69,7 +71,7 @@ const AdjustMinus = ({documentType=DOCUMENT_TYPE.ADJUST_MINUS, documentTypeName=
         /** Clear states */
         setInvoiceDataRC([]); setSelectedInvoiceDataRC({}); setInvoiceDataUsage([]); setSelectedInvoiceDataUsage({});
         setCostedEvents([]); setSelectedCostedEvent({});
-        setAdjustmentTypes([]); setSelectedAdjustmentType({}); 
+        // setAdjustmentTypes([]); setSelectedAdjustmentType({}); 
         setAdjustmentAmount(0); 
     }
 
@@ -136,34 +138,24 @@ const AdjustMinus = ({documentType=DOCUMENT_TYPE.ADJUST_MINUS, documentTypeName=
 
                 <div className="card">
                     <div className="card-body">
-
-                        <InvoiceSearch accountNum={selectedAccount?.accountNum} invoices={invoices} getInvoicesByAccountNum={getInvoicesByAccountNum} selectedInvoice={selectedInvoice} handleSelectInvoice={handleSelectInvoice}  />
-                                            
-                        <hr className="mb-5" />
-
-                        <div className="row mb-5">
-                            <div className="col-lg-3">
-                                <InvoiceDataServices invoiceDataServices={invoiceDataServices} selectedInvoiceDataService={selectedInvoiceDataService} handleSelectInvoiceServices={handleSelectInvoiceServices} />
-                            </div>
-                            <div className="col-lg-9">                                
-                                <InvoiceDataRC invoiceDataRC={invoiceDataRC} selectedInvoiceDataRC={selectedInvoiceDataRC} handleSelectInvoiceRC={handleSelectInvoiceRC} />
-                                <InvoiceDataUsage invoiceDataUsage={invoiceDataUsage} selectedInvoiceDataUsage={selectedInvoiceDataUsage} handleSelectInvoiceUsage={handleSelectInvoiceUsage} />
-                            </div>
-                        </div>
-
-                        <hr className="mb-5" />
-                        
-                        {Object.keys(selectedInvoiceDataUsage).length > 0 && 
-                        (
-                            <DisputeEvent costedEvents={costedEvents} selectedCostedEvent={selectedCostedEvent} handleSelectCostedEvent={handleSelectCostedEvent} getCostedEvents={getCostedEvents} selectedInvoiceDataUsage={selectedInvoiceDataUsage} />
-                        )
-                        }
+                        <InvoiceSearch accountNum={selectedAccount?.accountNum} invoices={invoices} getInvoicesByAccountNum={getInvoicesByAccountNum} selectedInvoice={selectedInvoice} handleSelectInvoice={handleSelectInvoice}  />                                            
                     </div>
                 </div>
 
-                <div className="card">
-                    <div className="card-body">
-                        <MakeAdjustment adjustmentTypes={adjustmentTypes} selectedAdjustmentType={selectedAdjustmentType} setSelectedAdjustmentType={setSelectedAdjustmentType} selectedCostedEvent={selectedCostedEvent} adjustmentNote={adjustmentNote} setAdjustmentNote={setAdjustmentNote} adjustmentAmount={adjustmentAmount} setAdjustmentAmount={setAdjustmentAmount} handleCreateAdjustmentRequest={handleCreateAdjustmentRequest} documentType={documentType} selectedAccount={selectedAccount} />
+                <div className="row">
+                    <div className="col-lg-3 d-flex flex-column">
+                        <div className="card flex-grow-1">
+                            <div className="card-body">
+                                <InvoiceDataServices invoiceDataServices={invoiceDataServices} selectedInvoiceDataService={selectedInvoiceDataService} handleSelectInvoiceServices={handleSelectInvoiceServices} tableHeight={200} />
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-lg-9 d-flex flex-column">
+                        <div className="card flex-grow-1">
+                            <div className="card-body">
+                                <MakeAdjustment adjustmentTypes={adjustmentTypes} selectedAdjustmentType={selectedAdjustmentType} setSelectedAdjustmentType={setSelectedAdjustmentType} selectedCostedEvent={selectedCostedEvent} adjustmentNote={adjustmentNote} setAdjustmentNote={setAdjustmentNote} adjustmentAmount={adjustmentAmount} setAdjustmentAmount={setAdjustmentAmount} handleCreateAdjustmentRequest={handleCreateAdjustmentRequest} documentType={documentType} selectedAccount={selectedAccount} />
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -181,4 +173,4 @@ const AdjustMinus = ({documentType=DOCUMENT_TYPE.ADJUST_MINUS, documentTypeName=
     )
 };
 
-export default AdjustMinus;
+export default AdjustMinusInvoice;

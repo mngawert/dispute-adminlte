@@ -101,92 +101,18 @@ const AdjustPlus = ({documentType=DOCUMENT_TYPE.ADJUST_PLUS, documentTypeName='A
                             <AccountInfo selectedAccount={selectedAccount} />
                         </div>
 
-
-                        {/* <div className="col-sm-5">
-                            <div className="row">
-                                <div className="col-sm-6">
-
-                                    <Accounts accounts={accounts} selectedAccount={selectedAccount} setSelectedAccount={setSelectedAccount} />
-
-                                </div>
-                                <div className="col-sm-6">
-                                <div className="mb-2">
-                                    <label>Service Numbers</label>
-                                    <input type="text" className="form-control" defaultValue />
-                                </div>
-                                <div className="table-responsive" style={{height: 153, border: '1px solid #dee2e6'}}>
-                                    <table className="table table-as-list text-nowrap table-hover">
-                                    <tbody>
-                                        <tr>
-                                        <td>1232313123</td>
-                                        </tr>
-                                        <tr>
-                                        <td>1232313123</td>
-                                        </tr>
-                                    </tbody>
-                                    </table>
-                                </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-sm-3">
-                            <div className="form-group">
-                                <label>Customer name</label>
-                                <input type="text" className="form-control" defaultValue readOnly />
-                            </div>
-                            <div className="form-group">
-                                <label>Account type</label>
-                                <input type="text" className="form-control" defaultValue readOnly />
-                            </div>
-                        </div> */}
-
-
                     </div>
                 </div>
             </div>
             
             <AdjustmentTypeNamesFilter initialAdjustmentTypeNames={initialAdjustmentTypeNames} adjustmentTypeNames={adjustmentTypeNames} setAdjustmentTypeNames={setAdjustmentTypeNames} getAdjustmentTypes={getAdjustmentTypes} />
-            
-            <MakeAdjustment adjustmentTypes={adjustmentTypes} selectedAdjustmentType={selectedAdjustmentType} setSelectedAdjustmentType={setSelectedAdjustmentType} adjustmentNote={adjustmentNote} setAdjustmentNote={setAdjustmentNote}  adjustmentAmount={adjustmentAmount} setAdjustmentAmount={setAdjustmentAmount} handleCreateAdjustmentRequest={handleCreateAdjustmentRequest} documentType={documentType} />
 
-            {/* <div className="card">
+            <div className="card">
                 <div className="card-body">
-                <div className="row">
-                    <div className="col-sm-3 form-group">
-                    <label>Make adjustment type</label>
-                    <select className="form-control">
-                        <option>option 1</option>
-                        <option>option 2</option>
-                        <option>option 3</option>
-                        <option>option 4</option>
-                        <option>option 5</option>
-                    </select>
-                    </div>
-                    <div className="col-sm-3 form-group">
-                    <label>Amount</label>
-                    <input type="text" className="form-control" />
-                    <small>Thai Baht (excl VAT).</small>
-                    </div>
-                    <div className="col-sm-3 form-group">
-                    <label>7% VAT</label>
-                    <input type="text" className="form-control" readOnly />
-                    </div>
-                    <div className="col-sm-3 form-group">
-                    <label>Total</label>
-                    <input type="text" className="form-control" readOnly />
-                    </div>
+                    <MakeAdjustment adjustmentTypes={adjustmentTypes} selectedAdjustmentType={selectedAdjustmentType} setSelectedAdjustmentType={setSelectedAdjustmentType} adjustmentNote={adjustmentNote} setAdjustmentNote={setAdjustmentNote}  adjustmentAmount={adjustmentAmount} setAdjustmentAmount={setAdjustmentAmount} handleCreateAdjustmentRequest={handleCreateAdjustmentRequest} documentType={documentType} />
                 </div>
-                <div className="row">
-                    <div className="col-sm-6 form-group">
-                    <label>Note</label>
-                    <textarea className="form-control" rows={3} defaultValue={""} />
-                    </div>
-                    <div className="col-sm-6 form-group d-flex" style={{alignItems: 'flex-end'}}>
-                    <button type="submit" className="btn btn-primary">Submit</button>
-                    </div>
-                </div>
-                </div>
-            </div> */}
+            </div>
+
 
             <PendingDocument pendingDocument={pendingDocument} adjustmentRequests={adjustmentRequests} fetchPendingDocumentAndRequests={fetchPendingDocumentAndRequests} deleteAdjustmentRequest={deleteAdjustmentRequest} updateDocumentStatus={updateDocumentStatus} />
 

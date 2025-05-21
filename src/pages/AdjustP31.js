@@ -1,9 +1,9 @@
 import { DOCUMENT_TYPE } from "../contexts/Constants";
-import AdjustMinus from "./AdjustMinus";
+import AdjustMinusInvoice from "./AdjustMinusInvoice";
 
 const AdjustP31 = () => {
   return (
-    <AdjustMinus documentType={DOCUMENT_TYPE.P31} documentTypeName="P31" />
+    <AdjustMinusInvoice documentType={DOCUMENT_TYPE.P31} documentTypeName="P31" adjustmentTypeNames={['P31']}  />
   );
 }
 

@@ -21,45 +21,43 @@ const MakeAdjustment = ({ adjustmentTypes, selectedAdjustmentType, setSelectedAd
     const total = selectedAccount ? (adjustmentAmount * (1 + CPS_MAP_HASH[selectedAccount.cpsId] / 100)).toFixed(2) : 0;
 
     return (
-        <div className="card">
-            <div className="card-body">
-                <div className="row">
-                    <div className="col-sm-3 form-group">
-                        <label>Make adjustment type</label>
-                        <select className="form-control" value={selectedAdjustmentType?.adjustmentTypeId || ''} onChange={(e) => handleChangeAdjustmentType(e)}>
-                            <option value="">Select Adjustment Type</option>
-                            {adjustmentTypes.map((adjType) => (
-                                <option key={adjType.adjustmentTypeId} value={adjType.adjustmentTypeId}>
-                                    {adjType.adjustmentTypeName}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                    <div className="col-sm-3 form-group">
-                        <label>Amount</label>
-                        <input type="number" className="form-control" value={adjustmentAmount} onChange={handleAmountChange} />
-                        <small>Thai Baht (excl VAT).</small>
-                    </div>
-                    <div className="col-sm-3 form-group">
-                        <label>VAT</label>
-                        <input type="text" className="form-control" readOnly value={formatNumber(vat)} />
-                    </div>
-                    <div className="col-sm-3 form-group">
-                        <label>Total</label>
-                        <input type="text" className="form-control" readOnly value={formatNumber(total)} />
-                    </div>
+        <>
+            <div className="row">
+                <div className="col-sm-3 form-group">
+                    <label>Make adjustment type</label>
+                    <select className="form-control" value={selectedAdjustmentType?.adjustmentTypeId || ''} onChange={(e) => handleChangeAdjustmentType(e)}>
+                        <option value="">Select Adjustment Type</option>
+                        {adjustmentTypes.map((adjType) => (
+                            <option key={adjType.adjustmentTypeId} value={adjType.adjustmentTypeId}>
+                                {adjType.adjustmentTypeName}
+                            </option>
+                        ))}
+                    </select>
                 </div>
-                <div className="row">
-                    <div className="col-sm-6 form-group">
-                        <label>Note</label>
-                        <textarea className="form-control" rows={3} value={adjustmentNote} onChange={(e) => setAdjustmentNote(e.target.value)} />
-                    </div>
-                    <div className="col-sm-6 form-group d-flex" style={{ alignItems: 'flex-end' }}>
-                        <button type="submit" className="btn btn-default" onClick={() => handleCreateAdjustmentRequest(documentType)} >Submit</button>
-                    </div>
+                <div className="col-sm-3 form-group">
+                    <label>Amount</label>
+                    <input type="number" className="form-control" value={adjustmentAmount} onChange={handleAmountChange} />
+                    <small>Thai Baht (excl VAT).</small>
+                </div>
+                <div className="col-sm-3 form-group">
+                    <label>VAT</label>
+                    <input type="text" className="form-control" readOnly value={formatNumber(vat)} />
+                </div>
+                <div className="col-sm-3 form-group">
+                    <label>Total</label>
+                    <input type="text" className="form-control" readOnly value={formatNumber(total)} />
                 </div>
             </div>
-        </div>
+            <div className="row">
+                <div className="col-sm-6 form-group">
+                    <label>Note</label>
+                    <textarea className="form-control" rows={3} value={adjustmentNote} onChange={(e) => setAdjustmentNote(e.target.value)} />
+                </div>
+                <div className="col-sm-6 form-group d-flex" style={{ alignItems: 'flex-end' }}>
+                    <button type="submit" className="btn btn-default" onClick={() => handleCreateAdjustmentRequest(documentType)} >Submit</button>
+                </div>
+            </div>
+        </>
     );
 }
 

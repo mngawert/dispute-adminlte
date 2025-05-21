@@ -64,6 +64,18 @@ export default function Sidebar() {
                     </a>
                   </li>
                   <li className="nav-item">
+                    <a href="/NTAdjustor/AdjustP31" className={`nav-link ${isActive('/AdjustP31')}`}> {/* Add basepath */}
+                      <i className="far fa-circle nav-icon" />
+                      <p>P31 </p>
+                    </a>
+                  </li>
+                  <li className="nav-item">
+                    <a href="/NTAdjustor/AdjustP32" className={`nav-link ${isActive('/AdjustP32')}`}> {/* Add basepath */}
+                      <i className="far fa-circle nav-icon" />
+                      <p>P32 </p>
+                    </a>
+                  </li>
+                  <li className="nav-item">
                     <a href="/NTAdjustor/AdjustP35" className={`nav-link ${isActive('/AdjustP35')}`}> {/* Add basepath */}
                       <i className="far fa-circle nav-icon" />
                       <p>P35 </p>

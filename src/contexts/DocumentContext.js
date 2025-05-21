@@ -277,9 +277,6 @@ export const DocumentProvider = ({ children }) => {
         if (!selectedInvoiceDataService || Object.keys(selectedInvoiceDataService).length === 0) {
             return getTranslation('selectServiceNumber', language);
         }
-        if ((!selectedInvoiceDataRC || Object.keys(selectedInvoiceDataRC).length === 0) && (!selectedInvoiceDataUsage || Object.keys(selectedInvoiceDataUsage).length === 0)) {
-            return getTranslation('selectRCOrUsage', language);
-        }
         if (!selectedAdjustmentType || Object.keys(selectedAdjustmentType).length === 0) {
             return getTranslation('selectAdjustmentType', language);
         }
@@ -295,12 +292,6 @@ export const DocumentProvider = ({ children }) => {
         if (parseFloat(adjustmentAmount) > creditLimit) {
             return getTranslation('adjustmentAmountLessThanOrEqualToCreditLimit', language, { creditLimit });
         }
-        if (parseFloat(adjustmentAmount) > parseFloat(selectedInvoiceDataRC?.aggAmount ?? selectedInvoiceDataUsage?.aggAmount)) {
-            return getTranslation('adjustmentAmountLessThanCharge', language);
-        }
-        if (parseFloat(adjustmentAmount) > parseFloat(selectedCostedEvent?.eventCostMny)) {
-            return getTranslation('adjustmentAmountLessThanCharge', language);
-        }
         if (parseFloat(adjustmentAmount) > (parseFloat(selectedInvoice?.invoiceNetMny) - parseFloat(selectedInvoice?.adjustedMny) - parseFloat(selectedInvoice?.pendingAdjustmentMny))) {
             return getTranslation('adjustmentAmountLessThanInvoice', language);
         }
@@ -308,6 +299,20 @@ export const DocumentProvider = ({ children }) => {
             return getTranslation('invoiceWrittenOff', language);
         }
     
+
+        if (documentType === DOCUMENT_TYPE.ADJUST_MINUS || documentType === DOCUMENT_TYPE.P35 || documentType === DOCUMENT_TYPE.P36) {
+
+            if ((!selectedInvoiceDataRC || Object.keys(selectedInvoiceDataRC).length === 0) && (!selectedInvoiceDataUsage || Object.keys(selectedInvoiceDataUsage).length === 0)) {
+                return getTranslation('selectRCOrUsage', language);
+            }
+            if (parseFloat(adjustmentAmount) > parseFloat(selectedInvoiceDataRC?.aggAmount ?? selectedInvoiceDataUsage?.aggAmount)) {
+                return getTranslation('adjustmentAmountLessThanCharge', language);
+            }
+            if (parseFloat(adjustmentAmount) > parseFloat(selectedCostedEvent?.eventCostMny)) {
+                return getTranslation('adjustmentAmountLessThanCharge', language);
+            }    
+        }
+
 
         if (documentType === DOCUMENT_TYPE.P35) {
 
