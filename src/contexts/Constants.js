@@ -5,8 +5,8 @@ export const DOCUMENT_TYPE = {
   P32           : '32',
   P35           : '35',
   P36           : '36',
-  P3_PLUS       : '21',
-  P3_MINUS      : '22',
+  P3_MINUS      : '21',
+  P3_PLUS       : '22',
   B             : '11'
 };
 

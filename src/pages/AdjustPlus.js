@@ -12,7 +12,12 @@ import { get } from "jquery";
 import ContentHeader from "../components/ContentHeader";
 
 
-const AdjustPlus = ({documentType=DOCUMENT_TYPE.ADJUST_PLUS, documentTypeName='Adjust +'}) => {
+const AdjustPlus = ({
+    documentType = DOCUMENT_TYPE.ADJUST_PLUS,
+    documentTypeName = 'Adjust +',
+    initialAdjustmentTypeNames = ['RC', 'USG', 'NRC'],
+    showAdjustmentTypeNamesFilter = true // <-- add this line
+}) => {
 
     const { 
         /** Account */
@@ -38,7 +43,7 @@ const AdjustPlus = ({documentType=DOCUMENT_TYPE.ADJUST_PLUS, documentTypeName='A
 
     } = useDocumentContext();
 
-    const initialAdjustmentTypeNames = ['RC', 'USG', 'NRC'];
+    //const initialAdjustmentTypeNames = ['RC', 'USG', 'NRC'];
     const [adjustmentTypeNames, setAdjustmentTypeNames] = useState(initialAdjustmentTypeNames);
 
     const handleSelectAccount = (account) => {
@@ -105,7 +110,9 @@ const AdjustPlus = ({documentType=DOCUMENT_TYPE.ADJUST_PLUS, documentTypeName='A
                 </div>
             </div>
             
-            <AdjustmentTypeNamesFilter initialAdjustmentTypeNames={initialAdjustmentTypeNames} adjustmentTypeNames={adjustmentTypeNames} setAdjustmentTypeNames={setAdjustmentTypeNames} getAdjustmentTypes={getAdjustmentTypes} />
+            {showAdjustmentTypeNamesFilter && (
+                <AdjustmentTypeNamesFilter initialAdjustmentTypeNames={initialAdjustmentTypeNames} adjustmentTypeNames={adjustmentTypeNames} setAdjustmentTypeNames={setAdjustmentTypeNames} getAdjustmentTypes={getAdjustmentTypes} />
+            )}
 
             <div className="card">
                 <div className="card-body">
