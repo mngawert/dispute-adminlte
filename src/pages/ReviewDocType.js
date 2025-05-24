@@ -167,16 +167,16 @@ const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, select
                                                     <td>{adj.invoiceNum}</td>
                                                     <td>{adj.serviceNum}</td>
                                                     <td>{adj.adjustmentTypeName}</td>
-                                                    <td align='center'>{formatNumber(adj.disputeMny.toFixed(2))}</td>
-                                                    <td align='center'>{formatNumber((adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100)).toFixed(2))}</td>
-                                                    <td align='center'>{formatNumber((adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100)).toFixed(2))}</td>
+                                                    <td align='center'>{formatNumber(Math.abs(adj.disputeMny).toFixed(2))}</td>
+                                                    <td align='center'>{formatNumber(Math.abs(adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100)).toFixed(2))}</td>
+                                                    <td align='center'>{formatNumber(Math.abs(adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100)).toFixed(2))}</td>
                                                 </tr>
                                             ))}
                                             <tr>
                                                 <td colSpan="4" align='right'><strong>Total</strong></td>
-                                                <td align='center'><strong>{formatNumber(totalAmount)}</strong></td>
-                                                <td align='center'><strong>{formatNumber(totalVAT)}</strong></td>
-                                                <td align='center'><strong>{formatNumber(total)}</strong></td>
+                                                <td align='center'><strong>{formatNumber(Math.abs(totalAmount))}</strong></td>
+                                                <td align='center'><strong>{formatNumber(Math.abs(totalVAT))}</strong></td>
+                                                <td align='center'><strong>{formatNumber(Math.abs(total))}</strong></td>
                                             </tr>
                                         </tbody>
                                     </table>

@@ -14,6 +14,9 @@ const MakeAdjustment = ({ adjustmentTypes, selectedAdjustmentType, setSelectedAd
         const value = e.target.value;
         if (!isNaN(value)) {
             setAdjustmentAmount(value);
+
+            console.log("Adjustment Amount:", value);
+            console.log("selectedAccount:", selectedAccount);
         }
     }
 

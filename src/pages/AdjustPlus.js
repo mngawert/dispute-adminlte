@@ -116,7 +116,7 @@ const AdjustPlus = ({
 
             <div className="card">
                 <div className="card-body">
-                    <MakeAdjustment adjustmentTypes={adjustmentTypes} selectedAdjustmentType={selectedAdjustmentType} setSelectedAdjustmentType={setSelectedAdjustmentType} adjustmentNote={adjustmentNote} setAdjustmentNote={setAdjustmentNote}  adjustmentAmount={adjustmentAmount} setAdjustmentAmount={setAdjustmentAmount} handleCreateAdjustmentRequest={handleCreateAdjustmentRequest} documentType={documentType} />
+                    <MakeAdjustment adjustmentTypes={adjustmentTypes} selectedAdjustmentType={selectedAdjustmentType} setSelectedAdjustmentType={setSelectedAdjustmentType} adjustmentNote={adjustmentNote} setAdjustmentNote={setAdjustmentNote}  adjustmentAmount={adjustmentAmount} setAdjustmentAmount={setAdjustmentAmount} handleCreateAdjustmentRequest={handleCreateAdjustmentRequest} documentType={documentType} selectedAccount={selectedAccount}  />
                 </div>
             </div>
 
