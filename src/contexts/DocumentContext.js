@@ -459,15 +459,26 @@ export const DocumentProvider = ({ children }) => {
             /** Reload pending adjust amount in Invoices */
             await getInvoicesByAccountNum(selectedAccount.accountNum);
 
-            /** Update selectedInvoice based on the updated data */
-            //setSelectedInvoice({}); 
-            const updatedInvoice = invoices.find(invoice => invoice.billSeq === selectedInvoice.billSeq && invoice.invoiceNum === selectedInvoice.invoiceNum);
-            setSelectedInvoice(updatedInvoice);
+            console.log('Invoices after adjustment request:', invoices);
 
-            await getInvoiceDataRC(selectedInvoiceDataService);
-            await getInvoiceDataUsage(selectedInvoiceDataService);
-            setSelectedInvoiceDataRC({});
-            setSelectedInvoiceDataUsage({});
+
+
+            /** Update selectedInvoice based on the updated data */
+            if (selectedInvoice && Object.keys(selectedInvoice).length > 0) {
+                //setSelectedInvoice({}); 
+                const updatedInvoice = invoices.find(invoice => invoice.billSeq === selectedInvoice?.billSeq && invoice.invoiceNum === selectedInvoice?.invoiceNum);
+                setSelectedInvoice(updatedInvoice);
+            }
+
+            if (selectedInvoiceDataService && Object.keys(selectedInvoiceDataService).length > 0) {
+                await getInvoiceDataRC(selectedInvoiceDataService);
+                setSelectedInvoiceDataRC({});
+            }
+
+            if (selectedInvoiceDataRC && Object.keys(selectedInvoiceDataRC).length > 0) {
+                await getInvoiceDataUsage(selectedInvoiceDataService);
+                setSelectedInvoiceDataUsage({});
+            }
 
             /** Fetch Invoice Data */
             //getInvoiceDataServices(updatedInvoice);
