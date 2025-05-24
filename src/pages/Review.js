@@ -115,12 +115,16 @@ const Review = ({ reviewType, prevDocumentStatus }) => {
               </div>
 
               <Tabs activeKey={activeTab} onSelect={handleTabSelect}>
-                <Tab eventKey="Adjust-" title="Adjust-">
-                  <ReviewDocType documentTypeDesc='Adjust-' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} />
-                </Tab>
-                <Tab eventKey="Adjust+" title="Adjust+">
-                  <ReviewDocType documentTypeDesc='Adjust+' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} />
-                </Tab>
+                {reviewType !== 'Finance' && (
+                  <Tab eventKey="Adjust-" title="Adjust-">
+                    <ReviewDocType documentTypeDesc='Adjust-' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} />
+                  </Tab>
+                )}
+                {reviewType !== 'Finance' && (
+                  <Tab eventKey="Adjust+" title="Adjust+">
+                    <ReviewDocType documentTypeDesc='Adjust+' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} />
+                  </Tab>
+                )}
                 <Tab eventKey="P31" title="P31">
                   <ReviewDocType documentTypeDesc='P31' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} />
                 </Tab>
@@ -133,14 +137,12 @@ const Review = ({ reviewType, prevDocumentStatus }) => {
                 <Tab eventKey="P36" title="P36">
                   <ReviewDocType documentTypeDesc='P36' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} />
                 </Tab>
-
                 <Tab eventKey="P3-" title="P3-">
                   <ReviewDocType documentTypeDesc='P3-' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} />
                 </Tab>
                 <Tab eventKey="P3+" title="P3+">
                   <ReviewDocType documentTypeDesc='P3+' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} />
                 </Tab>
-
               </Tabs>
 
               {/* END CONTENT */}
