@@ -64,7 +64,7 @@ const DocumentDetails = ({ selectedDocument, adjustmentRequests }) => {
                             <th className="sortable" onClick={() => requestSort('serviceNum')}>Service Number {getSortIndicator('serviceNum')}</th>
                             <th className="sortable" onClick={() => requestSort('adjustmentTypeName')}>Adjustment Type {getSortIndicator('adjustmentTypeName')}</th>
                             <th className="sortable" onClick={() => requestSort('requestStatus')}>Status {getSortIndicator('requestStatus')}</th>
-                            <th className="sortable" onClick={() => requestSort('errorMessages')}>Error Messages</th> {/* New column */}
+                            <th className="sortable" onClick={() => requestSort('errorMessages')}>Error Messages</th>
                             <th className="sortable" onClick={() => requestSort('disputeMny')}>Amount {getSortIndicator('disputeMny')}</th>
                             <th className="sortable" onClick={() => requestSort('vat')}>VAT {getSortIndicator('vat')}</th>
                             <th className="sortable" onClick={() => requestSort('total')}>Total {getSortIndicator('total')}</th>
@@ -85,7 +85,7 @@ const DocumentDetails = ({ selectedDocument, adjustmentRequests }) => {
                             </tr>
                         ))}
                         <tr>
-                            <td colSpan="6" align='right'><strong>Total</strong></td> {/* Adjusted colspan */}
+                            <td colSpan="6" align='right'><strong>Total</strong></td>
                             <td align='center'><strong>{formatNumber(Math.abs(totalAmount))}</strong></td>
                             <td align='center'><strong>{formatNumber(Math.abs(totalVAT))}</strong></td>
                             <td align='center'><strong>{formatNumber(Math.abs(total))}</strong></td>
