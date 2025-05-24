@@ -459,9 +459,7 @@ export const DocumentProvider = ({ children }) => {
             /** Reload pending adjust amount in Invoices */
             await getInvoicesByAccountNum(selectedAccount.accountNum);
 
-            console.log('Invoices after adjustment request:', invoices);
-
-
+            //console.log('Invoices after adjustment request:', invoices);
 
             /** Update selectedInvoice based on the updated data */
             if (selectedInvoice && Object.keys(selectedInvoice).length > 0) {

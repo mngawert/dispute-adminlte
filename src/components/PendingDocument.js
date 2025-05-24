@@ -36,9 +36,9 @@ const PendingDocument = ({ pendingDocument, adjustmentRequests, fetchPendingDocu
         return null;
     };
 
-    const totalAmount = adjustmentRequests.reduce((sum, adj) => sum + adj.disputeMny, 0).toFixed(2);
-    const totalVAT = adjustmentRequests.reduce((sum, adj) => sum + (adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100)), 0).toFixed(2);
-    const total = adjustmentRequests.reduce((sum, adj) => sum + (adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100)), 0).toFixed(2);
+    const totalAmount = Math.abs(adjustmentRequests.reduce((sum, adj) => sum + adj.disputeMny, 0)).toFixed(2);
+    const totalVAT = Math.abs(adjustmentRequests.reduce((sum, adj) => sum + (adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100)), 0)).toFixed(2);
+    const total = Math.abs(adjustmentRequests.reduce((sum, adj) => sum + (adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100)), 0)).toFixed(2);
 
     return (
         <div className="card">
@@ -75,9 +75,9 @@ const PendingDocument = ({ pendingDocument, adjustmentRequests, fetchPendingDocu
                                     <td>{adj.accountNum}</td>
                                     <td>{adj.invoiceNum}</td>
                                     <td>{adj.serviceNum}</td>
-                                    <td align='center'>{formatNumber(adj.disputeMny.toFixed(2))}</td>
-                                    <td align='center'>{formatNumber((adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100)).toFixed(2))}</td>
-                                    <td align='center'>{formatNumber((adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100)).toFixed(2))}</td>
+                                    <td align='center'>{formatNumber(Math.abs(adj.disputeMny).toFixed(2))}</td>
+                                    <td align='center'>{formatNumber(Math.abs(adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100)).toFixed(2))}</td>
+                                    <td align='center'>{formatNumber(Math.abs(adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100)).toFixed(2))}</td>
                                     <td>
                                         <button className="btn btn-sm" onClick={() => deleteAdjustmentRequest(adj.documentSeq)}>
                                             <i className="fas fa-trash-alt"></i>
