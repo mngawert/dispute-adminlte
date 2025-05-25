@@ -27,6 +27,7 @@ import AdjustP3Minus_Bak from "./pages/AdjustP3Minus_Bak";
 import AdjustP3Plus from "./pages/AdjustP3Plus";
 import AdjustP3Minus from "./pages/AdjustP3Minus";
 import AdjustB from "./pages/AdjustB";
+import AdjustB_Bak from "./pages/AdjustB_Bak";
 import User from "./pages/User";
 import Group from "./pages/Group";
 
@@ -67,7 +68,8 @@ function App() {
             <Route path="/AdjustP3Minus" element={ <PrivateRoute element={<AdjustP3Minus />} allowedRoles={['Admin', 'Creator']} /> } />
             <Route path="/AdjustP3Plus_Bak" element={ <PrivateRoute element={<AdjustP3Plus_Bak />} allowedRoles={['Admin', 'Creator']} /> } />
             <Route path="/AdjustP3Minus_Bak" element={ <PrivateRoute element={<AdjustP3Minus_Bak />} allowedRoles={['Admin', 'Creator']} /> } />
-            <Route path="/AdjustB" element={<AdjustB />} />
+            <Route path="/AdjustB_Bak" element={<AdjustB_Bak />} />
+            <Route path="/AdjustB" element={ <PrivateRoute element={<AdjustB />} allowedRoles={['Admin', 'Creator']} /> } />
             <Route path="/MyAdj" element={ <PrivateRoute element={<SearchAdj myAdjust="Yes" title="My Adjustments" fetchDataAtStart="Yes" />} allowedRoles={['Admin', 'Creator', 'Reviewer', 'Approver', 'Finance']} /> } />
             <Route path="/SearchAdj" element={ <PrivateRoute element={<SearchAdj myAdjust="No" title="Search Adjustments" fetchDataAtStart="No" />} allowedRoles={['Admin', 'Creator', 'Reviewer', 'Approver', 'Finance']} /> } />
             {/* <Route path="/MyAdj2" element={<SearchAdj myAdjust="Yes" title="My Adjustments" fetchDataAtStart="Yes" />} /> */}

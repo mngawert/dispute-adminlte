@@ -1,5 +1,5 @@
 import React from 'react';
-import { CPS_MAP_HASH } from "../contexts/Constants";
+import { CPS_MAP_HASH, DOCUMENT_TYPE } from "../contexts/Constants";
 import { formatNumber } from '../utils/utils'; // Import the utility function
 
 const MakeAdjustment = ({ adjustmentTypes, selectedAdjustmentType, setSelectedAdjustmentType, selectedCostedEvent, adjustmentNote, setAdjustmentNote, adjustmentAmount, setAdjustmentAmount, handleCreateAdjustmentRequest, documentType, selectedAccount }) => {
@@ -27,15 +27,24 @@ const MakeAdjustment = ({ adjustmentTypes, selectedAdjustmentType, setSelectedAd
         <>
             <div className="row">
                 <div className="col-sm-3 form-group">
-                    <label>Make adjustment type</label>
-                    <select className="form-control" value={selectedAdjustmentType?.adjustmentTypeId || ''} onChange={(e) => handleChangeAdjustmentType(e)}>
-                        <option value="">Select Adjustment Type</option>
-                        {adjustmentTypes.map((adjType) => (
-                            <option key={adjType.adjustmentTypeId} value={adjType.adjustmentTypeId}>
-                                {adjType.adjustmentTypeName}
-                            </option>
-                        ))}
-                    </select>
+                    {documentType === DOCUMENT_TYPE.B ? (
+                        <div>
+                            <label>Make adjustment type</label>
+                            <div className="form-control-plaintext font-weight-bold">B +/-</div>
+                        </div>
+                    ) : (
+                        <>
+                            <label>Make adjustment type</label>
+                            <select className="form-control" value={selectedAdjustmentType?.adjustmentTypeId || ''} onChange={handleChangeAdjustmentType}>
+                                <option value="">Select Adjustment Type</option>
+                                {adjustmentTypes.map((adjType) => (
+                                    <option key={adjType.adjustmentTypeId} value={adjType.adjustmentTypeId}>
+                                        {adjType.adjustmentTypeName}
+                                    </option>
+                                ))}
+                            </select>
+                        </>
+                    )}
                 </div>
                 <div className="col-sm-3 form-group">
                     <label>Amount</label>

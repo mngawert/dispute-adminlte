@@ -100,6 +100,12 @@ export default function Sidebar() {
                       <p>P3+ </p>
                     </a>
                   </li>
+                  <li className="nav-item">
+                    <a href="/NTAdjustor/AdjustB" className={`nav-link ${isActive('/AdjustB')}`}> {/* Add basepath */}
+                      <i className="far fa-circle nav-icon" />
+                      <p>B+/- </p>
+                    </a>
+                  </li>
                 </ul>
               </li>
             }

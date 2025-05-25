@@ -61,6 +61,8 @@ export const DocumentProvider = ({ children }) => {
             setAdjustmentNote('');
             setAdjustmentAmount(0); 
 
+
+            return response.data; // Return the accounts data for further processing if needed
         } catch (error) {
             console.error('Error fetching accounts:', error);
         }
@@ -89,6 +91,7 @@ export const DocumentProvider = ({ children }) => {
             setAdjustmentNote('');
             setAdjustmentAmount(0);
 
+            return response.data; // Return the accounts data for further processing if needed
         } catch (error) {
             console.error('Error fetching accounts:', error);
         }
@@ -108,6 +111,8 @@ export const DocumentProvider = ({ children }) => {
                 }
             });
             setServices(response.data);
+            
+            return response.data; // Return the services data for further processing if needed
         } catch (error) {
             console.error('Error fetching services:', error);
         }
@@ -125,6 +130,8 @@ export const DocumentProvider = ({ children }) => {
                 }
             });
             setInvoices(response.data);
+
+            return response.data; // Return the invoices data for further processing if needed
         } catch (error) {
             console.error('Error fetching invoices:', error);
         }
@@ -146,6 +153,8 @@ export const DocumentProvider = ({ children }) => {
                 }
             });
             setInvoiceDataServices(response.data);
+
+            return response.data; // Return the invoice data services for further processing if needed
         } catch (error) {
             console.error('Error fetching invoice feed data services:', error);
         }
@@ -241,6 +250,8 @@ export const DocumentProvider = ({ children }) => {
                 params: params
             });
             setAdjustmentTypes(response.data);
+
+            return response.data; // Return the adjustment types for further processing if needed
             if (response.data.length > 0) {
                 setSelectedAdjustmentType(response.data[0]);
             }

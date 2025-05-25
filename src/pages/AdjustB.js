@@ -1,293 +1,522 @@
-import React from 'react';
+import { useEffect } from 'react';
+import { useDocumentContext } from '../contexts/DocumentContext';
+import PendingDocument from '../components/PendingDocument';
 import { DOCUMENT_TYPE } from '../contexts/Constants';
+import AccountSearch from '../components/AccountSearch';
+import InvoiceSearch from '../components/InvoiceSearch';
+import InvoiceDataServices from '../components/InvoiceDataServices';
+import InvoiceDataRC from '../components/InvoiceDataRC';
+import InvoiceDataUsage from '../components/InvoiceDataUsage';
+import MakeAdjustment from '../components/MakeAdjustment';
+import DisputeEvent from '../components/DisputeEvent';
+import ContentHeader from '../components/ContentHeader';
+import Accounts from '../components/Accounts';
+import Services from '../components/Services';
+import ServiceSearch from '../components/ServiceSearch';
+import AccountInfo from '../components/AccountInfo';
+import { useState } from 'react';
+import api from '../api';
+import getTranslation from '../utils/getTranslation';
+
+const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B +/-', adjustmentTypeNames=['B1']}) => {
+
+    const { 
+        /** Account */
+        accountNum, setAccountNum, accounts, getAccountsByAccountNum, getAccountsByServiceNum, selectedAccount, setSelectedAccount,
+        
+        /** Service */
+        serviceNum, setServiceNum, services, setServices, getServicesByAccountNum, selectedService, setSelectedService,
+
+        /** Document Submit */
+        pendingDocument, adjustmentRequests, fetchPendingDocumentAndRequests, deleteAdjustmentRequest, updateDocumentStatus,
+
+        /** Invoice */
+        invoices, getInvoicesByAccountNum, selectedInvoice, setSelectedInvoice,
+
+        /** Invoice Data Services */
+        invoiceDataServices, setInvoiceDataServices, getInvoiceDataServices,
+        invoiceDataRC, setInvoiceDataRC, getInvoiceDataRC,
+        invoiceDataUsage, setInvoiceDataUsage, getInvoiceDataUsage,
+        selectedInvoiceDataService, setSelectedInvoiceDataService,
+        selectedInvoiceDataRC, setSelectedInvoiceDataRC,
+        selectedInvoiceDataUsage, setSelectedInvoiceDataUsage,
+
+        /** Adjustment */
+        getAdjustmentTypesByProductCodeAndRevenueCode,getAdjustmentTypes,
+        selectedAdjustmentType, setSelectedAdjustmentType,
+        adjustmentAmount, setAdjustmentAmount,
+        adjustmentNote, setAdjustmentNote,
+
+        /** Validation */
+        validateInputsAdjustMinus, validateInputsAdjustPlus,
+
+        /** Create Adjustment Request */
+        createAdjustmentRequest,
+
+        /** Dispute Event */
+        costedEvents, setCostedEvents, getCostedEvents, selectedCostedEvent, setSelectedCostedEvent
+
+    } = useDocumentContext();
 
 
-const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B +/-'}) => {
+    const [adjustmentTypes, setAdjustmentTypes] = useState([]);
+    
+    // For B-
+    const [accountNumBMinus, setAccountNumBMinus] = useState('');
+    const [accountsBMinus, setAccountsBMinus] = useState([]);
+    const [selectedAccountBMinus, setSelectedAccountBMinus] = useState(null);
+    const [servicesBMinus, setServicesBMinus] = useState([]);
+    const [selectedServiceBMinus, setSelectedServiceBMinus] = useState(null);
+    const [invoicesBMinus, setInvoicesBMinus] = useState([]);
+    const [selectedInvoiceBMinus, setSelectedInvoiceBMinus] = useState(null);
+    const [invoiceDataServicesBMinus, setInvoiceDataServicesBMinus] = useState([]);
+    const [selectedInvoiceDataServiceBMinus, setSelectedInvoiceDataServiceBMinus] = useState({});
+
+    // For B+
+    const [accountNumBPlus, setAccountNumBPlus] = useState('');
+    const [accountsBPlus, setAccountsBPlus] = useState([]);
+    const [selectedAccountBPlus, setSelectedAccountBPlus] = useState(null);
+    const [servicesBPlus, setServicesBPlus] = useState([]);
+    const [selectedServiceBPlus, setSelectedServiceBPlus] = useState(null);
+
+    const getAccountsByAccountNumLocalBMinus = async (accountNum) => {
+        const accounts = await getAccountsByAccountNum(accountNum);
+        setAccountsBMinus(accounts);
+    }
+
+    const getAccountsByAccountNumLocalBPlus = async (accountNum) => {
+        const accounts = await getAccountsByAccountNum(accountNum);
+        setAccountsBPlus(accounts);
+    }
+
+    const getAccountsByServiceNumLocalBMinus = async (serviceNum) => {
+        const accounts = await getAccountsByServiceNum(serviceNum);
+        setAccountsBMinus(accounts);
+    }
+
+    const getAccountsByServiceNumLocalBPlus = async (serviceNum) => {
+        const accounts = await getAccountsByServiceNum(serviceNum);
+        setAccountsBPlus(accounts);
+    }
+
+    const handleSelectAccountBMinus = async (account) => {
+        setSelectedAccountBMinus(account);
+        const services = await getServicesByAccountNum(account.accountNum);
+        setServicesBMinus(services);
+    }
+
+    const handleSelectAccountBPlus = async (account) => {
+        setSelectedAccountBPlus(account);
+        const services = await getServicesByAccountNum(account.accountNum);
+        setServicesBPlus(services);
+    }
+
+    const handleSelectInvoiceBMinus = async (invoice) => {
+        setSelectedInvoiceBMinus(invoice);
+
+        const invoiceDataServices = await getInvoiceDataServices(invoice);
+
+        console.log('invoiceDataServices:', invoiceDataServices);
+        console.log('selectedServiceBMinus:', selectedServiceBMinus);
+
+        setInvoiceDataServicesBMinus(invoiceDataServices);
+
+        const selectedInvoiceDataServiceBMinus = invoiceDataServices.filter(service => service.serviceNumber === selectedServiceBMinus?.serviceNum)[0] || invoiceDataServices[0] || {};
+        console.log('selectedInvoiceDataServiceBMinus:', selectedInvoiceDataServiceBMinus);
+        setSelectedInvoiceDataServiceBMinus(selectedInvoiceDataServiceBMinus);
+
+        setAdjustmentAmount(0); 
+        //getAdjustmentTypes(adjustmentTypeNames)
+    }
+
+    const getInvoicesByAccountNumLocalBMinus = async (accountNum) => {
+        const invoices = await getInvoicesByAccountNum(accountNum);
+        setInvoicesBMinus(invoices);
+        setSelectedInvoiceBMinus(null); // Reset selected invoice
+    }
+
+    const getAdjustmentTypesLocal = async (adjustmentTypeNames) => {
+      const adjustmentTypes = await getAdjustmentTypes(adjustmentTypeNames);
+      setAdjustmentTypes(adjustmentTypes);
+    }
+
+    const handleCreateAdjustmentRequest = async () => {
+
+        const validationError = validateInputsAdjustB(documentType);
+        if(validationError) {
+            alert(validationError);
+            return;
+        }
+
+        await createAdjustmentRequestLocal(documentType, selectedInvoiceBMinus, adjustmentAmount, selectedAccountBMinus, selectedInvoiceDataServiceBMinus?.productId, null, null, selectedInvoiceDataServiceBMinus?.productSeq, null, null, 6, selectedInvoiceDataServiceBMinus?.serviceNumber, adjustmentNote);
+        await createAdjustmentRequestLocal(documentType, null, adjustmentAmount, selectedAccountBPlus, null, null, null, null, null, null, 5, selectedServiceBPlus?.serviceNum, adjustmentNote);
+        alert(getTranslation('adjustmentRequestCreated', 'th'));
+        await fetchPendingDocumentAndRequests(documentType);
+    }
+
+    const createAdjustmentRequestLocal = async (documentType, selectedInvoice, adjustmentAmount, selectedAccount, productId, tariffId, callType, productSeq, eventRef, eventTypeId, adjustmentTypeId, serviceNum, adjustmentNote) => {
+        
+      const isSelectedInvoiceValid = selectedInvoice && Object.keys(selectedInvoice).length > 0;
+      const disputeAmount = isSelectedInvoiceValid ? parseFloat(adjustmentAmount) : parseFloat(adjustmentAmount) * -1; 
+
+      try 
+      {
+        const response = await api.post('/api/Adjustment/CreateAdjustmentRequest', {
+            documentType: documentType,
+            createdBy: JSON.parse(localStorage.getItem('userLogin'))?.userId,
+            accountNum: selectedAccount.accountNum,
+            disputeDtm: new Date().toISOString(),
+            billSeq: selectedInvoice?.billSeq,
+            disputeMny: disputeAmount,
+            productId: productId,
+            tariffId: tariffId,
+            callType: callType,
+            cpsId: selectedAccount.cpsId,
+            productSeq: productSeq,
+            eventRef: eventRef,
+            eventTypeId: eventTypeId,
+            adjustmentTypeId: adjustmentTypeId,
+            serviceNum: serviceNum,
+            invoiceNum: selectedInvoice?.invoiceNum,
+            disputeSeq: null,
+            adjustmentSeq: null,
+            requestStatus: "Create-Pending",
+            note: adjustmentNote
+        });
+        
+        console.log('Adjustment Request Created:', response.data);
+
+        /** Clear states */
+        // setAccountNum(""); setAccounts([]); setSelectedAccount(null);
+        // setSelectedAccount(null);
+        // setServices([]); setSelectedService({}); 
+        // setInvoices([]); 
+
+        /** Reload pending adjust amount in Invoices */
+        await getInvoicesByAccountNumLocalBMinus(selectedAccount.accountNum);
+        
+        setAdjustmentNote('');
+        setAdjustmentAmount(0);
+
+      } catch (error) {
+          console.error('Error creating adjustment request', error);
+          alert('Error creating adjustment request');
+      }
+    };
+
+    /** Validation */
+
+    const validateInputsAdjustB = (documentType) => {
+        console.log('documentType:', documentType);
+        console.log('adjustmentAmount:', adjustmentAmount);
+        console.log('selectedInvoice:', selectedInvoice);
+        console.log('selectedCostedEvent:', selectedCostedEvent);
+    
+        // let remainingAmount = (parseFloat(selectedInvoice?.invoiceNetMny) - parseFloat(selectedInvoice?.adjustedMny) - parseFloat(selectedInvoice?.pendingAdjustmentMny));
+        // console.log('remainingAmount:', remainingAmount);
+    
+        // const userLogin = JSON.parse(localStorage.getItem('userLogin'));
+        // const creditLimit = userLogin?.creditLimit || 9999; // Default to 9999 if creditLimit is not available
+    
+        // if (!accountNum) {
+        //     return getTranslation('enterAccountNumber', language);
+        // }
+        // if (!selectedAccount || Object.keys(selectedAccount).length === 0) {
+        //     return getTranslation('selectAccount', language);
+        // }
+        // if (!selectedInvoice || Object.keys(selectedInvoice).length === 0) {
+        //     return getTranslation('selectInvoice', language);
+        // }
+        // if (!selectedInvoiceDataService || Object.keys(selectedInvoiceDataService).length === 0) {
+        //     return getTranslation('selectServiceNumber', language);
+        // }
+        // if (!selectedAdjustmentType || Object.keys(selectedAdjustmentType).length === 0) {
+        //     return getTranslation('selectAdjustmentType', language);
+        // }
+        // if (!adjustmentAmount) {
+        //     return getTranslation('enterAdjustmentAmount', language);
+        // }
+        // if (isNaN(adjustmentAmount)) {
+        //     return getTranslation('adjustmentAmountNumber', language);
+        // }
+        // if (parseFloat(adjustmentAmount) <= 0) {
+        //     return getTranslation('adjustmentAmountGreaterThanZero', language);
+        // }
+        // if (parseFloat(adjustmentAmount) > creditLimit) {
+        //     return getTranslation('adjustmentAmountLessThanOrEqualToCreditLimit', language, { creditLimit });
+        // }
+        // if (parseFloat(adjustmentAmount) > (parseFloat(selectedInvoice?.invoiceNetMny) - parseFloat(selectedInvoice?.adjustedMny) - parseFloat(selectedInvoice?.pendingAdjustmentMny))) {
+        //     return getTranslation('adjustmentAmountLessThanInvoice', language);
+        // }
+        // if (parseFloat(selectedInvoice?.writeOffMny) > 0) {
+        //     return getTranslation('invoiceWrittenOff', language);
+        // }
+    
+
+        // if (documentType === DOCUMENT_TYPE.ADJUST_MINUS || documentType === DOCUMENT_TYPE.P35 || documentType === DOCUMENT_TYPE.P36) {
+
+        //     if ((!selectedInvoiceDataRC || Object.keys(selectedInvoiceDataRC).length === 0) && (!selectedInvoiceDataUsage || Object.keys(selectedInvoiceDataUsage).length === 0)) {
+        //         return getTranslation('selectRCOrUsage', language);
+        //     }
+        //     if (parseFloat(adjustmentAmount) > parseFloat(selectedInvoiceDataRC?.aggAmount ?? selectedInvoiceDataUsage?.aggAmount)) {
+        //         return getTranslation('adjustmentAmountLessThanCharge', language);
+        //     }
+        //     if (parseFloat(adjustmentAmount) > parseFloat(selectedCostedEvent?.eventCostMny)) {
+        //         return getTranslation('adjustmentAmountLessThanCharge', language);
+        //     }    
+        // }
+
+
+        // if (documentType === DOCUMENT_TYPE.P35) {
+
+        //     console.log('process.env.REACT_APP_OVERRIDE_CURRENT_DATE_FLAG:', process.env.REACT_APP_OVERRIDE_CURRENT_DATE_FLAG);
+        //     console.log('process.env.REACT_APP_OVERRIDE_CURRENT_DATE_VALUE:', process.env.REACT_APP_OVERRIDE_CURRENT_DATE_VALUE);
+            
+        //     const currentDate = process.env.REACT_APP_OVERRIDE_CURRENT_DATE_FLAG === 'Y' ? new Date(process.env.REACT_APP_OVERRIDE_CURRENT_DATE_VALUE) : new Date();
+
+        //     console.log('currentDate:', currentDate);
+
+        //     const actualBillDtm = new Date(selectedInvoice.actualBillDtm);
+        //     const lastYear = currentDate.getFullYear() - 1;
+        //     const startDate = new Date(lastYear, 10, 1); // November 1st of last year
+        //     const endDate = new Date(lastYear, 11, 31); // December 31st of last year
+
+        //     const billDtm = new Date(selectedInvoice.billDtm);
+        //     if (billDtm.getMonth() === 11) { // December
+        //         endDate.setMonth(0); // January
+        //         endDate.setFullYear(currentDate.getFullYear()); // Current year
+        //     }
+
+        //     console.log('actualBillDtm:', actualBillDtm);
+        //     console.log('billDtm:', billDtm);
+        //     console.log('startDate:', startDate);
+        //     console.log('endDate:', endDate);
+
+        //     if (actualBillDtm < startDate || actualBillDtm > endDate) {
+        //         return getTranslation('p35InvoiceDate', language, { lastYear });
+        //     }
+
+        //     // const startYear = currentDate.getFullYear();
+        //     // const startJan = new Date(startYear, 0, 1); // January 1st of current year
+        //     // const endMar = new Date(startYear, 2, 31); // March 31st of current year
+
+        //     // if (currentDate < startJan || currentDate > endMar) {
+        //     //     return getTranslation('p35AdjustmentDate', language, { startYear });
+        //     // }
+
+        // }
+        // if (documentType === DOCUMENT_TYPE.P36) {
+
+        //     const currentDate = process.env.REACT_APP_OVERRIDE_CURRENT_DATE_FLAG === 'Y' ? new Date(process.env.REACT_APP_OVERRIDE_CURRENT_DATE_VALUE) : new Date();
+
+        //     const actualBillDtm = new Date(selectedInvoice.actualBillDtm);
+        //     const lastYear = currentDate.getFullYear() - 1;
+        //     const currentYear = currentDate.getFullYear();
+        //     const endOfOctoberLastYear = new Date(lastYear, 9, 31); // October 31st of last year
+        //     const endOfDecemberLastYear = new Date(lastYear, 11, 31); // December 31st of last year
+
+        //     const startNov = new Date(lastYear, 10, 1); // November 1st of last year
+        //     const endDec = new Date(lastYear, 11, 31); // December 31st of last year
+        //     const startMarch = new Date(currentYear, 2, 1); // March 1st of current year
+
+        //     if (actualBillDtm > endOfDecemberLastYear) {
+        //         return getTranslation('p36InvoiceDate', language, { lastYear });
+        //     }
+
+        //     if (startNov <= actualBillDtm && actualBillDtm <= endDec && currentDate < startMarch) {
+        //         return getTranslation('p36AdjustmentDate', language, { lastYear });
+        //     }
+
+        // }
+        // if (documentType === DOCUMENT_TYPE.ADJUST_MINUS) {
+
+        //     const currentDate = process.env.REACT_APP_OVERRIDE_CURRENT_DATE_FLAG === 'Y' ? new Date(process.env.REACT_APP_OVERRIDE_CURRENT_DATE_VALUE) : new Date();
+        //     const currentYear = currentDate.getFullYear();
+        //     const actualBillDtmYear = new Date(selectedInvoice.actualBillDtm).getFullYear();
+
+        //     if (actualBillDtmYear !== currentYear) {
+        //         return getTranslation('adjustMinusInvoiceDate', language);
+        //     }
+
+        // }
+
+    
+        return '';
+    };
+
+
+    const handleSelectInvoice = (invoice) => { 
+        setSelectedInvoice(invoice);
+        getInvoiceDataServices(invoice);
+
+        /** Clear states */
+        setInvoiceDataServices([]); setSelectedInvoiceDataService({}); 
+        setInvoiceDataRC([]); setSelectedInvoiceDataRC({}); setInvoiceDataUsage([]); setSelectedInvoiceDataUsage({});
+        setCostedEvents([]); setSelectedCostedEvent({});
+        // setAdjustmentTypes([]); setSelectedAdjustmentType({}); 
+        setAdjustmentAmount(0); 
+
+        getAdjustmentTypes(adjustmentTypeNames)
+    }
+
+    const handleSelectInvoiceServices = (data) => {
+        setSelectedInvoiceDataService(data);
+        //getInvoiceDataRC(data);
+        //getInvoiceDataUsage(data);
+
+        /** Clear states */
+        setInvoiceDataRC([]); setSelectedInvoiceDataRC({}); setInvoiceDataUsage([]); setSelectedInvoiceDataUsage({});
+        setCostedEvents([]); setSelectedCostedEvent({});
+        // setAdjustmentTypes([]); setSelectedAdjustmentType({}); 
+        setAdjustmentAmount(0); 
+    }
+
+    const handleSelectInvoiceRC = (data) => {
+        setSelectedInvoiceDataUsage({});
+        setCostedEvents([]); setSelectedCostedEvent({});
+        setSelectedInvoiceDataRC(data);
+        getAdjustmentTypesByProductCodeAndRevenueCode(data);        
+
+        /** Dont need to set amount */
+        //setAdjustmentAmount(data?.aggAmount);
+    }
+
+    const handleSelectInvoiceUsage = (data) => {
+        setSelectedInvoiceDataRC({});
+        setSelectedInvoiceDataUsage(data);
+        setCostedEvents([]); setSelectedCostedEvent({});
+        getAdjustmentTypesByProductCodeAndRevenueCode(data);
+
+        /** Dont need to set amount */
+        //setAdjustmentAmount(data?.aggAmount);
+    }
+
+    const handleSelectCostedEvent = (data) => {
+        setSelectedCostedEvent(data);
+
+        /** Dont need to set amount */
+        //setAdjustmentAmount(data?.eventCostMny);
+    }
+
+    const handleSelectAccount = (account) => {
+        setSelectedAccount(account);
+        getServicesByAccountNum(account.accountNum);
+
+        /** Fetch Adjustment types */
+        getAdjustmentTypes(adjustmentTypeNames);
+    }
+
+    /** Fetch Pending Document */
+    useEffect(() => {
+        fetchPendingDocumentAndRequests(documentType);
+
+        /** Fetch Adjustment types */
+        getAdjustmentTypesLocal(adjustmentTypeNames);
+
+    }, []);
 
 
     return (
-        <div className="content-wrapper-x">
-        {/* Content Header (Page header) */}
-        <div className="content-header">
-            <div className="container-fluid">
-            <div className="row mb-2">
-                <div className="col-sm-6">
-                <h1 className="m-0">{documentTypeName}</h1>
-                </div>{/* /.col */}
-                <div className="col-sm-6">
-                <ol className="breadcrumb float-sm-right">
-                  <li className="breadcrumb-item active"> {`[ ${JSON.parse(localStorage.getItem('userLogin'))?.username} ] [ ${JSON.parse(localStorage.getItem('userLogin'))?.homeLocationCode} ]`} </li>
-                </ol>
-                </div>{/* /.col */}
-            </div>{/* /.row */}
-            </div>{/* /.container-fluid */}
-        </div>
-        {/* /.content-header */}
-        {/* Main content */}
-        <div className="content">
-            <div className="container-fluid">
+    <div className="content-wrapper-x">
+      <ContentHeader title={documentTypeName} />
+
+      <div className="content">
+          <div className="container-fluid">
             <div className="row">
                 <div className="col-12">
-                {/* START CONTENT */}
-    
-                
+
                   <div className="card">
-                    <div className="card-body">
-                      <div className="row mb-4">
-                        <div className="col-sm-3">
-                          <div className="mb-3">
-                            <label>Search for service number for B-:</label>
-                            <input type="text" className="form-control" placeholder />
-                          </div>
-                          <div className>
-                            <div className="form-inline">
-                              <p className="d-flex flex-row" style={{gap: 5}}>
-                                <button type="submit" className="btn btn-default">Service Num</button>
-                                <button type="submit" className="btn btn-default">Account Num</button>
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-sm-3">
-                          <div className="mb-3">
-                            <label>Customer name</label>
-                            <input type="text" className="form-control" defaultValue readOnly />
-                          </div>
-                          <div>
-                            <label>Account type</label>
-                            <input type="text" className="form-control" defaultValue readOnly />
-                          </div>
-                        </div>
-                        <div className="col-sm-3">
-                          <label>Accounts</label>
-                          <div className="table-responsive" style={{height: 125, border: '1px solid #dee2e6'}}>
-                            <table className="table table-as-list text-nowrap table-hover">
-                              <tbody>
-                                <tr>
-                                  <td>1232313123</td>
-                                </tr>
-                                <tr>
-                                  <td>1232313123</td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
-                        </div>
-                        <div className="col-sm-3 d-flex align-items-end">
-                          <button type="button" className="btn btn-default">Get details for Account</button>
-                        </div>
-                      </div>
-                      <div className="row mb-4">
-                        <div className="col-md-9">
-                          <div className="table-responsive" style={{height: 200}}>
-                            <table className="table table-head-fixed text-nowrap table-bordered table-hover">
-                              <thead>
-                                <tr>
-                                  <th>Bill</th>
-                                  <th>Invoice Number</th>
-                                  <th>Bill Month</th>
-                                  <th>Actual Bill</th>
-                                  <th>Convergent Amount</th>
-                                  <th>Invoice Amount</th>
-                                  <th>VAT Amount</th>
-                                  <th>Adjusted</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                <tr>
-                                  <td />
-                                  <td />
-                                  <td />
-                                  <td />
-                                  <td />
-                                  <td />
-                                  <td />
-                                  <td />
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
-                        </div>
-                        <div className="col-md-3">
-                          <label>Service Numbers</label>
-                          <input type="text" className="form-control mb-2" />
-                          <div className="table-responsive" style={{height: 135, border: '1px solid #dee2e6'}}>
-                            <table className="table table-as-list text-nowrap table-hover">
-                              <tbody>
-                                <tr>
-                                  <td>1232313123</td>
-                                </tr>
-                                <tr>
-                                  <td>1232313123</td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="text-center">
-                        <button type="button" className="btn btn-default">View invoice's pending adjustments</button>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="card">
-                    <div className="card-body">
-                      <div className="row mb-4">
-                        <div className="col-sm-3">
-                          <div className="mb-3">
-                            <label>Search for service number for B+:</label>
-                            <input type="text" className="form-control" placeholder />
-                          </div>
-                          <div className>
-                            <div className="form-inline">
-                              <p className="d-flex flex-row" style={{gap: 5}}>
-                                <button type="submit" className="btn btn-default">Service Num</button>
-                                <button type="submit" className="btn btn-default">Account Num</button>
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="col-sm-3">
-                          <div className="mb-3">
-                            <label>Customer name</label>
-                            <input type="text" className="form-control" defaultValue readOnly />
-                          </div>
-                          <div>
-                            <label>Account type</label>
-                            <input type="text" className="form-control" defaultValue readOnly />
-                          </div>
-                        </div>
-                        <div className="col-sm-3">
-                          <label>Accounts</label>
-                          <div className="table-responsive" style={{height: 125, border: '1px solid #dee2e6'}}>
-                            <table className="table table-as-list text-nowrap table-hover">
-                              <tbody>
-                                <tr>
-                                  <td>1232313123</td>
-                                </tr>
-                                <tr>
-                                  <td>1232313123</td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
-                        </div>
-                        <div className="col-sm-3">
-                          <label>Service Numbers</label>
-                          <div className="table-responsive" style={{height: 125, border: '1px solid #dee2e6'}}>
-                            <table className="table table-as-list text-nowrap table-hover">
-                              <tbody>
-                                <tr>
-                                  <td>1232313123</td>
-                                </tr>
-                                <tr>
-                                  <td>1232313123</td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="card">
-                    <div className="card-body">
-                      <p>Make B+/- adjustment</p>
-                      <div className="row">
-                        <div className="col-sm-6">
+                      <div className="card-body">
                           <div className="row">
-                            <div className="col-sm-4">
-                              <label>Amount</label>
-                              <input type="text" className="form-control" readOnly />
-                              <small>Thai Baht (excl VAT.)</small>
-                            </div>
-                            <div className="col-sm-4">
-                              <label>7% VAT</label>
-                              <input type="text" className="form-control" readOnly />
-                            </div>
-                            <div className="col-sm-4">
-                              <label>Total</label>
-                              <input type="text" className="form-control" readOnly />
-                            </div>
+                              <div className="col-sm-4">
+                                  <ServiceSearch
+                                      title="Search for service number for B-:"
+                                      accountNum={accountNumBMinus}
+                                      setAccountNum={setAccountNumBMinus}
+                                      getAccountsByAccountNum={getAccountsByAccountNumLocalBMinus}
+                                      getAccountsByServiceNum={getAccountsByServiceNumLocalBMinus}
+                                  />
+                              </div>
+                              <div className="col-sm-2">
+                                  <Accounts
+                                      accounts={accountsBMinus || []}
+                                      selectedAccount={selectedAccountBMinus}
+                                      setSelectedAccount={handleSelectAccountBMinus}
+                                  />
+                              </div>
+                              <div className="col-sm-2">
+                                  <Services
+                                      services={servicesBMinus}
+                                      selectedService={selectedServiceBMinus}
+                                      setSelectedService={setSelectedServiceBMinus}
+                                  />
+                              </div>
+                              <div className="col-sm-4">
+                                  <AccountInfo selectedAccount={selectedAccountBMinus} />
+                              </div>
                           </div>
-                        </div>
-                        <div className="col-sm-6">
-                          <div className="row">
-                            <div className="col-sm-6">
-                              <label>Note</label>
-                              <textarea className="form-control" rows={3} defaultValue={""} />
-                            </div>
-                            <div className="col-sm-6 d-flex align-items-end">
-                              <button type="submit" className="btn btn-primary">Submit</button>
-                            </div>
-                          </div>
-                        </div>
                       </div>
-                    </div>
                   </div>
+
                   <div className="card">
-                    <div className="card-header border-0">
-                      <h3 className="card-title">Document Sequence</h3>
-                    </div>
-                    <div className="card-body">
-                      <div className="row">
-                        <div className="form-group col-sm-4">
-                          <strong>Adjustment type:</strong> Adjustment -
-                        </div>
-                        <div className="form-group col-sm-4">
-                          <strong>Current sequence:</strong> 2024860204042
-                        </div>
-                        <div className="form-group col-sm-4">
-                          <div className="form-inline">
-                            <p className="ml-auto d-flex flex-row text-right" style={{gap: 5}}>
-                              <button type="submit" className="btn btn-default">Remove Adjustment</button>
-                              <button type="submit" className="btn btn-default">Submit document</button>
-                            </p>
-                          </div>
-                        </div>
+                      <div className="card-body">
+                          <InvoiceSearch
+                            accountNum={selectedAccountBMinus?.accountNum}
+                            invoices={invoicesBMinus || []}
+                            getInvoicesByAccountNum={getInvoicesByAccountNumLocalBMinus}
+                            selectedInvoice={selectedInvoiceBMinus}
+                            handleSelectInvoice={handleSelectInvoiceBMinus}
+                          />
                       </div>
-                      <div className="table-responsive" style={{height: 300}}>
-                        <table className="table table-head-fixed text-nowrap table-bordered table-hover">
-                          <thead>
-                            <tr>
-                              <th>Adjustment Type</th>
-                              <th>Account Number</th>
-                              <th>Invoice Number</th>
-                              <th>Service Number</th>
-                              <th>Amount</th>
-                              <th>VAT</th>
-                              <th>Total</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <td />
-                              <td />
-                              <td />
-                              <td />
-                              <td />
-                              <td />
-                              <td />
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
                   </div>
 
+                  <div className="card">
+                      <div className="card-body">
+                          <div className="row">
+                              <div className="col-sm-4">
+                                  <ServiceSearch
+                                      title="Search for service number for B+:"
+                                      accountNum={accountNumBPlus}
+                                      setAccountNum={setAccountNumBPlus}
+                                      getAccountsByAccountNum={getAccountsByAccountNumLocalBPlus}
+                                      getAccountsByServiceNum={getAccountsByServiceNumLocalBPlus}
+                                  />
+                              </div>
 
+                              <div className="col-sm-2">
+                                  <Accounts
+                                      accounts={accountsBPlus || []}
+                                      selectedAccount={selectedAccountBPlus}
+                                      setSelectedAccount={handleSelectAccountBPlus}
+                                  />
+                              </div>
+                              <div className="col-sm-2">
+                                  <Services
+                                      services={servicesBPlus}
+                                      selectedService={selectedServiceBPlus}
+                                      setSelectedService={setSelectedServiceBPlus}
+                                  />
+                              </div>
+                              <div className="col-sm-4">
+                                  <AccountInfo selectedAccount={selectedAccountBPlus} />
+                              </div>
+                          </div>
+                      </div>
+                  </div>
 
+                  <div className="card">
+                      <div className="card-body">
+                        <MakeAdjustment adjustmentTypes={adjustmentTypes} selectedAdjustmentType={selectedAdjustmentType} setSelectedAdjustmentType={setSelectedAdjustmentType} selectedCostedEvent={selectedCostedEvent} adjustmentNote={adjustmentNote} setAdjustmentNote={setAdjustmentNote} adjustmentAmount={adjustmentAmount} setAdjustmentAmount={setAdjustmentAmount} handleCreateAdjustmentRequest={handleCreateAdjustmentRequest} documentType={documentType} selectedAccount={selectedAccountBMinus} />
+                      </div>
+                  </div>
 
-    
-                {/* END CONTENT */}
+                  <PendingDocument pendingDocument={pendingDocument} adjustmentRequests={adjustmentRequests} fetchPendingDocumentAndRequests={fetchPendingDocumentAndRequests} deleteAdjustmentRequest={deleteAdjustmentRequest} updateDocumentStatus={updateDocumentStatus} />
+                  
                 </div>
             </div>
-            {/* /.row */}
-            </div>
-            {/* /.container-fluid */}
-        </div>
-        {/* /.content */}
-        </div>
+          </div>
+      </div>
+    </div>
     );
 
 };
