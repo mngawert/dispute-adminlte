@@ -390,7 +390,7 @@ export const DocumentProvider = ({ children }) => {
                 return getTranslation('p36InvoiceDate', language, { lastYear });
             }
 
-            if (startNov <= actualBillDtm && actualBillDtm <= endDec && currentDate < startApril) {
+            if (startNov <= actualBillDtm && actualBillDtm <= endDate && currentDate < startApril) {
                 return getTranslation('p36AdjustmentDate', language, { lastYear });
             }
 
