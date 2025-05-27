@@ -26,7 +26,8 @@ const SearchAdj = ({ myAdjust, title, fetchDataAtStart }) => {
                 documentNum: documentNum,
                 searchBy: selectedSearchBy?.value,
                 fromDate: fromDate,
-                toDate: toDate
+                toDate: toDate,
+                bypassLocation: 'Yes',
             };
             if (myAdjust === 'Yes' && userId) {
                 params[filterBy] = userId;
