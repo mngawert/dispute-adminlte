@@ -20,6 +20,8 @@ import getTranslation from '../utils/getTranslation';
 
 const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B +/-', adjustmentTypeNames=['B1']}) => {
 
+    const [language, setLanguage] = useState('th'); // Default language
+
     const { 
         /** Account */
         accountNum, setAccountNum, accounts, getAccountsByAccountNum, getAccountsByServiceNum, selectedAccount, setSelectedAccount,
@@ -183,26 +185,34 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B +/-', adjust
             requestStatus: "Create-Pending",
             note: adjustmentNote
         });
+
+        clearStates(); // Clear states after creating adjustment request
         
         console.log('Adjustment Request Created:', response.data);
-
-        /** Clear states */
-        // setAccountNum(""); setAccounts([]); setSelectedAccount(null);
-        // setSelectedAccount(null);
-        // setServices([]); setSelectedService({}); 
-        // setInvoices([]); 
-
-        /** Reload pending adjust amount in Invoices */
-        await getInvoicesByAccountNumLocalBMinus(selectedAccount.accountNum);
-        
-        setAdjustmentNote('');
-        setAdjustmentAmount(0);
 
       } catch (error) {
           console.error('Error creating adjustment request', error);
           alert('Error creating adjustment request');
       }
     };
+
+    const clearStates = () => {
+        setSelectedInvoiceBMinus(null);
+        setSelectedInvoiceDataServiceBMinus({});
+        setSelectedAccountBMinus(null);
+        setSelectedServiceBPlus(null);
+        setSelectedAccountBPlus(null);
+        setInvoiceDataServicesBMinus([]);
+        setAdjustmentNote('');
+        setAdjustmentAmount(0);
+        setAccountNumBMinus('');
+        setAccountNumBPlus('');
+        setAccountsBMinus([]);
+        setAccountsBPlus([]);
+        setServicesBMinus([]);
+        setServicesBPlus([]);
+        setInvoicesBMinus([]);
+    }
 
     /** Validation */
 
@@ -211,136 +221,44 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B +/-', adjust
         console.log('adjustmentAmount:', adjustmentAmount);
         console.log('selectedInvoice:', selectedInvoice);
         console.log('selectedCostedEvent:', selectedCostedEvent);
-    
+        
         // let remainingAmount = (parseFloat(selectedInvoice?.invoiceNetMny) - parseFloat(selectedInvoice?.adjustedMny) - parseFloat(selectedInvoice?.pendingAdjustmentMny));
         // console.log('remainingAmount:', remainingAmount);
     
-        // const userLogin = JSON.parse(localStorage.getItem('userLogin'));
-        // const creditLimit = userLogin?.creditLimit || 9999; // Default to 9999 if creditLimit is not available
+        const userLogin = JSON.parse(localStorage.getItem('userLogin'));
+        const creditLimit = userLogin?.creditLimit || 9999; // Default to 9999 if creditLimit is not available
     
-        // if (!accountNum) {
-        //     return getTranslation('enterAccountNumber', language);
-        // }
-        // if (!selectedAccount || Object.keys(selectedAccount).length === 0) {
-        //     return getTranslation('selectAccount', language);
-        // }
-        // if (!selectedInvoice || Object.keys(selectedInvoice).length === 0) {
-        //     return getTranslation('selectInvoice', language);
-        // }
-        // if (!selectedInvoiceDataService || Object.keys(selectedInvoiceDataService).length === 0) {
-        //     return getTranslation('selectServiceNumber', language);
-        // }
-        // if (!selectedAdjustmentType || Object.keys(selectedAdjustmentType).length === 0) {
-        //     return getTranslation('selectAdjustmentType', language);
-        // }
-        // if (!adjustmentAmount) {
-        //     return getTranslation('enterAdjustmentAmount', language);
-        // }
-        // if (isNaN(adjustmentAmount)) {
-        //     return getTranslation('adjustmentAmountNumber', language);
-        // }
-        // if (parseFloat(adjustmentAmount) <= 0) {
-        //     return getTranslation('adjustmentAmountGreaterThanZero', language);
-        // }
-        // if (parseFloat(adjustmentAmount) > creditLimit) {
-        //     return getTranslation('adjustmentAmountLessThanOrEqualToCreditLimit', language, { creditLimit });
-        // }
-        // if (parseFloat(adjustmentAmount) > (parseFloat(selectedInvoice?.invoiceNetMny) - parseFloat(selectedInvoice?.adjustedMny) - parseFloat(selectedInvoice?.pendingAdjustmentMny))) {
-        //     return getTranslation('adjustmentAmountLessThanInvoice', language);
-        // }
-        // if (parseFloat(selectedInvoice?.writeOffMny) > 0) {
-        //     return getTranslation('invoiceWrittenOff', language);
-        // }
-    
+        if (!accountNumBMinus || !accountNumBPlus) {
+            return getTranslation('enterAccountNumber', language);
+        }
+        if (!selectedAccountBMinus || Object.keys(selectedAccountBMinus).length === 0 || !selectedAccountBPlus || Object.keys(selectedAccountBPlus).length === 0) {
+            return getTranslation('selectAccount', language);
+        }
+        if (!selectedInvoiceBMinus || Object.keys(selectedInvoiceBMinus).length === 0) {
+            return getTranslation('selectInvoice', language);
+        }
+        if (!selectedInvoiceDataServiceBMinus || Object.keys(selectedInvoiceDataServiceBMinus).length === 0 || !selectedServiceBPlus || Object.keys(selectedServiceBPlus).length === 0) {
+            return getTranslation('selectServiceNumber', language);
+        }
+        if (!adjustmentAmount) {
+            return getTranslation('enterAdjustmentAmount', language);
+        }
+        if (isNaN(adjustmentAmount)) {
+            return getTranslation('adjustmentAmountNumber', language);
+        }
+        if (parseFloat(adjustmentAmount) <= 0) {
+            return getTranslation('adjustmentAmountGreaterThanZero', language);
+        }
+        if (parseFloat(adjustmentAmount) > creditLimit) {
+            return getTranslation('adjustmentAmountLessThanOrEqualToCreditLimit', language, { creditLimit });
+        }
+        if (parseFloat(adjustmentAmount) > (parseFloat(selectedInvoiceBMinus?.invoiceNetMny) - parseFloat(selectedInvoiceBMinus?.adjustedMny) - parseFloat(selectedInvoiceBMinus?.pendingAdjustmentMny))) {
+            return getTranslation('adjustmentAmountLessThanInvoice', language);
+        }
+        if (parseFloat(selectedInvoiceBMinus?.writeOffMny) > 0) {
+            return getTranslation('invoiceWrittenOff', language);
+        }
 
-        // if (documentType === DOCUMENT_TYPE.ADJUST_MINUS || documentType === DOCUMENT_TYPE.P35 || documentType === DOCUMENT_TYPE.P36) {
-
-        //     if ((!selectedInvoiceDataRC || Object.keys(selectedInvoiceDataRC).length === 0) && (!selectedInvoiceDataUsage || Object.keys(selectedInvoiceDataUsage).length === 0)) {
-        //         return getTranslation('selectRCOrUsage', language);
-        //     }
-        //     if (parseFloat(adjustmentAmount) > parseFloat(selectedInvoiceDataRC?.aggAmount ?? selectedInvoiceDataUsage?.aggAmount)) {
-        //         return getTranslation('adjustmentAmountLessThanCharge', language);
-        //     }
-        //     if (parseFloat(adjustmentAmount) > parseFloat(selectedCostedEvent?.eventCostMny)) {
-        //         return getTranslation('adjustmentAmountLessThanCharge', language);
-        //     }    
-        // }
-
-
-        // if (documentType === DOCUMENT_TYPE.P35) {
-
-        //     console.log('process.env.REACT_APP_OVERRIDE_CURRENT_DATE_FLAG:', process.env.REACT_APP_OVERRIDE_CURRENT_DATE_FLAG);
-        //     console.log('process.env.REACT_APP_OVERRIDE_CURRENT_DATE_VALUE:', process.env.REACT_APP_OVERRIDE_CURRENT_DATE_VALUE);
-            
-        //     const currentDate = process.env.REACT_APP_OVERRIDE_CURRENT_DATE_FLAG === 'Y' ? new Date(process.env.REACT_APP_OVERRIDE_CURRENT_DATE_VALUE) : new Date();
-
-        //     console.log('currentDate:', currentDate);
-
-        //     const actualBillDtm = new Date(selectedInvoice.actualBillDtm);
-        //     const lastYear = currentDate.getFullYear() - 1;
-        //     const startDate = new Date(lastYear, 10, 1); // November 1st of last year
-        //     const endDate = new Date(lastYear, 11, 31); // December 31st of last year
-
-        //     const billDtm = new Date(selectedInvoice.billDtm);
-        //     if (billDtm.getMonth() === 11) { // December
-        //         endDate.setMonth(0); // January
-        //         endDate.setFullYear(currentDate.getFullYear()); // Current year
-        //     }
-
-        //     console.log('actualBillDtm:', actualBillDtm);
-        //     console.log('billDtm:', billDtm);
-        //     console.log('startDate:', startDate);
-        //     console.log('endDate:', endDate);
-
-        //     if (actualBillDtm < startDate || actualBillDtm > endDate) {
-        //         return getTranslation('p35InvoiceDate', language, { lastYear });
-        //     }
-
-        //     // const startYear = currentDate.getFullYear();
-        //     // const startJan = new Date(startYear, 0, 1); // January 1st of current year
-        //     // const endMar = new Date(startYear, 2, 31); // March 31st of current year
-
-        //     // if (currentDate < startJan || currentDate > endMar) {
-        //     //     return getTranslation('p35AdjustmentDate', language, { startYear });
-        //     // }
-
-        // }
-        // if (documentType === DOCUMENT_TYPE.P36) {
-
-        //     const currentDate = process.env.REACT_APP_OVERRIDE_CURRENT_DATE_FLAG === 'Y' ? new Date(process.env.REACT_APP_OVERRIDE_CURRENT_DATE_VALUE) : new Date();
-
-        //     const actualBillDtm = new Date(selectedInvoice.actualBillDtm);
-        //     const lastYear = currentDate.getFullYear() - 1;
-        //     const currentYear = currentDate.getFullYear();
-        //     const endOfOctoberLastYear = new Date(lastYear, 9, 31); // October 31st of last year
-        //     const endOfDecemberLastYear = new Date(lastYear, 11, 31); // December 31st of last year
-
-        //     const startNov = new Date(lastYear, 10, 1); // November 1st of last year
-        //     const endDec = new Date(lastYear, 11, 31); // December 31st of last year
-        //     const startMarch = new Date(currentYear, 2, 1); // March 1st of current year
-
-        //     if (actualBillDtm > endOfDecemberLastYear) {
-        //         return getTranslation('p36InvoiceDate', language, { lastYear });
-        //     }
-
-        //     if (startNov <= actualBillDtm && actualBillDtm <= endDec && currentDate < startMarch) {
-        //         return getTranslation('p36AdjustmentDate', language, { lastYear });
-        //     }
-
-        // }
-        // if (documentType === DOCUMENT_TYPE.ADJUST_MINUS) {
-
-        //     const currentDate = process.env.REACT_APP_OVERRIDE_CURRENT_DATE_FLAG === 'Y' ? new Date(process.env.REACT_APP_OVERRIDE_CURRENT_DATE_VALUE) : new Date();
-        //     const currentYear = currentDate.getFullYear();
-        //     const actualBillDtmYear = new Date(selectedInvoice.actualBillDtm).getFullYear();
-
-        //     if (actualBillDtmYear !== currentYear) {
-        //         return getTranslation('adjustMinusInvoiceDate', language);
-        //     }
-
-        // }
-
-    
         return '';
     };
 
