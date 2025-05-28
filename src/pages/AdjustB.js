@@ -234,6 +234,9 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B +/-', adjust
         if (!selectedAccountBMinus || Object.keys(selectedAccountBMinus).length === 0 || !selectedAccountBPlus || Object.keys(selectedAccountBPlus).length === 0) {
             return getTranslation('selectAccount', language);
         }
+        if (selectedAccountBMinus.invoicingCoName !== selectedAccountBPlus.invoicingCoName) {
+            return getTranslation('invoicingCoNameMustMatch', language);
+        }
         if (!selectedInvoiceBMinus || Object.keys(selectedInvoiceBMinus).length === 0) {
             return getTranslation('selectInvoice', language);
         }

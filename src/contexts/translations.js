@@ -32,7 +32,8 @@ const translations = {
     errorFetchingAdjustmentTypes: "Error fetching adjustment types",
     errorFetchingPendingDocument: "Error fetching pending document number",
     errorDeletingAdjustmentRequest: "Error deleting adjustment request",
-    errorUpdatingDocumentStatus: "Error updating document status"
+    errorUpdatingDocumentStatus: "Error updating document status",
+    invoicingCoNameMustMatch: "Account type for B- and B+ must be the same."
   },
   th: {
     enterAccountNumber: "โปรดระบุรหัสลูกค้า",
@@ -67,7 +68,8 @@ const translations = {
     errorFetchingAdjustmentTypes: "เกิดข้อผิดพลาดในการดึงข้อมูลประเภทการปรับปรุง",
     errorFetchingPendingDocument: "เกิดข้อผิดพลาดในการดึงข้อมูลเอกสารที่รอดำเนินการ",
     errorDeletingAdjustmentRequest: "เกิดข้อผิดพลาดในการลบคำขอปรับปรุง",
-    errorUpdatingDocumentStatus: "เกิดข้อผิดพลาดในการอัปเดตสถานะเอกสาร"
+    errorUpdatingDocumentStatus: "เกิดข้อผิดพลาดในการอัปเดตสถานะเอกสาร",
+    invoicingCoNameMustMatch: "Account Type ของ B- และ B+ ต้องเหมือนกัน"
   }
 };
 
