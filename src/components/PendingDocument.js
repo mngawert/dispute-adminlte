@@ -36,9 +36,9 @@ const PendingDocument = ({ pendingDocument, adjustmentRequests, fetchPendingDocu
         return null;
     };
 
-    const totalAmount = Math.abs(adjustmentRequests.reduce((sum, adj) => sum + adj.disputeMny, 0)).toFixed(2);
-    const totalVAT = Math.abs(adjustmentRequests.reduce((sum, adj) => sum + (adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100)), 0)).toFixed(2);
-    const total = Math.abs(adjustmentRequests.reduce((sum, adj) => sum + (adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100)), 0)).toFixed(2);
+    const totalAmount = adjustmentRequests.reduce((sum, adj) => sum + Math.abs(adj.disputeMny), 0).toFixed(2);
+    const totalVAT = adjustmentRequests.reduce((sum, adj) => sum + Math.abs(adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100)), 0).toFixed(2);
+    const total = adjustmentRequests.reduce((sum, adj) => sum + Math.abs(adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100)), 0).toFixed(2);
 
     return (
         <div className="card">

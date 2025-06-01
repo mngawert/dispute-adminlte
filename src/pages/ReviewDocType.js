@@ -91,9 +91,9 @@ const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, select
         setSelectedAdjustmentRequest(adj);
     };
 
-    const totalAmount = sortedAdjustmentRequests.reduce((sum, adj) => sum + adj.disputeMny, 0).toFixed(2);
-    const totalVAT = sortedAdjustmentRequests.reduce((sum, adj) => sum + (adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100)), 0).toFixed(2);
-    const total = sortedAdjustmentRequests.reduce((sum, adj) => sum + (adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100)), 0).toFixed(2);
+    const totalAmount = sortedAdjustmentRequests.reduce((sum, adj) => sum + Math.abs(adj.disputeMny), 0).toFixed(2);
+    const totalVAT = sortedAdjustmentRequests.reduce((sum, adj) => sum + Math.abs(adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100)), 0).toFixed(2);
+    const total = sortedAdjustmentRequests.reduce((sum, adj) => sum + Math.abs(adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100)), 0).toFixed(2);
 
     const handleReject = () => {
         if (!myNote.trim()) {
