@@ -74,7 +74,7 @@ const Review = ({ reviewType, prevDocumentStatus }) => {
         documentStatus: _documentStatus,
         note: note,
         sapDocNo: sapDocNo,           
-        sapDocDate: sapDocDate,       
+        sapDocDate: sapDocDate ? sapDocDate : null,
         updatedBy: JSON.parse(localStorage.getItem('userLogin'))?.userId
       });
       resetPage();
