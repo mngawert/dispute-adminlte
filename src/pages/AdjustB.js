@@ -118,17 +118,30 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B +/-', adjust
 
         const invoiceDataServices = await getInvoiceDataServices(invoice);
 
-        console.log('invoiceDataServices:', invoiceDataServices);
-        console.log('selectedServiceBMinus:', selectedServiceBMinus);
+        // convert invoiceDataServices to servicesBMinus
+        const servicesBMinus = invoiceDataServices.map(inv => ({
+            accountNum: inv.accountNum,
+            billSeq: inv.billSeq,
+            serviceNum: inv.serviceNumber,
+            productId: inv.productId,
+            productSeq: inv.productSeq
+        }));
+        setServicesBMinus(servicesBMinus);
 
-        setInvoiceDataServicesBMinus(invoiceDataServices);
+        const selected = servicesBMinus.filter(service => service.serviceNum === selectedServiceBMinus?.serviceNum)[0] || {};
+        setSelectedServiceBMinus(selected);
 
-        const selectedInvoiceDataServiceBMinus = invoiceDataServices.filter(service => service.serviceNumber === selectedServiceBMinus?.serviceNum)[0] || invoiceDataServices[0] || {};
-        console.log('selectedInvoiceDataServiceBMinus:', selectedInvoiceDataServiceBMinus);
-        setSelectedInvoiceDataServiceBMinus(selectedInvoiceDataServiceBMinus);
+        // console.log('invoiceDataServices:', invoiceDataServices);
+        // console.log('selectedServiceBMinus:', selectedServiceBMinus);
 
-        setAdjustmentAmount(0); 
-        //getAdjustmentTypes(adjustmentTypeNames)
+        // setInvoiceDataServicesBMinus(invoiceDataServices);
+
+        // const selectedInvoiceDataServiceBMinus = invoiceDataServices.filter(service => service.serviceNumber === selectedServiceBMinus?.serviceNum)[0] || invoiceDataServices[0] || {};
+        // console.log('selectedInvoiceDataServiceBMinus:', selectedInvoiceDataServiceBMinus);
+        // setSelectedInvoiceDataServiceBMinus(selectedInvoiceDataServiceBMinus);
+
+
+        setAdjustmentAmount(0);
     }
 
     const getInvoicesByAccountNumLocalBMinus = async (accountNum) => {
@@ -150,7 +163,7 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B +/-', adjust
             return;
         }
 
-        await createAdjustmentRequestLocal(documentType, selectedInvoiceBMinus, adjustmentAmount, selectedAccountBMinus, selectedInvoiceDataServiceBMinus?.productId, null, null, selectedInvoiceDataServiceBMinus?.productSeq, null, null, 6, selectedInvoiceDataServiceBMinus?.serviceNumber, adjustmentNote);
+        await createAdjustmentRequestLocal(documentType, selectedInvoiceBMinus, adjustmentAmount, selectedAccountBMinus, selectedServiceBMinus?.productId, null, null, selectedServiceBMinus?.productSeq, null, null, 6, selectedServiceBMinus?.serviceNum, adjustmentNote);
         await createAdjustmentRequestLocal(documentType, null, adjustmentAmount, selectedAccountBPlus, null, null, null, null, null, null, 5, selectedServiceBPlus?.serviceNum, adjustmentNote);
         alert(getTranslation('adjustmentRequestCreated', 'th'));
         await fetchPendingDocumentAndRequests(documentType);
@@ -240,7 +253,7 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B +/-', adjust
         if (!selectedInvoiceBMinus || Object.keys(selectedInvoiceBMinus).length === 0) {
             return getTranslation('selectInvoice', language);
         }
-        if (!selectedInvoiceDataServiceBMinus || Object.keys(selectedInvoiceDataServiceBMinus).length === 0 || !selectedServiceBPlus || Object.keys(selectedServiceBPlus).length === 0) {
+        if (!selectedServiceBMinus || Object.keys(selectedServiceBMinus).length === 0 || !selectedServiceBPlus || Object.keys(selectedServiceBPlus).length === 0) {
             return getTranslation('selectServiceNumber', language);
         }
         if (!adjustmentAmount) {
