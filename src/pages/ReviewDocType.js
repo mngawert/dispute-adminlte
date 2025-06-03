@@ -1,12 +1,23 @@
 import { CPS_MAP_HASH } from '../contexts/Constants';
 import React, { useState, useEffect } from 'react';
-import { formatNumber } from '../utils/utils'; // Import the utility function
+import { formatNumber } from '../utils/utils'; 
 
 const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, selectedDocument, reviewType, handleSelectDocument, handleUpdateDocumentStatus }) => {
     const [myNote, setMyNote] = useState('');
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
     const [selectedAdjustmentRequest, setSelectedAdjustmentRequest] = useState(null);
     const [noteContent, setNoteContent] = useState('');
+    const [sapDocNo, setSapDocNo] = useState(selectedDocument?.sapDocNo || '');
+    const [sapDocDate, setSapDocDate] = useState(selectedDocument?.sapDocDate || '');
+
+    // Helper to check if SAP Doc fields should be shown and required
+
+
+    console.log('reviewType:', reviewType);
+    console.log('documentTypeDesc:', documentTypeDesc);
+
+
+    const showSapDocFields = reviewType === 'Finance' && (documentTypeDesc === 'P3+' || documentTypeDesc === 'P3-');
 
     const filterDocumentsByType = (type) => {
         return documents.filter(doc => doc.documentTypeDesc === type);
@@ -56,6 +67,11 @@ const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, select
         setMyNote('');
     };
 
+    const resetSapDocFields = () => {
+        setSapDocNo('');
+        setSapDocDate('');
+    };
+
     const sortedAdjustmentRequests = React.useMemo(() => {
         let sortableAdjustmentRequests = [...adjustmentRequests];
         if (sortConfig.key !== null) {
@@ -100,7 +116,32 @@ const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, select
             alert('My Note is required to reject the document.');
             return;
         }
-        handleUpdateDocumentStatus(selectedDocument, `${reviewType}-Reject`, myNote, resetMyNote);
+        
+        handleUpdateDocumentStatus(
+            selectedDocument,
+            `${reviewType}-Reject`,
+            myNote,
+            () => { resetMyNote(); resetSapDocFields(); },
+            sapDocNo,
+            sapDocDate
+        );
+    };
+
+    const handleAccept = () => {
+        // Require SAP Doc fields if needed
+        if (showSapDocFields && (!sapDocNo.trim() || !sapDocDate)) {
+            alert('SAP Doc No and SAP Doc Date are required.');
+            return;
+        }
+
+        handleUpdateDocumentStatus(
+            selectedDocument,
+            `${reviewType}-Accept`,
+            myNote,
+            () => { resetMyNote(); resetSapDocFields(); },
+            sapDocNo,
+            sapDocDate
+        );
     };
 
     return (
@@ -189,6 +230,30 @@ const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, select
                                     <label>Note</label>
                                     <textarea className="form-control" rows={5} readOnly value={noteContent} />
                                 </div>
+                                {showSapDocFields && (
+                                    <>
+                                        <div className="form-group">
+                                            <label>SAP Doc No <span style={{color: 'red'}}>*</span></label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                value={sapDocNo}
+                                                onChange={e => setSapDocNo(e.target.value)}
+                                                required
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>SAP Doc Date <span style={{color: 'red'}}>*</span></label>
+                                            <input
+                                                type="date"
+                                                className="form-control"
+                                                value={sapDocDate}
+                                                onChange={e => setSapDocDate(e.target.value)}
+                                                required
+                                            />
+                                        </div>
+                                    </>
+                                )}
                             </div>
                             <div className="col-sm-6">
                                 <div className="form-group">
@@ -204,7 +269,7 @@ const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, select
                                         <button
                                             type="button"
                                             className="btn btn-primary mr-1"
-                                            onClick={() => handleUpdateDocumentStatus(selectedDocument, `${reviewType}-Accept`, myNote, resetMyNote)}
+                                            onClick={handleAccept}
                                         >
                                             {reviewType === 'Cancel' ? 'Cancel Selected' : 'Accept Selected'}
                                         </button>

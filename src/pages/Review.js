@@ -67,17 +67,19 @@ const Review = ({ reviewType, prevDocumentStatus }) => {
     }
   };
 
-  const handleUpdateDocumentStatus = async (doc, _documentStatus, note, resetMyNote) => {
+  const handleUpdateDocumentStatus = async (doc, _documentStatus, note, resetMyNote, sapDocNo, sapDocDate) => {
     try {
       const response = await api.put(`/api/Document/UpdateDocument${reviewType}Status/${doc.documentNum}`, {
         documentNum: doc.documentNum,
         documentStatus: _documentStatus,
         note: note,
+        sapDocNo: sapDocNo,           
+        sapDocDate: sapDocDate,       
         updatedBy: JSON.parse(localStorage.getItem('userLogin'))?.userId
       });
       resetPage();
       getAllDocuments();
-      resetMyNote(); // Reset myNote after updating document status
+      resetMyNote();
     } catch (error) {
       console.error('Error updating document status', error);
     }

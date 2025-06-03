@@ -145,10 +145,10 @@ const DocumentDetails = ({ selectedDocument, adjustmentRequests }) => {
                 <div className="col-sm-6 col-md-4 col-lg-2">
                     <div className="form-group mb-2">
                         <label>SAP Doc</label>
-                        <input type="text" className="form-control" readOnly />
+                        <input type="text" className="form-control" readOnly value={selectedDocument?.sapDocNo || ''} />
                     </div>
                     <div className="form-group">
-                        <input type="text" className="form-control" readOnly />
+                        <input type="text" className="form-control" readOnly value={selectedDocument?.sapDocDate ? formatDate(selectedDocument.sapDocDate) : ''} />
                     </div>
                 </div>
             </div>
