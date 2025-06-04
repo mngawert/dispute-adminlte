@@ -251,10 +251,12 @@ export const DocumentProvider = ({ children }) => {
             });
             setAdjustmentTypes(response.data);
 
-            return response.data; // Return the adjustment types for further processing if needed
             if (response.data.length > 0) {
                 setSelectedAdjustmentType(response.data[0]);
             }
+
+            return response.data; // Return the adjustment types for further processing if needed
+
         } catch (error) {
             console.error('Error fetching adjustment types:', error);
         }

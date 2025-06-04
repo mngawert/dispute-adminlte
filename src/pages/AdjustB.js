@@ -253,6 +253,10 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B +/-', adjust
         if (!selectedAccountBMinus || Object.keys(selectedAccountBMinus).length === 0 || !selectedAccountBPlus || Object.keys(selectedAccountBPlus).length === 0) {
             return getTranslation('selectAccount', language);
         }
+        // New validation: terminationDat must be null for both accounts
+        if (selectedAccountBMinus.terminationDat !== null || selectedAccountBPlus.terminationDat !== null) {
+            return getTranslation('accountMustNotBeTerminated', language);
+        }
         if (selectedAccountBMinus.invoicingCoName !== selectedAccountBPlus.invoicingCoName) {
             return getTranslation('invoicingCoNameMustMatch', language);
         }
