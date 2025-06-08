@@ -42,7 +42,9 @@ const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, select
                 selectedDocument?.approveNote ? `[Approver]: ${selectedDocument.approveNote}` : null,
                 selectedDocument?.financeNote ? `[Financial Reviewer]: ${selectedDocument.financeNote}` : null,
             ];
-            return notes.filter(note => note).join('\n');
+            // Only show distinct notes
+            const distinctNotes = Array.from(new Set(notes.filter(note => note)));
+            return distinctNotes.join('\n');
         } else if (selectedDocument) {
             const notes = [
                 ...adjustmentRequests.map(adj => adj.note ? `[Creator]: ${adj.note}` : null),
@@ -50,7 +52,9 @@ const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, select
                 selectedDocument?.approveNote ? `[Approver]: ${selectedDocument.approveNote}` : null,
                 selectedDocument?.financeNote ? `[Financial Reviewer]: ${selectedDocument.financeNote}` : null,
             ];
-            return notes.filter(note => note).join('\n');
+            // Only show distinct notes
+            const distinctNotes = Array.from(new Set(notes.filter(note => note)));
+            return distinctNotes.join('\n');
         }
         return '';
     };

@@ -48,7 +48,8 @@ const DocumentDetails = ({ selectedDocument, adjustmentRequests }) => {
             selectedDocument?.financeNote ? `[Financial Reviewer]: ${selectedDocument.financeNote}` : null,
             selectedDocument?.cancelNote ? `[Canceller]: ${selectedDocument.cancelNote}` : null
         ];
-        return notes.filter(note => note).join('\n');
+        // Remove duplicate notes and join with newline
+        return Array.from(new Set(notes.filter(note => note))).join('\n');
     };
 
     return (
