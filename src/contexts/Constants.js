@@ -10,6 +10,18 @@ export const DOCUMENT_TYPE = {
   B             : '11'
 };
 
+export const DOCUMENT_TYPE_DESC = {
+  '01': 'Adjust(-)',
+  '02': 'Adjust(+)',
+  '31': 'P31',
+  '32': 'P32',
+  '35': 'P35',
+  '36': 'P36',
+  '21': 'P3-',
+  '22': 'P3+',
+  '11': 'B +/-'
+};
+
 export const DOCUMENT_STATUS_LIST = [
   { name: 'Create-Pending', value: 'Create-Pending' },
   { name: 'Create-Accept', value: 'Create-Accept' },
