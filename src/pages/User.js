@@ -300,6 +300,17 @@ const User = () => {
                                 >
                                     {isEditMode ? 'Update User' : 'Create User'}
                                 </button>
+
+                                {isEditMode && (
+                                    <button
+                                        type="button"
+                                        className="btn btn-primary"
+                                        onClick={handleResetPassword}
+                                    >
+                                        Reset Password
+                                    </button>
+                                )}
+
                                 <button type="button" className="btn btn-secondary" onClick={closeModal}>
                                     Cancel
                                 </button>
