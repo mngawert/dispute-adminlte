@@ -36,9 +36,20 @@ const DocumentDetails = ({ selectedDocument, adjustmentRequests }) => {
         return null;
     };
 
-    const totalAmount = sortedAdjustmentRequests.reduce((sum, adj) => sum + Math.abs(adj.disputeMny), 0).toFixed(2);
-    const totalVAT = sortedAdjustmentRequests.reduce((sum, adj) => sum + Math.abs(adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100)), 0).toFixed(2);
-    const total = sortedAdjustmentRequests.reduce((sum, adj) => sum + Math.abs(adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100)), 0).toFixed(2);
+    let totalAmount = sortedAdjustmentRequests.reduce((sum, adj) => sum + Math.abs(adj.disputeMny), 0);
+    let totalVAT = sortedAdjustmentRequests.reduce((sum, adj) => sum + Math.abs(adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100)), 0);
+    let total = sortedAdjustmentRequests.reduce((sum, adj) => sum + Math.abs(adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100)), 0);
+
+    // If documentTypeDesc is 'B+-', divide totals by 2
+    if (selectedDocument?.documentTypeDesc === 'B+-') {
+        totalAmount = totalAmount / 2;
+        totalVAT = totalVAT / 2;
+        total = total / 2;
+    }
+
+    totalAmount = totalAmount.toFixed(2);
+    totalVAT = totalVAT.toFixed(2);
+    total = total.toFixed(2);
 
     const getNoteContent = () => {
         const notes = [

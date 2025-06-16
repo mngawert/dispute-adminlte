@@ -55,7 +55,11 @@ const DocumentTable = ({ documents, selectedDocument, handleSelectDocument }) =>
                             <tr key={index} onClick={() => handleSelectDocument(document)} className={document.documentNum === selectedDocument?.documentNum ? 'selected' : ''}>
                                 <td>{document.documentNum}</td>
                                 <td>{document.documentTypeDesc}</td>
-                                <td>{formatNumber(Math.abs(document.totalMny))}</td>
+                                <td>
+                                    {document.documentTypeDesc === 'B+-'
+                                        ? formatNumber(Math.abs(document.totalMny) / 2)
+                                        : formatNumber(Math.abs(document.totalMny))}
+                                </td>
                                 <td>{document.createdByName}</td>
                                 <td>{formatDate(document.createdDtm)}</td>
                                 <td>{document.homeLocationCode}</td>

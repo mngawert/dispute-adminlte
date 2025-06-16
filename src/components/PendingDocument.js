@@ -36,9 +36,21 @@ const PendingDocument = ({ pendingDocument, adjustmentRequests, fetchPendingDocu
         return null;
     };
 
-    const totalAmount = adjustmentRequests.reduce((sum, adj) => sum + Math.abs(adj.disputeMny), 0).toFixed(2);
-    const totalVAT = adjustmentRequests.reduce((sum, adj) => sum + Math.abs(adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100)), 0).toFixed(2);
-    const total = adjustmentRequests.reduce((sum, adj) => sum + Math.abs(adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100)), 0).toFixed(2);
+    // Calculate totals
+    let totalAmount = adjustmentRequests.reduce((sum, adj) => sum + Math.abs(adj.disputeMny), 0);
+    let totalVAT = adjustmentRequests.reduce((sum, adj) => sum + Math.abs(adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100)), 0);
+    let total = adjustmentRequests.reduce((sum, adj) => sum + Math.abs(adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100)), 0);
+
+    // If document type is B +/-, divide totals by 2
+    if (pendingDocument?.documentTypeDesc === 'B+-') {
+        totalAmount = totalAmount / 2;
+        totalVAT = totalVAT / 2;
+        total = total / 2;
+    }
+
+    totalAmount = totalAmount.toFixed(2);
+    totalVAT = totalVAT.toFixed(2);
+    total = total.toFixed(2);
 
     return (
         <div className="card">
