@@ -54,6 +54,8 @@ const SearchBox = ({ searchBy, selectedSearchBy, handleSearchByChange, documentN
                                     <option value="reviewedBy">Reviewed</option>
                                     <option value="approvedBy">Approved</option>
                                     <option value="financeReviewedBy">Finance Reviewed</option>
+                                    <option value="rejectedBy">Rejected</option>
+                                    <option value="canceledBy">Canceled</option>
                                 </select>
                             </div>
                         </div>
