@@ -211,6 +211,9 @@ const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, select
                                                 <th className="sortable" onClick={() => requestSort('invoiceNum')}>Invoice Number {getSortIndicator('invoiceNum')}</th>
                                                 <th className="sortable" onClick={() => requestSort('serviceNum')}>Service Number {getSortIndicator('serviceNum')}</th>
                                                 <th className="sortable" onClick={() => requestSort('adjustmentTypeName')}>Adjustment Type {getSortIndicator('adjustmentTypeName')}</th>
+                                                {reviewType === 'Retry' && (
+                                                    <th className="sortable" onClick={() => requestSort('requestStatus')}>Request Status {getSortIndicator('requestStatus')}</th>
+                                                )}
                                                 <th className="sortable" onClick={() => requestSort('disputeMny')}>Amount {getSortIndicator('disputeMny')}</th>
                                                 <th className="sortable" onClick={() => requestSort('vat')}>VAT {getSortIndicator('vat')}</th>
                                                 <th className="sortable" onClick={() => requestSort('total')}>Total {getSortIndicator('total')}</th>
@@ -223,13 +226,16 @@ const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, select
                                                     <td>{adj.invoiceNum}</td>
                                                     <td>{adj.serviceNum}</td>
                                                     <td>{adj.adjustmentTypeName}</td>
+                                                    {reviewType === 'Retry' && (
+                                                        <td>{adj.requestStatus}</td>
+                                                    )}
                                                     <td align='center'>{formatNumber(Math.abs(adj.disputeMny).toFixed(2))}</td>
                                                     <td align='center'>{formatNumber(Math.abs(adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100)).toFixed(2))}</td>
                                                     <td align='center'>{formatNumber(Math.abs(adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100)).toFixed(2))}</td>
                                                 </tr>
                                             ))}
                                             <tr>
-                                                <td colSpan="4" align='right'><strong>Total</strong></td>
+                                                <td colSpan={reviewType === 'Retry' ? 5 : 4} align='right'><strong>Total</strong></td>
                                                 <td align='center'><strong>{formatNumber(Math.abs(totalAmount))}</strong></td>
                                                 <td align='center'><strong>{formatNumber(Math.abs(totalVAT))}</strong></td>
                                                 <td align='center'><strong>{formatNumber(Math.abs(total))}</strong></td>
@@ -286,9 +292,13 @@ const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, select
                                             className="btn btn-primary mr-1"
                                             onClick={handleAccept}
                                         >
-                                            {reviewType === 'Cancel' ? 'Cancel Selected' : 'Accept Selected'}
+                                            {reviewType === 'Cancel'
+                                                ? 'Cancel Selected'
+                                                : reviewType === 'Retry'
+                                                    ? 'Retry Selected'
+                                                    : 'Accept Selected'}
                                         </button>
-                                        {reviewType !== 'Cancel' && (
+                                        {reviewType !== 'Cancel' && reviewType !== 'Retry' && (
                                             <button
                                                 type="button"
                                                 className="btn btn-default"

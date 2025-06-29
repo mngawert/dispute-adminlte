@@ -186,6 +186,25 @@ export default function Sidebar() {
               </li>
             }
 
+            {/* Retry Tasks */}
+            {(userHasRole("Admin") || userHasRole("Finance")) && 
+              <li className="nav-item menu-is-opening menu-open">
+                <a href="#" className="nav-link">
+                  <p>
+                  Retry Tasks
+                  </p>
+                </a>
+                <ul className="nav nav-treeview">
+                  <li className="nav-item">
+                    <a href="/NTAdjustor/Retry" className={`nav-link ${isActive('/Retry')}`}> {/* Add basepath */}
+                      <i className="far fa-circle nav-icon" />
+                      <p>Retry</p>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+            }
+
             {/* User Management */}
             <li className="nav-item menu-is-opening menu-open">
               <a href="#" className="nav-link">
