@@ -100,6 +100,9 @@ const User = () => {
     const prepareUserPayload = () => {
         return {
             ...userForm,
+            // Convert empty date strings to null
+            startDate: userForm.startDate || null,
+            endDate: userForm.endDate || null,
             empCode: staffInfo?.empCode || '',
             titleTh: staffInfo?.titleTh || '',
             firstNameTh: staffInfo?.firstNameTh || '',
