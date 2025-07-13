@@ -11,7 +11,9 @@ const User = () => {
         password: '',
         userStatus: 'Active',
         homeLocationCode: '',
-        creditLimit: ''
+        creditLimit: '',
+        startDate: '', // Add startDate field
+        endDate: ''    // Add endDate field
     });
     const [isEditMode, setIsEditMode] = useState(false);
     const [showModal, setShowModal] = useState(false);
@@ -126,11 +128,17 @@ const User = () => {
         try {
             const payload = prepareUserPayload();
             await api.put(`/api/User/UpdateUser/${userForm.userId}`, payload);
+            
+            // Fetch the updated user list
+            const response = await api.get('/api/User/GetAllUsers');
+            setUsers(response.data);
+            setFilteredUsers(response.data);
+            
             alert('User updated successfully.');
-            fetchUsers();
             closeModal();
         } catch (error) {
             console.error('Error updating user:', error);
+            alert('Failed to update user. Please try again.');
         }
     };
 
@@ -151,7 +159,9 @@ const User = () => {
             password: '',
             userStatus: 'Active',
             homeLocationCode: '',
-            creditLimit: ''
+            creditLimit: '',
+            startDate: '', // Initialize with empty string
+            endDate: ''    // Initialize with empty string
         });
         // Clear staff info when creating a new user
         setStaffInfo(null);
@@ -161,12 +171,17 @@ const User = () => {
     };
 
     const openEditModal = (user) => {
-        setUserForm(user);
+        // Format dates correctly for the date inputs (YYYY-MM-DD format)
+        const formattedUser = {
+            ...user,
+            // Format startDate if it exists
+            startDate: user.startDate ? formatDateForInput(user.startDate) : '',
+            // Format endDate if it exists
+            endDate: user.endDate ? formatDateForInput(user.endDate) : ''
+        };
+        
+        setUserForm(formattedUser);
         setIsEditMode(true);
-
-        // if (user.username) {
-        //     fetchStaffInfo(user.username);
-        // }
         
         // First try to populate staffInfo from the existing user data
         setStaffInfo({
@@ -181,9 +196,64 @@ const User = () => {
         });
         setStaffLoading(false);
         setStaffError('');
-
         
         setShowModal(true);
+    };
+
+    // Helper function to format dates for input fields
+    const formatDateForInput = (dateString) => {
+        try {
+            // First check if it's a string that needs parsing
+            if (typeof dateString === 'string') {
+                // Parse the date in UTC to avoid timezone issues
+                const parts = dateString.split('T')[0].split('-');
+                if (parts.length === 3) {
+                    // Create date using UTC components (YYYY-MM-DD)
+                    return dateString.split('T')[0]; // Return just the date part
+                }
+                
+                // Try regular date parsing as fallback
+                const date = new Date(dateString);
+                if (!isNaN(date.getTime())) {
+                    // Get year, month, and day in local timezone
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+                    return `${year}-${month}-${day}`;
+                }
+            } else if (dateString instanceof Date) {
+                // If it's already a Date object
+                const year = dateString.getFullYear();
+                const month = String(dateString.getMonth() + 1).padStart(2, '0');
+                const day = String(dateString.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            }
+            return '';
+        } catch (error) {
+            console.error('Error formatting date:', error);
+            return '';
+        }
+    };
+
+    // Add this function to convert between date formats
+    const formatDateForDisplay = (dateString) => {
+        if (!dateString) return '';
+        
+        try {
+            // For consistent display, use a specific format
+            const date = new Date(dateString);
+            if (!isNaN(date.getTime())) {
+                // Format as DD/MM/YYYY
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const year = date.getFullYear();
+                return `${day}/${month}/${year}`;
+            }
+            return '';
+        } catch (error) {
+            console.error('Error formatting date for display:', error);
+            return '';
+        }
     };
 
     const fetchStaffInfo = async (username) => {
@@ -258,6 +328,8 @@ const User = () => {
                                                     <th>Status</th>
                                                     <th>Home Location Code</th>
                                                     <th>Credit Limit</th>
+                                                    <th>Start Date</th>
+                                                    <th>End Date</th>
                                                     <th>Actions</th>
                                                 </tr>
                                             </thead>
@@ -268,6 +340,8 @@ const User = () => {
                                                         <td>{user.userStatus}</td>
                                                         <td>{user.homeLocationCode}</td>
                                                         <td>{user.creditLimit}</td>
+                                                        <td>{formatDateForDisplay(user.startDate)}</td>
+                                                        <td>{formatDateForDisplay(user.endDate)}</td>
                                                         <td>
                                                             <button
                                                                 className="btn btn-sm mr-2"
@@ -429,6 +503,70 @@ const User = () => {
                                                 onChange={handleInputChange}
                                                 className="form-control"
                                             />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Start Date</label>
+                                            <div className="input-group">
+                                                <input
+                                                    type="date"
+                                                    name="startDate"
+                                                    value={userForm.startDate}
+                                                    onChange={handleInputChange}
+                                                    className="form-control"
+                                                    style={{ width: "0px", padding: "0", border: "none", opacity: 0, position: "absolute" }}
+                                                />
+                                                <div 
+                                                    className="form-control" 
+                                                    onClick={() => document.querySelector('input[name="startDate"]').showPicker()}
+                                                    style={{ cursor: "pointer", background: "#f8f9fa" }}
+                                                >
+                                                    {userForm.startDate ? formatDateForDisplay(userForm.startDate) : 'Click to select date'}
+                                                </div>
+                                                <div className="input-group-append">
+                                                    <button 
+                                                        className="btn btn-outline-secondary" 
+                                                        type="button"
+                                                        onClick={() => {
+                                                            setUserForm({...userForm, startDate: ''});
+                                                        }}
+                                                        title="Clear date"
+                                                    >
+                                                        <i className="fa fa-times"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="form-group">
+                                            <label>End Date</label>
+                                            <div className="input-group">
+                                                <input
+                                                    type="date"
+                                                    name="endDate"
+                                                    value={userForm.endDate}
+                                                    onChange={handleInputChange}
+                                                    className="form-control"
+                                                    style={{ width: "0px", padding: "0", border: "none", opacity: 0, position: "absolute" }}
+                                                />
+                                                <div 
+                                                    className="form-control" 
+                                                    onClick={() => document.querySelector('input[name="endDate"]').showPicker()}
+                                                    style={{ cursor: "pointer", background: "#f8f9fa" }}
+                                                >
+                                                    {userForm.endDate ? formatDateForDisplay(userForm.endDate) : 'Click to select date'}
+                                                </div>
+                                                <div className="input-group-append">
+                                                    <button 
+                                                        className="btn btn-outline-secondary" 
+                                                        type="button"
+                                                        onClick={() => {
+                                                            setUserForm({...userForm, endDate: ''});
+                                                        }}
+                                                        title="Clear date"
+                                                    >
+                                                        <i className="fa fa-times"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
