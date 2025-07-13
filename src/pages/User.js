@@ -95,20 +95,23 @@ const User = () => {
         setFilteredUsers(filtered);
     };
 
+    const prepareUserPayload = () => {
+        return {
+            ...userForm,
+            empCode: staffInfo?.empCode || '',
+            titleTh: staffInfo?.titleTh || '',
+            firstNameTh: staffInfo?.firstNameTh || '',
+            lastNameTh: staffInfo?.lastNameTh || '',
+            currDepFull: staffInfo?.currDepFull || '',
+            posAbbr: staffInfo?.posAbbr || '',
+            email: staffInfo?.email || '',
+            tel: staffInfo?.tel || ''
+        };
+    };
+
     const handleCreateUser = async () => {
         try {
-            // Merge staffInfo fields into userForm for creation
-            const payload = {
-                ...userForm,
-                empCode: staffInfo?.empCode || '',
-                titleTh: staffInfo?.titleTh || '',
-                firstNameTh: staffInfo?.firstNameTh || '',
-                lastNameTh: staffInfo?.lastNameTh || '',
-                currDepFull: staffInfo?.currDepFull || '',
-                posAbbr: staffInfo?.posAbbr || '',
-                email: staffInfo?.email || '',
-                tel: staffInfo?.tel || ''
-            };
+            const payload = prepareUserPayload();
             await api.post('/api/User/CreateUser', payload);
             alert('User created successfully.');
             fetchUsers();
@@ -121,19 +124,9 @@ const User = () => {
 
     const handleEditUser = async () => {
         try {
-            // Merge staffInfo fields into userForm for editing
-            const payload = {
-                ...userForm,
-                empCode: staffInfo?.empCode || '',
-                titleTh: staffInfo?.titleTh || '',
-                firstNameTh: staffInfo?.firstNameTh || '',
-                lastNameTh: staffInfo?.lastNameTh || '',
-                currDepFull: staffInfo?.currDepFull || '',
-                posAbbr: staffInfo?.posAbbr || '',
-                email: staffInfo?.email || '',
-                tel: staffInfo?.tel || ''
-            };
+            const payload = prepareUserPayload();
             await api.put(`/api/User/UpdateUser/${userForm.userId}`, payload);
+            alert('User updated successfully.');
             fetchUsers();
             closeModal();
         } catch (error) {
@@ -169,32 +162,35 @@ const User = () => {
 
     const openEditModal = (user) => {
         setUserForm(user);
-        // Clear staff info when editing a different user
-        setStaffInfo(null);
-        setStaffError('');
-        // Fetch staff info for the selected user if available
-        if (user.username) {
-            fetchStaffInfoForUser(user.username);
-        }
         setIsEditMode(true);
         setShowModal(true);
+        if (user.username) {
+            fetchStaffInfo(user.username);
+        }
     };
 
-    // New helper function to fetch staff info for an existing user
-    const fetchStaffInfoForUser = async (username) => {
+    const fetchStaffInfo = async (username) => {
         setStaffLoading(true);
+        setStaffError('');
+        setStaffInfo(null);
+        
         try {
             const response = await api.post(
                 `${process.env.REACT_APP_STAFF_INFO_URL || '/api/StaffInfo/GetStaffInfoFromJson'}`,
                 { staffID: username }
             );
+            
             if (response.data && response.data.length > 0) {
                 setStaffInfo(response.data[0]);
+            } else {
+                setStaffError('No staff info found.');
             }
         } catch (error) {
             console.error('Error fetching staff info:', error);
+            setStaffError('Error fetching staff info.');
+        } finally {
+            setStaffLoading(false);
         }
-        setStaffLoading(false);
     };
 
     const openGroupModal = (userId) => {
@@ -214,25 +210,7 @@ const User = () => {
     };
 
     // Search Staff Info using api.get
-    const handleSearchStaff = async () => {
-        setStaffLoading(true);
-        setStaffError('');
-        setStaffInfo(null);
-        try {
-            const response = await api.post(
-                `${process.env.REACT_APP_STAFF_INFO_URL || '/api/StaffInfo/GetStaffInfoFromJson'}`,
-                { staffID: userForm.username }
-            );
-            if (response.data && response.data.length > 0) {
-                setStaffInfo(response.data[0]);
-            } else {
-                setStaffError('No staff info found.');
-            }
-        } catch (error) {
-            setStaffError('Error fetching staff info.');
-        }
-        setStaffLoading(false);
-    };
+    const handleSearchStaff = () => fetchStaffInfo(userForm.username);
 
     return (
         <div className="content-wrapper-x">
