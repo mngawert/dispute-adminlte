@@ -10,6 +10,11 @@ const PrivateRoute = ({ element, allowedRoles }) => {
     }
 
     try {
+        // Special case: if allowedRoles contains "*", allow any authenticated user
+        if (allowedRoles.includes("*")) {
+            return element;
+        }
+
         const decodedToken = jwtDecode(token);
         const roles = decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || [];
         const userRoles = Array.isArray(roles) ? roles : [roles];

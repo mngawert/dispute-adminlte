@@ -52,25 +52,25 @@ function App() {
             <Route path="/Home" element={<PrivateRoute element={<Home />} allowedRoles={['Admin', 'Creator', 'Reviewer', 'Approver', 'Finance']} />} />
             {/* <Route path="/dispute" element={<Dispute />} /> */}
             {/* <Route path="/disputeBak" element={<DisputeBak />} /> */}
-            <Route path="/Create" element={ <PrivateRoute element={<Review reviewType="Create" prevDocumentStatus='Create-Pending' />} allowedRoles={['Admin', 'Creator']} /> } />
+            {/* <Route path="/Create" element={ <PrivateRoute element={<Review reviewType="Create" prevDocumentStatus='Create-Pending' />} allowedRoles={['Admin', 'Creator']} /> } /> */}
             <Route path="/Review" element={ <PrivateRoute element={<Review reviewType="Review" prevDocumentStatus='Create-Accept' />} allowedRoles={['Admin', 'Reviewer']} /> } />
             <Route path="/Approve" element={ <PrivateRoute element={<Review reviewType="Approve" prevDocumentStatus='Review-Accept' />} allowedRoles={['Admin', 'Approver']} /> } />
             <Route path="/Finance" element={ <PrivateRoute element={<Review reviewType="Finance" prevDocumentStatus='Approve-Accept' />} allowedRoles={['Admin', 'Finance']} /> } />
             <Route path="/Cancel" element={ <PrivateRoute element={<Review reviewType="Cancel" prevDocumentStatus='CREATED_IN_RBM' />} allowedRoles={['Admin', 'Finance']} /> } />
             <Route path="/Retry" element={ <PrivateRoute element={<Review reviewType="Retry" prevDocumentStatus='ERROR_IN_RBM,PARTIAL_ERROR' />} allowedRoles={['Admin', 'Approver', 'Finance']} /> } />
             {/* <Route path="/reviewBak" element={<ReviewBak />} /> */}
-            <Route path="/AdjustPlus" element={ <PrivateRoute element={<AdjustPlus />} allowedRoles={['Admin', 'Creator']} /> } />
-            <Route path="/AdjustMinus" element={ <PrivateRoute element={<AdjustMinus />} allowedRoles={['Admin', 'Creator']} /> } />
-            <Route path="/AdjustP31" element={ <PrivateRoute element={<AdjustP31 />} allowedRoles={['Admin', 'Creator']} /> } />
-            <Route path="/AdjustP32" element={ <PrivateRoute element={<AdjustP32 />} allowedRoles={['Admin', 'Creator']} /> } />
-            <Route path="/AdjustP35" element={ <PrivateRoute element={<AdjustP35 />} allowedRoles={['Admin', 'Creator']} /> } />
-            <Route path="/AdjustP36" element={ <PrivateRoute element={<AdjustP36 />} allowedRoles={['Admin', 'Creator']} /> } />
-            <Route path="/AdjustP3Plus" element={ <PrivateRoute element={<AdjustP3Plus />} allowedRoles={['Admin', 'Creator']} /> } />
-            <Route path="/AdjustP3Minus" element={ <PrivateRoute element={<AdjustP3Minus />} allowedRoles={['Admin', 'Creator']} /> } />
-            <Route path="/AdjustP3Plus_Bak" element={ <PrivateRoute element={<AdjustP3Plus_Bak />} allowedRoles={['Admin', 'Creator']} /> } />
-            <Route path="/AdjustP3Minus_Bak" element={ <PrivateRoute element={<AdjustP3Minus_Bak />} allowedRoles={['Admin', 'Creator']} /> } />
-            <Route path="/AdjustB_Bak" element={<AdjustB_Bak />} />
-            <Route path="/AdjustB" element={ <PrivateRoute element={<AdjustB />} allowedRoles={['Admin', 'Creator']} /> } />
+            <Route path="/AdjustPlus" element={ <PrivateRoute element={<AdjustPlus />} allowedRoles={['Admin', 'Creator', 'Creator_Adjust+']} /> } />
+            <Route path="/AdjustMinus" element={ <PrivateRoute element={<AdjustMinus />} allowedRoles={['Admin', 'Creator', 'Creator_Adjust-']} /> } />
+            <Route path="/AdjustP31" element={ <PrivateRoute element={<AdjustP31 />} allowedRoles={['Admin', 'Creator', 'Creator_P31']} /> } />
+            <Route path="/AdjustP32" element={ <PrivateRoute element={<AdjustP32 />} allowedRoles={['Admin', 'Creator', 'Creator_P32']} /> } />
+            <Route path="/AdjustP35" element={ <PrivateRoute element={<AdjustP35 />} allowedRoles={['Admin', 'Creator', 'Creator_P35']} /> } />
+            <Route path="/AdjustP36" element={ <PrivateRoute element={<AdjustP36 />} allowedRoles={['Admin', 'Creator', 'Creator_P36']} /> } />
+            <Route path="/AdjustP3Plus" element={ <PrivateRoute element={<AdjustP3Plus />} allowedRoles={['Admin', 'Creator', 'Creator_P3+']} /> } />
+            <Route path="/AdjustP3Minus" element={ <PrivateRoute element={<AdjustP3Minus />} allowedRoles={['Admin', 'Creator', 'Creator_P3-']} /> } />
+            {/* <Route path="/AdjustP3Plus_Bak" element={ <PrivateRoute element={<AdjustP3Plus_Bak />} allowedRoles={['Admin', 'Creator', 'Creator_P3+']} /> } /> */}
+            {/* <Route path="/AdjustP3Minus_Bak" element={ <PrivateRoute element={<AdjustP3Minus_Bak />} allowedRoles={['Admin', 'Creator', 'Creator_P3-']} /> } /> */}
+            {/* <Route path="/AdjustB_Bak" element={<AdjustB_Bak />} /> */}
+            <Route path="/AdjustB" element={ <PrivateRoute element={<AdjustB />} allowedRoles={['Admin', 'Creator', 'Creator_B+/-']} /> } />
             <Route path="/MyAdj" element={ <PrivateRoute element={<SearchAdj myAdjust="Yes" title="My Adjustments" fetchDataAtStart="Yes" />} allowedRoles={['Admin', 'Creator', 'Reviewer', 'Approver', 'Finance']} /> } />
             <Route path="/SearchAdj" element={ <PrivateRoute element={<SearchAdj myAdjust="No" title="Search Adjustments" fetchDataAtStart="No" />} allowedRoles={['Admin', 'Creator', 'Reviewer', 'Approver', 'Finance']} /> } />
             {/* <Route path="/MyAdj2" element={<SearchAdj myAdjust="Yes" title="My Adjustments" fetchDataAtStart="Yes" />} /> */}
@@ -80,7 +80,7 @@ function App() {
             {/* <Route path="/not-authorized2" element={<NotAuthorized /> } /> */}
             <Route path="/User" element={<PrivateRoute element={<User />} allowedRoles={['Admin']} />} /> {/* Add the new User page route */}
             <Route path="/Group" element={<PrivateRoute element={<Group />} allowedRoles={['Admin']} />} /> {/* Add the new User page route */}
-            <Route path="/Change-password" element={<PrivateRoute element={<ChangePassword />} allowedRoles={['Admin', 'Creator', 'Reviewer', 'Approver', 'Finance']} />} />
+            <Route path="/Change-password" element={<PrivateRoute element={<ChangePassword />} allowedRoles={["*"]} />} />
             {/* <Route path="/test" element={<Test />} /> */}
             {/* <Route path="/Dashboard" element={<PrivateRoute element={<Dashboard />} allowedRoles={['Admin']} />} /> */}
             {/* <Route path="/disputedata" element={<DisputeData />} /> */}

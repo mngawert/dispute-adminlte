@@ -10,11 +10,17 @@ export default function Sidebar() {
 
   if (token) {
     decodedToken = jwtDecode(token);
-    roles = decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || [];
+    // Handle both array and string formats
+    const roleData = decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+    roles = Array.isArray(roleData) ? roleData : [roleData];
   }
 
+  console.log("Current user roles:", roles);
+
   const userHasRole = (role) => {
-    return roles.includes(role);
+    if (!roles || roles.length === 0) return false;
+    // Exact match for role names - no partial matching
+    return roles.some(r => r === role);
   };
 
   const handleLogout = () => {
@@ -43,7 +49,12 @@ export default function Sidebar() {
             </li>
 
             {/* Creation Tasks */}
-            {(userHasRole("Admin") || userHasRole("Creator")) && 
+            {(userHasRole("Admin") || userHasRole("Creator") || 
+              userHasRole("Creator_Adjust+") || userHasRole("Creator_Adjust-") || 
+              userHasRole("Creator_B+/-") || userHasRole("Creator_P3+") || 
+              userHasRole("Creator_P3-") || userHasRole("Creator_P31") || 
+              userHasRole("Creator_P32") || userHasRole("Creator_P35") || 
+              userHasRole("Creator_P36")) && 
               <li className="nav-item menu-is-opening menu-open">
                 <a href="#" className="nav-link">
                   <p>
@@ -51,61 +62,86 @@ export default function Sidebar() {
                   </p>
                 </a>
                 <ul className="nav nav-treeview">
-                  <li className="nav-item">
-                    <a href="/NTAdjustor/AdjustMinus" className={`nav-link ${isActive('/AdjustMinus')}`}> {/* Add basepath */}
-                      <i className="far fa-circle nav-icon" />
-                      <p>Adjust-</p>
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a href="/NTAdjustor/AdjustPlus" className={`nav-link ${isActive('/AdjustPlus')}`}> {/* Add basepath */}
-                      <i className="far fa-circle nav-icon" />
-                      <p>Adjust+</p>
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a href="/NTAdjustor/AdjustP31" className={`nav-link ${isActive('/AdjustP31')}`}> {/* Add basepath */}
-                      <i className="far fa-circle nav-icon" />
-                      <p>P31 </p>
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a href="/NTAdjustor/AdjustP32" className={`nav-link ${isActive('/AdjustP32')}`}> {/* Add basepath */}
-                      <i className="far fa-circle nav-icon" />
-                      <p>P32 </p>
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a href="/NTAdjustor/AdjustP35" className={`nav-link ${isActive('/AdjustP35')}`}> {/* Add basepath */}
-                      <i className="far fa-circle nav-icon" />
-                      <p>P35 </p>
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a href="/NTAdjustor/AdjustP36" className={`nav-link ${isActive('/AdjustP36')}`}> {/* Add basepath */}
-                      <i className="far fa-circle nav-icon" />
-                      <p>P36 </p>
-                    </a>
-                  </li>
+                  {(userHasRole("Admin") || userHasRole("Creator") || userHasRole("Creator_Adjust-")) && (
+                    <li className="nav-item">
+                      <a href="/NTAdjustor/AdjustMinus" className={`nav-link ${isActive('/AdjustMinus')}`}>
+                        <i className="far fa-circle nav-icon" />
+                        <p>Adjust-</p>
+                      </a>
+                    </li>
+                  )}
+                  
+                  {(userHasRole("Admin") || userHasRole("Creator") || userHasRole("Creator_Adjust+")) && (
+                    <li className="nav-item">
+                      <a href="/NTAdjustor/AdjustPlus" className={`nav-link ${isActive('/AdjustPlus')}`}>
+                        <i className="far fa-circle nav-icon" />
+                        <p>Adjust+</p>
+                      </a>
+                    </li>
+                  )}
+                  
+                  {(userHasRole("Admin") || userHasRole("Creator") || userHasRole("Creator_P31")) && (
+                    <li className="nav-item">
+                      <a href="/NTAdjustor/AdjustP31" className={`nav-link ${isActive('/AdjustP31')}`}>
+                        <i className="far fa-circle nav-icon" />
+                        <p>P31</p>
+                      </a>
+                    </li>
+                  )}
+                  
+                  {(userHasRole("Admin") || userHasRole("Creator") || userHasRole("Creator_P32")) && (
+                    <li className="nav-item">
+                      <a href="/NTAdjustor/AdjustP32" className={`nav-link ${isActive('/AdjustP32')}`}>
+                        <i className="far fa-circle nav-icon" />
+                        <p>P32</p>
+                      </a>
+                    </li>
+                  )}
+                  
+                  {(userHasRole("Admin") || userHasRole("Creator") || userHasRole("Creator_P35")) && (
+                    <li className="nav-item">
+                      <a href="/NTAdjustor/AdjustP35" className={`nav-link ${isActive('/AdjustP35')}`}>
+                        <i className="far fa-circle nav-icon" />
+                        <p>P35</p>
+                      </a>
+                    </li>
+                  )}
+                  
+                  {(userHasRole("Admin") || userHasRole("Creator") || userHasRole("Creator_P36")) && (
+                    <li className="nav-item">
+                      <a href="/NTAdjustor/AdjustP36" className={`nav-link ${isActive('/AdjustP36')}`}>
+                        <i className="far fa-circle nav-icon" />
+                        <p>P36</p>
+                      </a>
+                    </li>
+                  )}
 
-                  <li className="nav-item">
-                    <a href="/NTAdjustor/AdjustP3Minus" className={`nav-link ${isActive('/AdjustP3Minus')}`}> {/* Add basepath */}
-                      <i className="far fa-circle nav-icon" />
-                      <p>P3- </p>
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a href="/NTAdjustor/AdjustP3Plus" className={`nav-link ${isActive('/AdjustP3Plus')}`}> {/* Add basepath */}
-                      <i className="far fa-circle nav-icon" />
-                      <p>P3+ </p>
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a href="/NTAdjustor/AdjustB" className={`nav-link ${isActive('/AdjustB')}`}> {/* Add basepath */}
-                      <i className="far fa-circle nav-icon" />
-                      <p>B+/- </p>
-                    </a>
-                  </li>
+                  {(userHasRole("Admin") || userHasRole("Creator") || userHasRole("Creator_P3-")) && (
+                    <li className="nav-item">
+                      <a href="/NTAdjustor/AdjustP3Minus" className={`nav-link ${isActive('/AdjustP3Minus')}`}>
+                        <i className="far fa-circle nav-icon" />
+                        <p>P3-</p>
+                      </a>
+                    </li>
+                  )}
+                  
+                  {(userHasRole("Admin") || userHasRole("Creator") || userHasRole("Creator_P3+")) && (
+                    <li className="nav-item">
+                      <a href="/NTAdjustor/AdjustP3Plus" className={`nav-link ${isActive('/AdjustP3Plus')}`}>
+                        <i className="far fa-circle nav-icon" />
+                        <p>P3+</p>
+                      </a>
+                    </li>
+                  )}
+                  
+                  {(userHasRole("Admin") || userHasRole("Creator") || userHasRole("Creator_B+/-")) && (
+                    <li className="nav-item">
+                      <a href="/NTAdjustor/AdjustB" className={`nav-link ${isActive('/AdjustB')}`}>
+                        <i className="far fa-circle nav-icon" />
+                        <p>B+/-</p>
+                      </a>
+                    </li>
+                  )}
                 </ul>
               </li>
             }

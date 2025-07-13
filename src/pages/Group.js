@@ -22,6 +22,7 @@ const Group = () => {
     const [isEditMode, setIsEditMode] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [availableLocationFilter, setAvailableLocationFilter] = useState('');
+    const [availableRoleFilter, setAvailableRoleFilter] = useState('');
 
     useEffect(() => {
         fetchGroups();
@@ -277,37 +278,55 @@ const Group = () => {
                             </div>
                             <div className="modal-body">
                                 <h6>Assigned Roles</h6>
-                                <ul className="list-group">
-                                    {groupRoles.map(role => (
-                                        <li key={role.roleId} className="list-group-item d-flex align-items-center justify-content-between">
-                                            <span>{role.roleId}</span>
-                                            <button
-                                                className="btn btn-sm btn-danger"
-                                                onClick={() => handleRemoveRoleFromGroup(role.roleId)}
-                                                title="Remove Role"
-                                            >
-                                                <i className="fa fa-minus-circle" aria-hidden="true"></i>
-                                            </button>
-                                        </li>
-                                    ))}
-                                </ul>
-                                <h6 className="mt-3">Available Roles</h6>
-                                <ul className="list-group">
-                                    {roles
-                                        .filter(role => !groupRoles.some(gr => gr.roleId === role.roleId))
-                                        .map(role => (
+                                {/* Added height constraint and overflow for scrolling */}
+                                <div style={{ maxHeight: '200px', overflowY: 'auto', marginBottom: '15px' }}>
+                                    <ul className="list-group">
+                                        {groupRoles.map(role => (
                                             <li key={role.roleId} className="list-group-item d-flex align-items-center justify-content-between">
                                                 <span>{role.roleId}</span>
                                                 <button
-                                                    className="btn btn-sm btn-primary"
-                                                    onClick={() => handleAddRoleToGroup(role.roleId)}
-                                                    title="Add Role"
+                                                    className="btn btn-sm btn-danger"
+                                                    onClick={() => handleRemoveRoleFromGroup(role.roleId)}
+                                                    title="Remove Role"
                                                 >
-                                                    <i className="fa fa-plus-circle" aria-hidden="true"></i>
+                                                    <i className="fa fa-minus-circle" aria-hidden="true"></i>
                                                 </button>
                                             </li>
                                         ))}
-                                </ul>
+                                    </ul>
+                                </div>
+                                
+                                <h6 className="mt-3">Available Roles</h6>
+                                {/* Added search filter for available roles */}
+                                <input
+                                    type="text"
+                                    className="form-control mb-2"
+                                    placeholder="Filter available roles"
+                                    value={availableRoleFilter}
+                                    onChange={(e) => setAvailableRoleFilter(e.target.value)}
+                                />
+                                {/* Added height constraint and overflow for scrolling */}
+                                <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                                    <ul className="list-group">
+                                        {roles
+                                            .filter(role => 
+                                                (role.roleId || '').toLowerCase().includes((availableRoleFilter || '').toLowerCase()) &&
+                                                !groupRoles.some(gr => gr.roleId === role.roleId)
+                                            )
+                                            .map(role => (
+                                                <li key={role.roleId} className="list-group-item d-flex align-items-center justify-content-between">
+                                                    <span>{role.roleId}</span>
+                                                    <button
+                                                        className="btn btn-sm btn-primary"
+                                                        onClick={() => handleAddRoleToGroup(role.roleId)}
+                                                        title="Add Role"
+                                                    >
+                                                        <i className="fa fa-plus-circle" aria-hidden="true"></i>
+                                                    </button>
+                                                </li>
+                                            ))}
+                                    </ul>
+                                </div>
                             </div>
                             <div className="modal-footer">
                                 <button type="button" className="btn btn-secondary" onClick={closeRoleModal}>
