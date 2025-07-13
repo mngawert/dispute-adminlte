@@ -48,8 +48,8 @@ function App() {
           </Route>
 
           <Route element={ <MainLayout /> }>
-            <Route path="/" element={<PrivateRoute element={<Home />} allowedRoles={['Admin', 'Creator', 'Reviewer', 'Approver', 'Finance']} />} />
-            <Route path="/Home" element={<PrivateRoute element={<Home />} allowedRoles={['Admin', 'Creator', 'Reviewer', 'Approver', 'Finance']} />} />
+            <Route path="/" element={<PrivateRoute element={<Home />} allowedRoles={['*']} />} />
+            <Route path="/Home" element={<PrivateRoute element={<Home />} allowedRoles={['*']} />} />
             {/* <Route path="/dispute" element={<Dispute />} /> */}
             {/* <Route path="/disputeBak" element={<DisputeBak />} /> */}
             {/* <Route path="/Create" element={ <PrivateRoute element={<Review reviewType="Create" prevDocumentStatus='Create-Pending' />} allowedRoles={['Admin', 'Creator']} /> } /> */}
@@ -71,12 +71,12 @@ function App() {
             {/* <Route path="/AdjustP3Minus_Bak" element={ <PrivateRoute element={<AdjustP3Minus_Bak />} allowedRoles={['Admin', 'Creator', 'Creator_P3-']} /> } /> */}
             {/* <Route path="/AdjustB_Bak" element={<AdjustB_Bak />} /> */}
             <Route path="/AdjustB" element={ <PrivateRoute element={<AdjustB />} allowedRoles={['Admin', 'Creator', 'Creator_B+/-']} /> } />
-            <Route path="/MyAdj" element={ <PrivateRoute element={<SearchAdj myAdjust="Yes" title="My Adjustments" fetchDataAtStart="Yes" />} allowedRoles={['Admin', 'Creator', 'Reviewer', 'Approver', 'Finance']} /> } />
-            <Route path="/SearchAdj" element={ <PrivateRoute element={<SearchAdj myAdjust="No" title="Search Adjustments" fetchDataAtStart="No" />} allowedRoles={['Admin', 'Creator', 'Reviewer', 'Approver', 'Finance']} /> } />
+            <Route path="/MyAdj" element={ <PrivateRoute element={<SearchAdj myAdjust="Yes" title="My Adjustments" fetchDataAtStart="Yes" />} allowedRoles={['*']} /> } />
+            <Route path="/SearchAdj" element={ <PrivateRoute element={<SearchAdj myAdjust="No" title="Search Adjustments" fetchDataAtStart="No" />} allowedRoles={['*']} /> } />
             {/* <Route path="/MyAdj2" element={<SearchAdj myAdjust="Yes" title="My Adjustments" fetchDataAtStart="Yes" />} /> */}
             {/* <Route path="/SearchAdj2" element={<SearchAdj myAdjust="No" title="Search Adjustments" fetchDataAtStart="No" />} /> */}
             {/* <Route path="/UserBak" element={<UserBak />} /> */}
-            <Route path="/Not-authorized" element={<PrivateRoute element={<NotAuthorized />} allowedRoles={['Admin', 'Creator', 'Reviewer', 'Approver', 'Finance']} />} />
+            <Route path="/Not-authorized" element={<PrivateRoute element={<NotAuthorized />} allowedRoles={['*']} />} />
             {/* <Route path="/not-authorized2" element={<NotAuthorized /> } /> */}
             <Route path="/User" element={<PrivateRoute element={<User />} allowedRoles={['Admin']} />} /> {/* Add the new User page route */}
             <Route path="/Group" element={<PrivateRoute element={<Group />} allowedRoles={['Admin']} />} /> {/* Add the new User page route */}
