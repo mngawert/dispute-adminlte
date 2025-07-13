@@ -20,6 +20,9 @@ const User = () => {
     const [selectedUserId, setSelectedUserId] = useState(null);
     const [showGroupModal, setShowGroupModal] = useState(false);
     const [availableGroupFilter, setAvailableGroupFilter] = useState('');
+    const [staffInfo, setStaffInfo] = useState(null);
+    const [staffLoading, setStaffLoading] = useState(false);
+    const [staffError, setStaffError] = useState('');
 
     useEffect(() => {
         fetchUsers();
@@ -159,6 +162,27 @@ const User = () => {
         setSelectedUserId(null);
     };
 
+    // Search Staff Info using api.get
+    const handleSearchStaff = async () => {
+        setStaffLoading(true);
+        setStaffError('');
+        setStaffInfo(null);
+        try {
+            const response = await api.post(
+                `${process.env.REACT_APP_STAFF_INFO_URL || '/api/StaffInfo/GetStaffInfoFromJson'}`,
+                { staffID: userForm.username }
+            );
+            if (response.data && response.data.length > 0) {
+                setStaffInfo(response.data[0]);
+            } else {
+                setStaffError('No staff info found.');
+            }
+        } catch (error) {
+            setStaffError('Error fetching staff info.');
+        }
+        setStaffLoading(false);
+    };
+
     return (
         <div className="content-wrapper-x">
             <ContentHeader title="User Management" />
@@ -227,7 +251,7 @@ const User = () => {
             {/* Modal */}
             {showModal && (
                 <div className="modal" style={{ display: 'block' }}>
-                    <div className="modal-dialog">
+                    <div className="modal-dialog" style={{ maxWidth: 900 }}>
                         <div className="modal-content">
                             <div className="modal-header">
                                 <h5 className="modal-title">{isEditMode ? 'Edit User' : 'Create User'}</h5>
@@ -236,60 +260,131 @@ const User = () => {
                                 </button>
                             </div>
                             <div className="modal-body">
-                                <div className="form-group">
-                                    <label>Username</label>
-                                    <input
-                                        type="text"
-                                        name="username"
-                                        value={userForm.username}
-                                        onChange={handleInputChange}
-                                        className="form-control"
-                                        disabled={isEditMode} // Disable username field in edit mode
-                                    />
-                                </div>
-                                {!isEditMode && (
-                                    <div className="form-group">
-                                        <label>Password</label>
-                                        <input
-                                            type="password"
-                                            name="password"
-                                            value={userForm.password}
-                                            onChange={handleInputChange}
-                                            className="form-control"
-                                        />
+                                <div className="row">
+                                    <div className="col-md-6">
+                                        <div className="form-group">
+                                            <label>Username</label>
+                                            <div className="input-group">
+                                                <input
+                                                    type="text"
+                                                    name="username"
+                                                    value={userForm.username}
+                                                    onChange={handleInputChange}
+                                                    className="form-control"
+                                                    disabled={isEditMode}
+                                                />
+                                                <div className="input-group-append">
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-outline-secondary"
+                                                        onClick={handleSearchStaff}
+                                                        disabled={!userForm.username}
+                                                    >
+                                                        Search
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="form-group">
+                                            <label>ชื่อ-สกุล (TH)</label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                value={
+                                                    staffLoading
+                                                        ? 'Loading...'
+                                                        : staffError
+                                                            ? staffError
+                                                            : staffInfo
+                                                                ? `${staffInfo.titleTh} ${staffInfo.firstNameTh} ${staffInfo.lastNameTh}`
+                                                                : ''
+                                                }
+                                                readOnly
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>แผนก</label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                value={staffInfo?.currDepFull || ''}
+                                                readOnly
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>ตำแหน่ง</label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                value={staffInfo?.posAbbr || ''}
+                                                readOnly
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Email</label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                value={staffInfo?.email || ''}
+                                                readOnly
+                                            />
+                                        </div>
                                     </div>
-                                )}
-                                <div className="form-group">
-                                    <label>Status</label>
-                                    <select
-                                        name="userStatus"
-                                        value={userForm.userStatus}
-                                        onChange={handleInputChange}
-                                        className="form-control"
-                                    >
-                                        <option value="Active">Active</option>
-                                        <option value="Inactive">Inactive</option>
-                                    </select>
-                                </div>
-                                <div className="form-group">
-                                    <label>Home Location Code</label>
-                                    <input
-                                        type="text"
-                                        name="homeLocationCode"
-                                        value={userForm.homeLocationCode}
-                                        onChange={handleInputChange}
-                                        className="form-control"
-                                    />
-                                </div>
-                                <div className="form-group">
-                                    <label>Credit Limit</label>
-                                    <input
-                                        type="number"
-                                        name="creditLimit"
-                                        value={userForm.creditLimit}
-                                        onChange={handleInputChange}
-                                        className="form-control"
-                                    />
+                                    <div className="col-md-6">
+                                        {/* Swap: Password first, then Tel */}
+                                        <div className="form-group">
+                                            <label>Password</label>
+                                            <input
+                                                type="password"
+                                                name="password"
+                                                value={userForm.password}
+                                                onChange={handleInputChange}
+                                                className="form-control"
+                                                disabled={isEditMode}
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>โทร</label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                value={staffInfo?.tel || ''}
+                                                readOnly
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Status</label>
+                                            <select
+                                                name="userStatus"
+                                                value={userForm.userStatus}
+                                                onChange={handleInputChange}
+                                                className="form-control"
+                                            >
+                                                <option value="Active">Active</option>
+                                                <option value="Inactive">Inactive</option>
+                                            </select>
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Home Location Code</label>
+                                            <input
+                                                type="text"
+                                                name="homeLocationCode"
+                                                value={userForm.homeLocationCode}
+                                                onChange={handleInputChange}
+                                                className="form-control"
+                                            />
+                                        </div>
+                                        <div className="form-group">
+                                            <label>Credit Limit</label>
+                                            <input
+                                                type="number"
+                                                name="creditLimit"
+                                                value={userForm.creditLimit}
+                                                onChange={handleInputChange}
+                                                className="form-control"
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div className="modal-footer">
