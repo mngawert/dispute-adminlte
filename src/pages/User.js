@@ -97,10 +97,22 @@ const User = () => {
 
     const handleCreateUser = async () => {
         try {
-            await api.post('/api/User/CreateUser', userForm);
+            // Merge staffInfo fields into userForm for creation
+            const payload = {
+                ...userForm,
+                empCode: staffInfo?.empCode || '',
+                titleTh: staffInfo?.titleTh || '',
+                firstNameTh: staffInfo?.firstNameTh || '',
+                lastNameTh: staffInfo?.lastNameTh || '',
+                currDepFull: staffInfo?.currDepFull || '',
+                posAbbr: staffInfo?.posAbbr || '',
+                email: staffInfo?.email || '',
+                tel: staffInfo?.tel || ''
+            };
+            await api.post('/api/User/CreateUser', payload);
             alert('User created successfully.');
-            fetchUsers(); // Refresh the user list
-            closeModal(); // Close the modal
+            fetchUsers();
+            closeModal();
         } catch (error) {
             console.error('Error creating user:', error);
             alert('Failed to create user. Please try again.');
@@ -109,7 +121,19 @@ const User = () => {
 
     const handleEditUser = async () => {
         try {
-            await api.put(`/api/User/UpdateUser/${userForm.userId}`, userForm);
+            // Merge staffInfo fields into userForm for editing
+            const payload = {
+                ...userForm,
+                empCode: staffInfo?.empCode || '',
+                titleTh: staffInfo?.titleTh || '',
+                firstNameTh: staffInfo?.firstNameTh || '',
+                lastNameTh: staffInfo?.lastNameTh || '',
+                currDepFull: staffInfo?.currDepFull || '',
+                posAbbr: staffInfo?.posAbbr || '',
+                email: staffInfo?.email || '',
+                tel: staffInfo?.tel || ''
+            };
+            await api.put(`/api/User/UpdateUser/${userForm.userId}`, payload);
             fetchUsers();
             closeModal();
         } catch (error) {
@@ -136,14 +160,41 @@ const User = () => {
             homeLocationCode: '',
             creditLimit: ''
         });
+        // Clear staff info when creating a new user
+        setStaffInfo(null);
+        setStaffError('');
         setIsEditMode(false);
         setShowModal(true);
     };
 
     const openEditModal = (user) => {
         setUserForm(user);
+        // Clear staff info when editing a different user
+        setStaffInfo(null);
+        setStaffError('');
+        // Fetch staff info for the selected user if available
+        if (user.username) {
+            fetchStaffInfoForUser(user.username);
+        }
         setIsEditMode(true);
         setShowModal(true);
+    };
+
+    // New helper function to fetch staff info for an existing user
+    const fetchStaffInfoForUser = async (username) => {
+        setStaffLoading(true);
+        try {
+            const response = await api.post(
+                `${process.env.REACT_APP_STAFF_INFO_URL || '/api/StaffInfo/GetStaffInfoFromJson'}`,
+                { staffID: username }
+            );
+            if (response.data && response.data.length > 0) {
+                setStaffInfo(response.data[0]);
+            }
+        } catch (error) {
+            console.error('Error fetching staff info:', error);
+        }
+        setStaffLoading(false);
     };
 
     const openGroupModal = (userId) => {
