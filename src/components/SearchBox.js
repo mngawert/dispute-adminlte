@@ -1,18 +1,22 @@
 import React from 'react';
-import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
-const formatDateForDisplay = (date) => {
-    if (!date) return '';
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`; // Convert to dd/mm/yyyy format
-};
-
-const parseDateFromInput = (dateString) => {
-    const [day, month, year] = dateString.split('/');
-    return new Date(`${year}-${month}-${day}`);
+const formatDateForDisplay = (dateString) => {
+    if (!dateString) return '';
+    
+    try {
+        const date = new Date(dateString);
+        if (!isNaN(date.getTime())) {
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+        return '';
+    } catch (error) {
+        console.error('Error formatting date:', error);
+        return '';
+    }
 };
 
 const SearchBox = ({ searchBy, selectedSearchBy, handleSearchByChange, documentNum, handleInputChange, handleSearch, filterBy, handleFilterByChange, fromDate, toDate, handleFromDateChange, handleToDateChange, showSearchBy }) => {
@@ -62,26 +66,72 @@ const SearchBox = ({ searchBy, selectedSearchBy, handleSearchByChange, documentN
                         <div className="col-sm-2">
                             <div className="form-group">
                                 <label>From Date:</label>
-                                <DatePicker
-                                    selected={fromDate ? new Date(fromDate) : null}
-                                    onChange={(date) => handleFromDateChange({ target: { value: date.toISOString().split('T')[0] } })}
-                                    dateFormat="dd/MM/yyyy"
-                                    className="form-control"
-                                    placeholderText="dd/mm/yyyy"
-                                    style={{ zIndex: 1050 }}
-                                />
+                                <div className="input-group">
+                                    <input
+                                        type="date"
+                                        value={fromDate || ''}
+                                        onChange={handleFromDateChange}
+                                        className="form-control"
+                                        style={{ width: "0px", padding: "0", border: "none", opacity: 0, position: "absolute" }}
+                                    />
+                                    <div 
+                                        className="form-control" 
+                                        onClick={(e) => document.querySelector('input[type="date"]').showPicker()}
+                                        style={{ cursor: "pointer", background: "#f8f9fa" }}
+                                    >
+                                        {fromDate ? formatDateForDisplay(fromDate) : 'Click to select date'}
+                                    </div>
+                                    <div className="input-group-append">
+                                        <button 
+                                            className="btn btn-outline-secondary" 
+                                            type="button"
+                                            onClick={() => handleFromDateChange({ target: { value: '' }})}
+                                            title="Clear date"
+                                        >
+                                            <i className="fa fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div className="col-sm-2">
                             <div className="form-group">
                                 <label>To Date:</label>
-                                <DatePicker
-                                    selected={toDate ? new Date(toDate) : null}
-                                    onChange={(date) => handleToDateChange({ target: { value: date.toISOString().split('T')[0] } })}
-                                    dateFormat="dd/MM/yyyy"
-                                    className="form-control"
-                                    placeholderText="dd/mm/yyyy"
-                                />
+                                <div className="input-group">
+                                    <input
+                                        type="date"
+                                        value={toDate || ''}
+                                        onChange={handleToDateChange}
+                                        className="form-control"
+                                        style={{ width: "0px", padding: "0", border: "none", opacity: 0, position: "absolute" }}
+                                    />
+                                    <div 
+                                        className="form-control" 
+                                        onClick={(e) => {
+                                            // Get the second date input in the component
+                                            const inputs = document.querySelectorAll('input[type="date"]');
+                                            if (inputs.length > 1) inputs[1].showPicker();
+                                        }}
+                                        style={{ cursor: "pointer", background: "#f8f9fa" }}
+                                    >
+                                        {toDate ? formatDateForDisplay(toDate) : 'Click to select date'}
+                                    </div>
+                                    <div className="input-group-append">
+                                        <button 
+                                            className="btn btn-outline-secondary" 
+                                            type="button"
+                                            onClick={() => handleToDateChange({ target: { value: '' }})}
+                                            title="Clear date"
+                                        >
+                                            <i className="fa fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="col-sm-2">
+                            <div className="form-group" style={{ marginTop: '32px' }}>
+                                <button type="button" className="btn btn-primary" onClick={handleSearch}>Search</button>
                             </div>
                         </div>
                     </div>
