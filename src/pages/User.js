@@ -163,10 +163,27 @@ const User = () => {
     const openEditModal = (user) => {
         setUserForm(user);
         setIsEditMode(true);
+
+        // if (user.username) {
+        //     fetchStaffInfo(user.username);
+        // }
+        
+        // First try to populate staffInfo from the existing user data
+        setStaffInfo({
+            empCode: user.empCode || '',
+            titleTh: user.titleTh || '',
+            firstNameTh: user.firstNameTh || '',
+            lastNameTh: user.lastNameTh || '',
+            currDepFull: user.currDepFull || '',
+            posAbbr: user.posAbbr || '',
+            email: user.email || '',
+            tel: user.tel || ''
+        });
+        setStaffLoading(false);
+        setStaffError('');
+
+        
         setShowModal(true);
-        if (user.username) {
-            fetchStaffInfo(user.username);
-        }
     };
 
     const fetchStaffInfo = async (username) => {
