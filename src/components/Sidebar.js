@@ -15,8 +15,6 @@ export default function Sidebar() {
     roles = Array.isArray(roleData) ? roleData : [roleData];
   }
 
-  console.log("Current user roles:", roles);
-
   const userHasRole = (role) => {
     if (!roles || roles.length === 0) return false;
     // Exact match for role names - no partial matching

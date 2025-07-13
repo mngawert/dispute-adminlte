@@ -16,18 +16,23 @@ const Group = () => {
     const [groupRoles, setGroupRoles] = useState([]);
     const [locations, setLocations] = useState([]);
     const [groupLocations, setGroupLocations] = useState([]);
+    const [invoicingCompanies, setInvoicingCompanies] = useState([]);
+    const [groupInvoicingCompanies, setGroupInvoicingCompanies] = useState([]);
     const [selectedGroupId, setSelectedGroupId] = useState(null);
     const [showRoleModal, setShowRoleModal] = useState(false);
     const [showLocationModal, setShowLocationModal] = useState(false);
+    const [showInvoicingCompanyModal, setShowInvoicingCompanyModal] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [availableLocationFilter, setAvailableLocationFilter] = useState('');
     const [availableRoleFilter, setAvailableRoleFilter] = useState('');
+    const [availableInvoicingCompanyFilter, setAvailableInvoicingCompanyFilter] = useState('');
 
     useEffect(() => {
         fetchGroups();
         fetchAllRoles();
         fetchAllLocations();
+        fetchAllInvoicingCompanies();
     }, []);
 
     const fetchGroups = async () => {
@@ -58,6 +63,15 @@ const Group = () => {
         }
     };
 
+    const fetchAllInvoicingCompanies = async () => {
+        try {
+            const response = await api.get('/api/Group/GetAllInvoicingCompanies');
+            setInvoicingCompanies(response.data);
+        } catch (error) {
+            console.error('Error fetching invoicing companies:', error);
+        }
+    };
+
     const fetchGroupRoles = async (groupId) => {
         try {
             const response = await api.get(`/api/Group/GetGroupRoles/${groupId}`);
@@ -73,6 +87,15 @@ const Group = () => {
             setGroupLocations(response.data);
         } catch (error) {
             console.error('Error fetching group locations:', error);
+        }
+    };
+
+    const fetchGroupInvoicingCompanies = async (groupId) => {
+        try {
+            const response = await api.get(`/api/Group/GetGroupInvoicingCompanies/${groupId}`);
+            setGroupInvoicingCompanies(response.data);
+        } catch (error) {
+            console.error('Error fetching group invoicing companies:', error);
         }
     };
 
@@ -94,6 +117,18 @@ const Group = () => {
         }
     };
 
+    const handleAddInvoicingCompanyToGroup = async (invoicingCoId) => {
+        try {
+            await api.post('/api/Group/AddGroupInvoicingCompany', { 
+                groupId: selectedGroupId, 
+                invoicingCoId: invoicingCoId 
+            });
+            fetchGroupInvoicingCompanies(selectedGroupId);
+        } catch (error) {
+            console.error('Error adding invoicing company to group:', error);
+        }
+    };
+
     const handleRemoveRoleFromGroup = async (roleId) => {
         try {
             await api.delete(`/api/Group/DeleteGroupRole/${selectedGroupId}/${roleId}`);
@@ -112,6 +147,15 @@ const Group = () => {
         }
     };
 
+    const handleRemoveInvoicingCompanyFromGroup = async (companyId) => {
+        try {
+            await api.delete(`/api/Group/DeleteGroupInvoicingCompany/${selectedGroupId}/${companyId}`);
+            fetchGroupInvoicingCompanies(selectedGroupId);
+        } catch (error) {
+            console.error('Error removing invoicing company from group:', error);
+        }
+    };
+
     const openRoleModal = (groupId) => {
         setSelectedGroupId(groupId);
         fetchGroupRoles(groupId);
@@ -124,6 +168,12 @@ const Group = () => {
         setShowLocationModal(true);
     };
 
+    const openInvoicingCompanyModal = (groupId) => {
+        setSelectedGroupId(groupId);
+        fetchGroupInvoicingCompanies(groupId);
+        setShowInvoicingCompanyModal(true);
+    };
+
     const closeRoleModal = () => {
         setShowRoleModal(false);
         setGroupRoles([]);
@@ -133,6 +183,12 @@ const Group = () => {
     const closeLocationModal = () => {
         setShowLocationModal(false);
         setGroupLocations([]);
+        setSelectedGroupId(null);
+    };
+
+    const closeInvoicingCompanyModal = () => {
+        setShowInvoicingCompanyModal(false);
+        setGroupInvoicingCompanies([]);
         setSelectedGroupId(null);
     };
 
@@ -245,10 +301,16 @@ const Group = () => {
                                                                 <i className="fa fa-users" aria-hidden="true"></i> Manage Roles
                                                             </button>
                                                             <button
-                                                                className="btn btn-sm btn-info"
+                                                                className="btn btn-sm btn-info mr-2"
                                                                 onClick={() => openLocationModal(group.groupId)}
                                                             >
                                                                 <i className="fa fa-map-marker" aria-hidden="true"></i> Manage Locations
+                                                            </button>
+                                                            <button
+                                                                className="btn btn-sm btn-info"
+                                                                onClick={() => openInvoicingCompanyModal(group.groupId)}
+                                                            >
+                                                                <i className="fa fa-money-bill-wave" aria-hidden="true"></i> Manage Invoicing Companies
                                                             </button>
                                                         </td>
                                                     </tr>
@@ -402,6 +464,78 @@ const Group = () => {
                             </div>
                             <div className="modal-footer">
                                 <button type="button" className="btn btn-secondary" onClick={closeLocationModal}>
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Invoicing Company Management Modal */}
+            {showInvoicingCompanyModal && (
+                <div className="modal" style={{ display: 'block' }}>
+                    <div className="modal-dialog">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title">
+                                    Manage Invoicing Companies for Group: <strong>{groups.find(group => group.groupId === selectedGroupId)?.groupName}</strong>
+                                </h5>
+                                <button type="button" className="close" onClick={closeInvoicingCompanyModal}>
+                                    <span>&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body">
+                                <h6>Assigned Invoicing Companies</h6>
+                                <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                                    <ul className="list-group">
+                                        {groupInvoicingCompanies.map(company => (
+                                            <li key={company.invoicingCoId} className="list-group-item d-flex align-items-center justify-content-between">
+                                                <span>{company.invoicingCoName}</span>
+                                                <button
+                                                    className="btn btn-sm btn-danger"
+                                                    onClick={() => handleRemoveInvoicingCompanyFromGroup(company.invoicingCoId)}
+                                                    title="Remove Invoicing Company"
+                                                >
+                                                    <i className="fa fa-minus-circle" aria-hidden="true"></i>
+                                                </button>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                                <h6 className="mt-3">Available Invoicing Companies</h6>
+                                {/* Filter Input for Available Invoicing Companies */}
+                                <input
+                                    type="text"
+                                    className="form-control mb-2"
+                                    placeholder="Filter available invoicing companies"
+                                    value={availableInvoicingCompanyFilter}
+                                    onChange={(e) => setAvailableInvoicingCompanyFilter(e.target.value)}
+                                />
+                                <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                                    <ul className="list-group">
+                                        {invoicingCompanies
+                                            .filter(company =>
+                                                company.invoicingCoName.toLowerCase().includes(availableInvoicingCompanyFilter.toLowerCase()) &&
+                                                !groupInvoicingCompanies.some(gc => gc.invoicingCoId === company.invoicingCoId)
+                                            )
+                                            .map(company => (
+                                                <li key={company.invoicingCoId} className="list-group-item d-flex align-items-center justify-content-between">
+                                                    <span>{company.invoicingCoName}</span>
+                                                    <button
+                                                        className="btn btn-sm btn-primary"
+                                                        onClick={() => handleAddInvoicingCompanyToGroup(company.invoicingCoId)}
+                                                        title="Add Invoicing Company"
+                                                    >
+                                                        <i className="fa fa-plus-circle" aria-hidden="true"></i>
+                                                    </button>
+                                                </li>
+                                            ))}
+                                    </ul>
+                                </div>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-secondary" onClick={closeInvoicingCompanyModal}>
                                     Close
                                 </button>
                             </div>
