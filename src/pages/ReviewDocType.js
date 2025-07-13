@@ -159,6 +159,25 @@ const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, select
         );
     };
 
+    // Add this helper function at the top of your component
+    const formatDateForDisplay = (dateString) => {
+        if (!dateString) return '';
+        
+        try {
+            const date = new Date(dateString);
+            if (!isNaN(date.getTime())) {
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const year = date.getFullYear();
+                return `${day}/${month}/${year}`;
+            }
+            return '';
+        } catch (error) {
+            console.error('Error formatting date:', error);
+            return '';
+        }
+    };
+
     return (
         <div className="card">
             <div className="card-body">
@@ -265,13 +284,33 @@ const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, select
                                         </div>
                                         <div className="form-group">
                                             <label>SAP Doc Date <span style={{color: 'red'}}>*</span></label>
-                                            <input
-                                                type="date"
-                                                className="form-control"
-                                                value={sapDocDate}
-                                                onChange={e => setSapDocDate(e.target.value)}
-                                                required
-                                            />
+                                            <div className="input-group">
+                                                <input
+                                                    type="date"
+                                                    value={sapDocDate || ''}
+                                                    onChange={(e) => setSapDocDate(e.target.value)}
+                                                    className="form-control"
+                                                    style={{ width: "0px", padding: "0", border: "none", opacity: 0, position: "absolute" }}
+                                                    required
+                                                />
+                                                <div 
+                                                    className="form-control" 
+                                                    onClick={() => document.querySelector('input[type="date"]').showPicker()}
+                                                    style={{ cursor: "pointer", background: "#f8f9fa" }}
+                                                >
+                                                    {sapDocDate ? formatDateForDisplay(sapDocDate) : 'Click to select date'}
+                                                </div>
+                                                <div className="input-group-append">
+                                                    <button 
+                                                        className="btn btn-outline-secondary" 
+                                                        type="button"
+                                                        onClick={() => setSapDocDate('')}
+                                                        title="Clear date"
+                                                    >
+                                                        <i className="fa fa-times"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
                                     </>
                                 )}
