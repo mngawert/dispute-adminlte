@@ -381,6 +381,7 @@ const User = () => {
                             </div>
                             <div className="modal-body">
                                 <div className="row">
+                                    {/* Left Column */}
                                     <div className="col-md-6">
                                         <div className="form-group">
                                             <label>Username</label>
@@ -449,9 +450,20 @@ const User = () => {
                                                 readOnly
                                             />
                                         </div>
+                                        {/* Moved Tel field here */}
+                                        <div className="form-group">
+                                            <label>โทร</label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                value={staffInfo?.tel || ''}
+                                                readOnly
+                                            />
+                                        </div>
                                     </div>
+                                    
+                                    {/* Right Column */}
                                     <div className="col-md-6">
-                                        {/* Swap: Password first, then Tel */}
                                         <div className="form-group">
                                             <label>Password</label>
                                             <input
@@ -461,15 +473,6 @@ const User = () => {
                                                 onChange={handleInputChange}
                                                 className="form-control"
                                                 disabled={isEditMode}
-                                            />
-                                        </div>
-                                        <div className="form-group">
-                                            <label>โทร</label>
-                                            <input
-                                                type="text"
-                                                className="form-control"
-                                                value={staffInfo?.tel || ''}
-                                                readOnly
                                             />
                                         </div>
                                         <div className="form-group">
