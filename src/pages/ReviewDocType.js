@@ -1,5 +1,5 @@
 import { CPS_MAP_HASH } from '../contexts/Constants';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { formatNumber } from '../utils/utils'; 
 
 const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, selectedDocument, reviewType, handleSelectDocument, handleUpdateDocumentStatus }) => {
@@ -9,6 +9,7 @@ const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, select
     const [noteContent, setNoteContent] = useState('');
     const [sapDocNo, setSapDocNo] = useState(selectedDocument?.sapDocNo || '');
     const [sapDocDate, setSapDocDate] = useState(selectedDocument?.sapDocDate || '');
+    const sapDocDateRef = useRef(null); // Ref for SAP Doc Date picker
 
     // Helper to check if SAP Doc fields should be shown and required
 
@@ -287,6 +288,7 @@ const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, select
                                             <div className="input-group">
                                                 <input
                                                     type="date"
+                                                    ref={sapDocDateRef}
                                                     value={sapDocDate || ''}
                                                     onChange={(e) => setSapDocDate(e.target.value)}
                                                     className="form-control"
@@ -295,7 +297,7 @@ const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, select
                                                 />
                                                 <div 
                                                     className="form-control" 
-                                                    onClick={() => document.querySelector('input[type="date"]').showPicker()}
+                                                    onClick={() => sapDocDateRef.current && sapDocDateRef.current.showPicker()}
                                                     style={{ cursor: "pointer", background: "#f8f9fa" }}
                                                 >
                                                     {sapDocDate ? formatDateForDisplay(sapDocDate) : 'Click to select date'}
