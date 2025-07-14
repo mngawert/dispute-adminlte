@@ -25,10 +25,12 @@ const User = () => {
     const [staffInfo, setStaffInfo] = useState(null);
     const [staffLoading, setStaffLoading] = useState(false);
     const [staffError, setStaffError] = useState('');
+    const [homeLocationCodes, setHomeLocationCodes] = useState([]); // New state for home location codes
 
     useEffect(() => {
         fetchUsers();
         fetchAllGroups();
+        fetchHomeLocationCodes(); // Fetch home location codes on component mount
     }, []);
 
     const fetchUsers = async () => {
@@ -56,6 +58,15 @@ const User = () => {
             setUserGroups(response.data);
         } catch (error) {
             console.error('Error fetching user groups:', error);
+        }
+    };
+
+    const fetchHomeLocationCodes = async () => {
+        try {
+            const response = await api.get('/api/Group/GetHomeLocationCodes');
+            setHomeLocationCodes(response.data);
+        } catch (error) {
+            console.error('Error fetching home location codes:', error);
         }
     };
 
@@ -492,13 +503,19 @@ const User = () => {
                                         </div>
                                         <div className="form-group">
                                             <label>Home Location Code</label>
-                                            <input
-                                                type="text"
+                                            <select
                                                 name="homeLocationCode"
                                                 value={userForm.homeLocationCode}
                                                 onChange={handleInputChange}
                                                 className="form-control"
-                                            />
+                                            >
+                                                <option value="">-- Select Location --</option>
+                                                {homeLocationCodes.map(location => (
+                                                    <option key={location.locationCode} value={location.locationCode}>
+                                                        {location.locationName}
+                                                    </option>
+                                                ))}
+                                            </select>
                                         </div>
                                         <div className="form-group">
                                             <label>Credit Limit</label>
