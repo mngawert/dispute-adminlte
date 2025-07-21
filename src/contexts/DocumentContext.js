@@ -469,7 +469,9 @@ export const DocumentProvider = ({ children }) => {
                 disputeSeq: null,
                 adjustmentSeq: null,
                 requestStatus: "Create-Pending",
-                note: adjustmentNote
+                note: adjustmentNote,
+                pairKey: null,
+                serviceLocationCode: selectedInvoiceDataService?.serviceLocationCode || selectedService?.serviceLocationCode,
             });
             console.log('Adjustment Request Created:', response.data);
             alert(getTranslation('adjustmentRequestCreated', language));
