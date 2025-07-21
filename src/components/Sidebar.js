@@ -239,6 +239,25 @@ export default function Sidebar() {
               </li>
             }
 
+            {/* Reports - Admin and Finance */}
+            {(userHasRole("Admin") || userHasRole("Report")) && 
+              <li className="nav-item menu-is-opening menu-open">
+                <a href="#" className="nav-link">
+                  <p>
+                    Reports
+                  </p>
+                </a>
+                <ul className="nav nav-treeview">
+                  <li className="nav-item">
+                    <a href="/NTAdjustor/ReportA" className={`nav-link ${isActive('/ReportA')}`}>
+                      <i className="far fa-circle nav-icon"></i>
+                      <p>Report All</p>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+            }
+
             {/* User Management */}
             <li className="nav-item menu-is-opening menu-open">
               <a href="#" className="nav-link">
@@ -289,6 +308,7 @@ export default function Sidebar() {
                 </li>
               </ul>
             </li>
+
           </ul>
         </nav>
       </div>

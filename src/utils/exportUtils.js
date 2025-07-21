@@ -37,6 +37,25 @@ const convertHeaders = (data) => {
     });
 };
 
+export const exportToExcel = (data, fileName) => {
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Report");
+    
+    // Auto-size columns
+    const max_width = data.reduce((w, r) => {
+      Object.keys(r).forEach(k => {
+        const value = r[k] == null ? '' : r[k].toString();
+        w[k] = Math.max(w[k] || 0, value.length);
+      });
+      return w;
+    }, {});
+    
+    worksheet['!cols'] = Object.keys(max_width).map(k => ({ wch: max_width[k] }));
+    
+    XLSX.writeFile(workbook, fileName);
+};
+
 export const exportAdjustmentRequestsToExcel = async (documentNums, fileName) => {
     try {
         const workbook = XLSX.utils.book_new();
