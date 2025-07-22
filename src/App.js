@@ -38,6 +38,7 @@ import NotAuthorized from "./pages/NotAuthorized";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ChangePassword from './pages/ChangePassword'; // Import the ChangePassword page
 import ReportA from "./pages/ReportA"; // Add this import at the top
+import ReportB from "./pages/ReportB"; // Add this import at the top
 
 function App() {
   return (
@@ -83,6 +84,7 @@ function App() {
             <Route path="/Group" element={<PrivateRoute element={<Group />} allowedRoles={['Admin']} />} /> {/* Add the new User page route */}
             <Route path="/Change-password" element={<PrivateRoute element={<ChangePassword />} allowedRoles={["*"]} />} />
             <Route path="/ReportA" element={<PrivateRoute element={<ReportA />} allowedRoles={['Admin', 'Report']} />} />
+            <Route path="/ReportB" element={<PrivateRoute element={<ReportB />} allowedRoles={['Admin', 'Report']} />} />
             {/* <Route path="/test" element={<Test />} /> */}
             {/* <Route path="/Dashboard" element={<PrivateRoute element={<Dashboard />} allowedRoles={['Admin']} />} /> */}
             {/* <Route path="/disputedata" element={<DisputeData />} /> */}

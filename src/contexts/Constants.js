@@ -19,7 +19,7 @@ export const DOCUMENT_TYPE_DESC = {
   '36': 'P36',
   '21': 'P3-',
   '22': 'P3+',
-  '11': 'B +/-'
+  '11': 'B1+/-'
 };
 
 export const DOCUMENT_STATUS_LIST = [

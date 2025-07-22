@@ -136,7 +136,7 @@ export default function Sidebar() {
                     <li className="nav-item">
                       <a href="/NTAdjustor/AdjustB" className={`nav-link ${isActive('/AdjustB')}`}>
                         <i className="far fa-circle nav-icon" />
-                        <p>B+/-</p>
+                        <p>B1+/-</p>
                       </a>
                     </li>
                   )}
@@ -252,6 +252,12 @@ export default function Sidebar() {
                     <a href="/NTAdjustor/ReportA" className={`nav-link ${isActive('/ReportA')}`}>
                       <i className="far fa-circle nav-icon"></i>
                       <p>Report All</p>
+                    </a>
+                  </li>
+                  <li className="nav-item">
+                    <a href="/NTAdjustor/ReportB" className={`nav-link ${isActive('/ReportB')}`}>
+                      <i className="far fa-circle nav-icon"></i>
+                      <p>Report B1+/-</p>
                     </a>
                   </li>
                 </ul>

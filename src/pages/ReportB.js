@@ -1,11 +1,10 @@
-import React, { useState, useCallback, useEffect } from 'react'; // Add useEffect
+import React, { useState, useCallback, useEffect } from 'react';
 import { Table } from 'react-bootstrap';
 import api from '../api';
 import ContentHeader from '../components/ContentHeader';
 import { exportToExcel } from '../utils/exportUtils';
 
 const formatDateForDisplay = (dateString) => {
-  // Keep existing function
   if (!dateString) return '';
   try {
     const date = new Date(dateString);
@@ -22,22 +21,18 @@ const formatDateForDisplay = (dateString) => {
   }
 };
 
-const ReportA = () => {
-  const [documentNum, setDocumentNum] = useState('');
-  const [accountNum, setAccountNum] = useState('');
-  const [serviceNum, setServiceNum] = useState('');
+const ReportB = () => {
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
   const [reportData, setReportData] = useState([]);
   const [loading, setLoading] = useState(false);
   
-  // Add new state variables for location filtering
+  // Add state variables for location filtering
   const [locations, setLocations] = useState([]);
   const [selectedLocations, setSelectedLocations] = useState([]);
-  const [locationFilter, setLocationFilter] = useState('');
   const [loadingLocations, setLoadingLocations] = useState(false);
 
-  // Update the state variables to include the new filter options
+  // State variables for the cascade filter
   const [workareas, setWorkareas] = useState([]);
   const [regions, setRegions] = useState([]);
   const [departments, setDepartments] = useState([]);
@@ -48,15 +43,9 @@ const ReportA = () => {
   const [selectedDepartment, setSelectedDepartment] = useState('');
   const [selectedSector, setSelectedSector] = useState('');
 
-  // Add new state variables for document type filtering
-  const [documentTypes, setDocumentTypes] = useState([]);
-  const [selectedDocumentType, setSelectedDocumentType] = useState('');
-  const [loadingDocumentTypes, setLoadingDocumentTypes] = useState(false);
-
   // Fetch locations when component mounts
   useEffect(() => {
     fetchLocations();
-    fetchDocumentTypes();
   }, []);
 
   // Function to fetch locations
@@ -73,19 +62,6 @@ const ReportA = () => {
       console.error('Error fetching locations:', error);
     } finally {
       setLoadingLocations(false);
-    }
-  };
-
-  // Function to fetch document types
-  const fetchDocumentTypes = async () => {
-    setLoadingDocumentTypes(true);
-    try {
-      const response = await api.get('/api/Document/GetDocumentTypes');
-      setDocumentTypes(response.data);
-    } catch (error) {
-      console.error('Error fetching document types:', error);
-    } finally {
-      setLoadingDocumentTypes(false);
     }
   };
 
@@ -151,19 +127,15 @@ const ReportA = () => {
     try {
       // Create base params object with scalar values
       const params = {
-        documentNum: documentNum || undefined,
-        accountNum: accountNum || undefined,
-        serviceNum: serviceNum || undefined,
         fromDate: fromDate || undefined,
         toDate: toDate || undefined,
-        documentType: selectedDocumentType || undefined,
       };
       
       // Create options for axios request
       const options = { params };
       
       // If we have locations, add them to the URL manually with proper format
-      let url = '/api/Adjustment/ReportA';
+      let url = '/api/Adjustment/ReportB';
       
       if (selectedLocations.length > 0) {
         // Start with the base URL
@@ -193,7 +165,7 @@ const ReportA = () => {
     } finally {
       setLoading(false);
     }
-  }, [documentNum, accountNum, serviceNum, fromDate, toDate, selectedLocations, selectedDocumentType]);
+  }, [fromDate, toDate, selectedLocations]);
 
   // Function to handle adding a location to selected locations
   const handleAddLocation = (locationCode) => {
@@ -218,7 +190,6 @@ const ReportA = () => {
   };
 
   const handleExportToExcel = () => {
-    // Keep existing function
     if (reportData.length === 0) {
       alert('No data to export.');
       return;
@@ -228,15 +199,18 @@ const ReportA = () => {
     const exportData = reportData.map(item => ({
       'Document Number': item.documentNum,
       'Document Type': item.documentTypeDesc,
-      'Account Number': item.accountNum,
-      'Customer Name': item.customerName,
-      'Customer Type': item.customerTypeName,
-      'Invoicing Company': item.invoicingCoName,
+      'Account Number (B-)': item.accountNum,
+      'Customer Name (B-)': item.customerName,
+      'Customer Type (B-)': item.customerTypeName,
+      'Invoicing Company (B-)': item.invoicingCoName,
       'Invoice Number': item.invoiceNum,
-      'Service Number': item.serviceNum,
+      'Service Number (B-)': item.serviceNum,
       'Bill Date': formatDateForDisplay(item.billDtm),
       'Actual Bill Date': formatDateForDisplay(item.actualBillDtm),
-      'Adjustment Type': item.adjustmentTypeName,
+      'Account Number (B+)': item.accountNum2,
+      'Customer Name (B+)': item.customerName2,
+      'Invoicing Company (B+)': item.invoicingCoName2,
+      'Service Number (B+)': item.serviceNum2,
       'Amount': item.amount,
       'VAT': item.vat,
       'Total': item.total,
@@ -256,7 +230,7 @@ const ReportA = () => {
       'Adjustment Status': item.adjustmentStatus
     }));
 
-    exportToExcel(exportData, 'ReportA.xlsx');
+    exportToExcel(exportData, 'ReportB.xlsx');
   };
 
   const formatNumber = (num) => {
@@ -288,7 +262,7 @@ const ReportA = () => {
 
   return (
     <div className="content-wrapper-x">
-      <ContentHeader title="Report All" />
+      <ContentHeader title="Report B1+/-" />
       <div className="content">
         <div className="container-fluid">
           <div className="row">
@@ -423,25 +397,8 @@ const ReportA = () => {
                     </div>
                   </div>
                   
-                  {/* Second row with date filters, document type, and action buttons */}
+                  {/* Second row with date filters and action buttons */}
                   <div className="row mb-3">
-                    <div className="col-md-3">
-                      <div className="form-group">
-                        <label>Document Type</label>
-                        <select
-                          className="form-control"
-                          value={selectedDocumentType}
-                          onChange={(e) => setSelectedDocumentType(e.target.value)}
-                        >
-                          <option value="">All Document Types</option>
-                          {documentTypes.map(docType => (
-                            <option key={docType.documentTypeCode} value={docType.documentTypeCode}>
-                              {docType.documentTypeDesc}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    </div>
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>From Date</label>
@@ -528,22 +485,25 @@ const ReportA = () => {
                     </div>
                   </div>
                   
-                  {/* Keep existing report table */}
+                  {/* Report B table with the additional columns */}
                   <div className="table-responsive" style={{ maxHeight: '600px', overflowY: 'auto' }}>
                     <Table className="table table-head-fixed text-nowrap table-bordered table-hover">
                       <thead>
                         <tr>
                           <th>Document #</th>
                           <th>Type</th>
-                          <th>Account #</th>
-                          <th>Customer Name</th>
-                          <th>Customer Type</th>
-                          <th>Invoicing Company</th>
+                          <th>Account # (B-)</th>
+                          <th>Customer Name (B-)</th>
+                          <th>Customer Type (B-)</th>
+                          <th>Invoicing Company (B-)</th>
                           <th>Invoice #</th>
-                          <th>Service #</th>
+                          <th>Service # (B-)</th>
                           <th>Bill Date</th>
                           <th>Actual Bill Date</th>
-                          <th>Adjustment Type</th>
+                          <th>Account # (B+)</th>
+                          <th>Customer Name (B+)</th>
+                          <th>Invoicing Company (B+)</th>
+                          <th>Service # (B+)</th>
                           <th>Amount</th>
                           <th>VAT</th>
                           <th>Total</th>
@@ -566,7 +526,7 @@ const ReportA = () => {
                       <tbody>
                         {reportData.length === 0 ? (
                           <tr>
-                            <td colSpan="28" className="text-center">{loading ? 'Loading...' : 'No data available'}</td>
+                            <td colSpan="31" className="text-center">{loading ? 'Loading...' : 'No data available'}</td>
                           </tr>
                         ) : (
                           reportData.map((item, index) => (
@@ -581,7 +541,10 @@ const ReportA = () => {
                               <td>{item.serviceNum}</td>
                               <td>{formatDateForDisplay(item.billDtm)}</td>
                               <td>{formatDateForDisplay(item.actualBillDtm)}</td>
-                              <td>{item.adjustmentTypeName}</td>
+                              <td>{item.accountNum2}</td>
+                              <td>{item.customerName2}</td>
+                              <td>{item.invoicingCoName2}</td>
+                              <td>{item.serviceNum2}</td>
                               <td align="right">{formatNumber(item.amount)}</td>
                               <td align="right">{formatNumber(item.vat)}</td>
                               <td align="right">{formatNumber(item.total)}</td>
@@ -621,4 +584,4 @@ const ReportA = () => {
   );
 };
 
-export default ReportA;
+export default ReportB;
