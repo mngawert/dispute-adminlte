@@ -39,6 +39,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import ChangePassword from './pages/ChangePassword'; 
 import ReportA from "./pages/ReportA"; 
 import ReportB from "./pages/ReportB"; 
+import ReportP from "./pages/ReportP"; 
 import ReportUser from "./pages/ReportUser"; 
 
 function App() {
@@ -86,6 +87,7 @@ function App() {
             <Route path="/Change-password" element={<PrivateRoute element={<ChangePassword />} allowedRoles={["*"]} />} />
             <Route path="/ReportA" element={<PrivateRoute element={<ReportA />} allowedRoles={['Admin', 'Report']} />} />
             <Route path="/ReportB" element={<PrivateRoute element={<ReportB />} allowedRoles={['Admin', 'Report']} />} />
+            <Route path="/ReportP" element={<PrivateRoute element={<ReportP />} allowedRoles={['Admin', 'Report']} />} />
             <Route path="/ReportUser" element={<PrivateRoute element={<ReportUser />} allowedRoles={['Admin', 'Report']} />} />
             {/* <Route path="/test" element={<Test />} /> */}
             {/* <Route path="/Dashboard" element={<PrivateRoute element={<Dashboard />} allowedRoles={['Admin']} />} /> */}

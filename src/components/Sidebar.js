@@ -255,6 +255,12 @@ export default function Sidebar() {
                     </a>
                   </li>
                   <li className="nav-item">
+                    <a href="/NTAdjustor/ReportP" className={`nav-link ${isActive('/ReportP')}`}>
+                      <i className="far fa-circle nav-icon"></i>
+                      <p>P3-P3+</p>
+                    </a>
+                  </li>
+                  <li className="nav-item">
                     <a href="/NTAdjustor/ReportB" className={`nav-link ${isActive('/ReportB')}`}>
                       <i className="far fa-circle nav-icon"></i>
                       <p>B1+/-</p>
