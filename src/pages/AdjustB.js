@@ -19,7 +19,7 @@ import api from '../api';
 import getTranslation from '../utils/getTranslation';
 import { v4 as uuidv4 } from 'uuid'; // npm install uuid
 
-const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B +/-', adjustmentTypeNames=['B1']}) => {
+const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjustmentTypeNames=['B1']}) => {
 
     const [language, setLanguage] = useState('th'); // Default language
 

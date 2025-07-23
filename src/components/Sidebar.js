@@ -49,7 +49,7 @@ export default function Sidebar() {
             {/* Creation Tasks */}
             {(userHasRole("Admin") || userHasRole("Creator") || 
               userHasRole("Creator_Adjust+") || userHasRole("Creator_Adjust-") || 
-              userHasRole("Creator_B+/-") || userHasRole("Creator_P3+") || 
+              userHasRole("Creator_B1+/-") || userHasRole("Creator_P3+") || 
               userHasRole("Creator_P3-") || userHasRole("Creator_P31") || 
               userHasRole("Creator_P32") || userHasRole("Creator_P35") || 
               userHasRole("Creator_P36")) && 
@@ -132,7 +132,7 @@ export default function Sidebar() {
                     </li>
                   )}
                   
-                  {(userHasRole("Admin") || userHasRole("Creator") || userHasRole("Creator_B+/-")) && (
+                  {(userHasRole("Admin") || userHasRole("Creator") || userHasRole("Creator_B1+/-")) && (
                     <li className="nav-item">
                       <a href="/NTAdjustor/AdjustB" className={`nav-link ${isActive('/AdjustB')}`}>
                         <i className="far fa-circle nav-icon" />

@@ -116,8 +116,8 @@ const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, select
     let totalVAT = sortedAdjustmentRequests.reduce((sum, adj) => sum + Math.abs(adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100)), 0);
     let total = sortedAdjustmentRequests.reduce((sum, adj) => sum + Math.abs(adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100)), 0);
 
-    // If documentTypeDesc is 'B +/-', divide totals by 2
-    if (documentTypeDesc === 'B+-') {
+    // If documentTypeDesc is 'B1+/-', divide totals by 2
+    if (documentTypeDesc === 'B1+/-') {
         totalAmount = totalAmount / 2;
         totalVAT = totalVAT / 2;
         total = total / 2;

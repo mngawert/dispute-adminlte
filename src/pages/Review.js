@@ -146,8 +146,8 @@ const Review = ({ reviewType, prevDocumentStatus }) => {
                   <ReviewDocType documentTypeDesc='P3+' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} />
                 </Tab>
                 {reviewType !== 'Finance' && (
-                  <Tab eventKey="B+-" title="B+/-">
-                    <ReviewDocType documentTypeDesc='B+-' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} />
+                  <Tab eventKey="B1+-" title="B1+/-">
+                    <ReviewDocType documentTypeDesc='B1+/-' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} />
                   </Tab>
                 )}
               </Tabs>

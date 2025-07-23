@@ -72,7 +72,7 @@ function App() {
             {/* <Route path="/AdjustP3Plus_Bak" element={ <PrivateRoute element={<AdjustP3Plus_Bak />} allowedRoles={['Admin', 'Creator', 'Creator_P3+']} /> } /> */}
             {/* <Route path="/AdjustP3Minus_Bak" element={ <PrivateRoute element={<AdjustP3Minus_Bak />} allowedRoles={['Admin', 'Creator', 'Creator_P3-']} /> } /> */}
             {/* <Route path="/AdjustB_Bak" element={<AdjustB_Bak />} /> */}
-            <Route path="/AdjustB" element={ <PrivateRoute element={<AdjustB />} allowedRoles={['Admin', 'Creator', 'Creator_B+/-']} /> } />
+            <Route path="/AdjustB" element={ <PrivateRoute element={<AdjustB />} allowedRoles={['Admin', 'Creator', 'Creator_B1+/-']} /> } />
             <Route path="/MyAdj" element={ <PrivateRoute element={<SearchAdj myAdjust="Yes" title="My Adjustments" fetchDataAtStart="Yes" />} allowedRoles={['*']} /> } />
             <Route path="/SearchAdj" element={ <PrivateRoute element={<SearchAdj myAdjust="No" title="Search Adjustments" fetchDataAtStart="No" />} allowedRoles={['*']} /> } />
             {/* <Route path="/MyAdj2" element={<SearchAdj myAdjust="Yes" title="My Adjustments" fetchDataAtStart="Yes" />} /> */}

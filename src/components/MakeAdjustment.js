@@ -30,7 +30,7 @@ const MakeAdjustment = ({ adjustmentTypes, selectedAdjustmentType, setSelectedAd
                     {documentType === DOCUMENT_TYPE.B ? (
                         <div>
                             <label>Make adjustment type</label>
-                            <div className="form-control-plaintext font-weight-bold">B +/-</div>
+                            <div className="form-control-plaintext font-weight-bold">B1+/-</div>
                         </div>
                     ) : (
                         <>

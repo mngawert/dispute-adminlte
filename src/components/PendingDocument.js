@@ -41,8 +41,8 @@ const PendingDocument = ({ pendingDocument, adjustmentRequests, fetchPendingDocu
     let totalVAT = adjustmentRequests.reduce((sum, adj) => sum + Math.abs(adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100)), 0);
     let total = adjustmentRequests.reduce((sum, adj) => sum + Math.abs(adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100)), 0);
 
-    // If document type is B +/-, divide totals by 2
-    if (pendingDocument?.documentTypeDesc === 'B+-') {
+    // If document type is B1+/-, divide totals by 2
+    if (pendingDocument?.documentTypeDesc === 'B1+/-') {
         totalAmount = totalAmount / 2;
         totalVAT = totalVAT / 2;
         total = total / 2;

@@ -2,7 +2,7 @@ import React from 'react';
 import { DOCUMENT_TYPE } from '../contexts/Constants';
 
 
-const AdjustB_Bak = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B +/-'}) => {
+const AdjustB_Bak = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-'}) => {
 
 
     return (
@@ -192,7 +192,7 @@ const AdjustB_Bak = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B +/-'}) =
                   </div>
                   <div className="card">
                     <div className="card-body">
-                      <p>Make B+/- adjustment</p>
+                      <p>Make B1+/- adjustment</p>
                       <div className="row">
                         <div className="col-sm-6">
                           <div className="row">
