@@ -288,7 +288,7 @@ const ReportA = () => {
 
   return (
     <div className="content-wrapper-x">
-      <ContentHeader title="Report All" />
+      <ContentHeader title="Report - All" />
       <div className="content">
         <div className="container-fluid">
           <div className="row">

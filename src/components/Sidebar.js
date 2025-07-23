@@ -251,19 +251,19 @@ export default function Sidebar() {
                   <li className="nav-item">
                     <a href="/NTAdjustor/ReportA" className={`nav-link ${isActive('/ReportA')}`}>
                       <i className="far fa-circle nav-icon"></i>
-                      <p>Report All</p>
+                      <p>All</p>
                     </a>
                   </li>
                   <li className="nav-item">
                     <a href="/NTAdjustor/ReportB" className={`nav-link ${isActive('/ReportB')}`}>
                       <i className="far fa-circle nav-icon"></i>
-                      <p>Report B1+/-</p>
+                      <p>B1+/-</p>
                     </a>
                   </li>
                   <li className="nav-item">
                     <a href="/NTAdjustor/ReportUser" className={`nav-link ${isActive('/ReportUser')}`}>
                       <i className="far fa-circle nav-icon"></i>
-                      <p>User Report</p>
+                      <p>User</p>
                     </a>
                   </li>
                 </ul>

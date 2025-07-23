@@ -262,7 +262,7 @@ const ReportB = () => {
 
   return (
     <div className="content-wrapper-x">
-      <ContentHeader title="Report B1+/-" />
+      <ContentHeader title="Report - B1+/-" />
       <div className="content">
         <div className="container-fluid">
           <div className="row">

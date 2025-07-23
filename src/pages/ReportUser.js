@@ -45,11 +45,16 @@ const ReportUser = () => {
   const [empCode, setEmpCode] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [userStatus, setUserStatus] = useState('');
+  const [roleId, setRoleId] = useState(''); // Replace userStatus with roleId
+
+  // Add a new state to store available roles
+  const [roles, setRoles] = useState([]);
+  const [loadingRoles, setLoadingRoles] = useState(false);
 
   // Fetch locations when component mounts
   useEffect(() => {
     fetchLocations();
+    fetchRoles(); // Add this to fetch roles
   }, []);
 
   // Function to fetch locations
@@ -66,6 +71,19 @@ const ReportUser = () => {
       console.error('Error fetching locations:', error);
     } finally {
       setLoadingLocations(false);
+    }
+  };
+
+  // Add a function to fetch available roles
+  const fetchRoles = async () => {
+    setLoadingRoles(true);
+    try {
+      const response = await api.get('/api/Group/GetAllRoles');
+      setRoles(response.data);
+    } catch (error) {
+      console.error('Error fetching roles:', error);
+    } finally {
+      setLoadingRoles(false);
     }
   };
 
@@ -129,12 +147,12 @@ const ReportUser = () => {
   const fetchReportData = useCallback(async () => {
     setLoading(true);
     try {
-      // Create base params object with scalar values
+      // Create base params object with scalar values - replace userStatus with roleId
       const params = {
         empCode: empCode || undefined,
         firstName: firstName || undefined,
         lastName: lastName || undefined,
-        userStatus: userStatus || undefined,
+        roleId: roleId || undefined, // Replace userStatus with roleId
       };
       
       // Create options for axios request
@@ -171,7 +189,7 @@ const ReportUser = () => {
     } finally {
       setLoading(false);
     }
-  }, [empCode, firstName, lastName, userStatus, selectedLocations]);
+  }, [empCode, firstName, lastName, roleId, selectedLocations]); // Update dependency array
 
   // Function to handle adding a location to selected locations
   const handleAddLocation = (locationCode) => {
@@ -246,7 +264,7 @@ const ReportUser = () => {
 
   return (
     <div className="content-wrapper-x">
-      <ContentHeader title="User Report" />
+      <ContentHeader title="Report - User" />
       <div className="content">
         <div className="container-fluid">
           <div className="row">
@@ -421,16 +439,21 @@ const ReportUser = () => {
                     </div>
                     <div className="col-md-2">
                       <div className="form-group">
-                        <label>User Status</label>
+                        <label>Role</label>
                         <select
                           className="form-control"
-                          value={userStatus}
-                          onChange={(e) => setUserStatus(e.target.value)}
+                          value={roleId}
+                          onChange={(e) => setRoleId(e.target.value)}
+                          disabled={loadingRoles}
                         >
-                          <option value="">All</option>
-                          <option value="Active">Active</option>
-                          <option value="Inactive">Inactive</option>
+                          <option value="">All Roles</option>
+                          {roles.map(role => (
+                            <option key={role.roleId} value={role.roleId}>
+                              {role.roleName || role.roleId}
+                            </option>
+                          ))}
                         </select>
+                        {loadingRoles && <small className="text-muted">Loading roles...</small>}
                       </div>
                     </div>
                     <div className="col-md-4">
@@ -460,7 +483,7 @@ const ReportUser = () => {
                     <Table className="table table-head-fixed text-nowrap table-bordered table-hover">
                       <thead>
                         <tr>
-                          <th>User ID</th>
+                          <th>#</th> {/* Replace User ID with row number */}
                           <th>Employee Code</th>
                           <th>First Name (TH)</th>
                           <th>Last Name (TH)</th>
@@ -489,7 +512,7 @@ const ReportUser = () => {
                         ) : (
                           reportData.map((item, index) => (
                             <tr key={index}>
-                              <td>{item.userId}</td>
+                              <td>{index + 1}</td> {/* Display row number (index + 1) instead of userId */}
                               <td>{item.empCode}</td>
                               <td>{item.firstNameTh}</td>
                               <td>{item.lastNameTh}</td>
