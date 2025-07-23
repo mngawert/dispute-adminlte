@@ -36,9 +36,10 @@ import SearchAdj from "./pages/SearchAdj";
 import UserBak from "./pages/UserBak";
 import NotAuthorized from "./pages/NotAuthorized";
 import ProtectedRoute from "./components/ProtectedRoute";
-import ChangePassword from './pages/ChangePassword'; // Import the ChangePassword page
-import ReportA from "./pages/ReportA"; // Add this import at the top
-import ReportB from "./pages/ReportB"; // Add this import at the top
+import ChangePassword from './pages/ChangePassword'; 
+import ReportA from "./pages/ReportA"; 
+import ReportB from "./pages/ReportB"; 
+import ReportUser from "./pages/ReportUser"; 
 
 function App() {
   return (
@@ -85,6 +86,7 @@ function App() {
             <Route path="/Change-password" element={<PrivateRoute element={<ChangePassword />} allowedRoles={["*"]} />} />
             <Route path="/ReportA" element={<PrivateRoute element={<ReportA />} allowedRoles={['Admin', 'Report']} />} />
             <Route path="/ReportB" element={<PrivateRoute element={<ReportB />} allowedRoles={['Admin', 'Report']} />} />
+            <Route path="/ReportUser" element={<PrivateRoute element={<ReportUser />} allowedRoles={['Admin', 'Report']} />} />
             {/* <Route path="/test" element={<Test />} /> */}
             {/* <Route path="/Dashboard" element={<PrivateRoute element={<Dashboard />} allowedRoles={['Admin']} />} /> */}
             {/* <Route path="/disputedata" element={<DisputeData />} /> */}
