@@ -131,10 +131,15 @@ const Group = () => {
 
     const handleRemoveRoleFromGroup = async (roleId) => {
         try {
-            await api.delete(`/api/Group/DeleteGroupRole/${selectedGroupId}/${roleId}`);
+            // Use POST instead of DELETE and send the roleId in the request body
+            await api.post(`/api/Group/DeleteGroupRole`, {
+                groupId: selectedGroupId,
+                roleId: roleId
+            });
             fetchGroupRoles(selectedGroupId);
         } catch (error) {
             console.error('Error removing role from group:', error);
+            alert('Error removing role: ' + (error.response?.data || error.message));
         }
     };
 
