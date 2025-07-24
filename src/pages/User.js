@@ -108,6 +108,7 @@ const User = () => {
         setFilteredUsers(filtered);
     };
 
+    // Update the prepareUserPayload function to include cctr
     const prepareUserPayload = () => {
         return {
             ...userForm,
@@ -121,7 +122,8 @@ const User = () => {
             currDepFull: staffInfo?.currDepFull || '',
             posAbbr: staffInfo?.posAbbr || '',
             email: staffInfo?.email || '',
-            tel: staffInfo?.tel || ''
+            tel: staffInfo?.tel || '',
+            cctr: staffInfo?.cctr || '' // Add cctr from staffInfo
         };
     };
 
