@@ -56,7 +56,7 @@ const DocumentTable = ({ documents, selectedDocument, handleSelectDocument }) =>
                                 <td>{document.documentNum}</td>
                                 <td>{document.documentTypeDesc}</td>
                                 <td>
-                                    {document.documentTypeDesc === 'B+-'
+                                    {document.documentTypeDesc === 'B1+/-'
                                         ? formatNumber(Math.abs(document.totalMny) / 2)
                                         : formatNumber(Math.abs(document.totalMny))}
                                 </td>
