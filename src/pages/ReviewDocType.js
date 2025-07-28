@@ -14,8 +14,8 @@ const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, select
     // Helper to check if SAP Doc fields should be shown and required
 
 
-    console.log('reviewType:', reviewType);
-    console.log('documentTypeDesc:', documentTypeDesc);
+    //console.log('reviewType:', reviewType);
+    //console.log('documentTypeDesc:', documentTypeDesc);
 
 
     const showSapDocFields = reviewType === 'Finance' && (documentTypeDesc === 'P3+' || documentTypeDesc === 'P3-');

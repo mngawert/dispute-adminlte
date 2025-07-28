@@ -31,8 +31,11 @@ const Review = ({ reviewType, prevDocumentStatus }) => {
       const fetchedDocuments = response.data;
       setDocuments(fetchedDocuments);
 
+      console.log('Fetched Documents:', fetchedDocuments);
+
       if (fetchedDocuments.length === 1) {
         const doc = fetchedDocuments[0];
+        console.log('Selected Document:', doc);
         setSelectedDocument(doc);
         setActiveTab(doc.documentTypeDesc);
         fetchAdjustmentRequests(doc.documentNum);
@@ -146,7 +149,7 @@ const Review = ({ reviewType, prevDocumentStatus }) => {
                   <ReviewDocType documentTypeDesc='P3+' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} />
                 </Tab>
                 {reviewType !== 'Finance' && (
-                  <Tab eventKey="B1+-" title="B1+/-">
+                  <Tab eventKey="B1+/-" title="B1+/-">
                     <ReviewDocType documentTypeDesc='B1+/-' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} />
                   </Tab>
                 )}
