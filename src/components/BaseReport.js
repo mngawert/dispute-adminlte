@@ -184,7 +184,9 @@ const BaseReport = ({
         serviceNum: serviceNum || undefined,
         fromDate: fromDate || undefined,
         toDate: toDate || undefined,
-        documentType: selectedDocumentType || undefined,
+        // Always send documentTypes (note the parameter name change) - if none selected, send all available codes
+        documentTypes: selectedDocumentType || 
+          (documentTypes.length > 0 ? documentTypes.map(dt => dt.documentTypeCode).join(',') : undefined),
       };
       
       // Create options for axios request
@@ -220,7 +222,7 @@ const BaseReport = ({
     } finally {
       setLoading(false);
     }
-  }, [documentNum, accountNum, serviceNum, fromDate, toDate, selectedLocations, selectedDocumentType, apiEndpoint]);
+  }, [documentNum, accountNum, serviceNum, fromDate, toDate, selectedLocations, selectedDocumentType, apiEndpoint, documentTypes]);
 
   // Location handling functions
   const handleAddLocation = (locationCode) => {
