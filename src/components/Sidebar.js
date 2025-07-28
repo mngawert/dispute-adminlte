@@ -318,6 +318,14 @@ export default function Sidebar() {
                     </a>
                   </li>                            
                 }
+                {(userHasRole("Admin") || userHasRole("ApproverXX")) && 
+                  <li className="nav-item">
+                    <a href="/NTAdjustor/AdjustmentTypeDetail" className={`nav-link ${isActive('/AdjustmentTypeDetail')}`}>
+                      <i className="far fa-circle nav-icon" />
+                      <p>Adjustment Types</p>
+                    </a>
+                  </li>
+                }
                 <li className="nav-item">
                   <a href="#" className="nav-link" onClick={() => { handleLogout() }} >
                     <i className="far fa-circle nav-icon"></i>

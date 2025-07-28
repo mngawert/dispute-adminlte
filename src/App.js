@@ -41,6 +41,7 @@ import ReportA from "./pages/ReportA";
 import ReportB from "./pages/ReportB"; 
 import ReportP from "./pages/ReportP"; 
 import ReportUser from "./pages/ReportUser"; 
+import AdjustmentTypeDetail from './pages/AdjustmentTypeDetail';
 
 function App() {
   return (
@@ -82,13 +83,14 @@ function App() {
             {/* <Route path="/UserBak" element={<UserBak />} /> */}
             <Route path="/Not-authorized" element={<PrivateRoute element={<NotAuthorized />} allowedRoles={['*']} />} />
             {/* <Route path="/not-authorized2" element={<NotAuthorized /> } /> */}
-            <Route path="/User" element={<PrivateRoute element={<User />} allowedRoles={['Admin']} />} /> {/* Add the new User page route */}
-            <Route path="/Group" element={<PrivateRoute element={<Group />} allowedRoles={['Admin']} />} /> {/* Add the new User page route */}
+            <Route path="/User" element={<PrivateRoute element={<User />} allowedRoles={['Admin']} />} />
+            <Route path="/Group" element={<PrivateRoute element={<Group />} allowedRoles={['Admin']} />} />
             <Route path="/Change-password" element={<PrivateRoute element={<ChangePassword />} allowedRoles={["*"]} />} />
             <Route path="/ReportA" element={<PrivateRoute element={<ReportA />} allowedRoles={['Admin', 'Report']} />} />
             <Route path="/ReportB" element={<PrivateRoute element={<ReportB />} allowedRoles={['Admin', 'Report']} />} />
             <Route path="/ReportP" element={<PrivateRoute element={<ReportP />} allowedRoles={['Admin', 'Report']} />} />
             <Route path="/ReportUser" element={<PrivateRoute element={<ReportUser />} allowedRoles={['Admin', 'Report']} />} />
+            <Route path="/AdjustmentTypeDetail" element={<PrivateRoute element={<AdjustmentTypeDetail />} allowedRoles={['Admin']} />} />
             {/* <Route path="/test" element={<Test />} /> */}
             {/* <Route path="/Dashboard" element={<PrivateRoute element={<Dashboard />} allowedRoles={['Admin']} />} /> */}
             {/* <Route path="/disputedata" element={<DisputeData />} /> */}
