@@ -44,7 +44,18 @@ const AdjustmentTypeDetail = () => {
         try {
             const response = await api.get('/api/AdjustmentTypeDetail/GetAllAdjustmentTypeDetails');
             setAdjustmentTypeDetails(response.data);
-            setFilteredAdjustmentTypeDetails(response.data);
+            
+            // Apply existing search filter to the newly fetched data
+            if (searchText.trim()) {
+                const filtered = response.data.filter(item =>
+                    (item.adjustmentTypeName || '').toLowerCase().includes(searchText.toLowerCase()) ||
+                    (item.adjustmentTypeDesc || '').toLowerCase().includes(searchText.toLowerCase()) ||
+                    (item.accountCode || '').toLowerCase().includes(searchText.toLowerCase())
+                );
+                setFilteredAdjustmentTypeDetails(filtered);
+            } else {
+                setFilteredAdjustmentTypeDetails(response.data);
+            }
         } catch (error) {
             console.error('Error fetching adjustment type details:', error);
             alert('Error fetching adjustment type details: ' + (error.response?.data || error.message));
