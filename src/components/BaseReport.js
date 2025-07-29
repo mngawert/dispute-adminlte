@@ -57,6 +57,9 @@ const BaseReport = ({
   const [selectedDocumentType, setSelectedDocumentType] = useState('');
   const [loadingDocumentTypes, setLoadingDocumentTypes] = useState(false);
 
+  // Update the state variable name
+  const [excludeMappedLocations, setExcludeMappedLocations] = useState(false);
+
   // Fetch data when component mounts
   useEffect(() => {
     fetchLocations();
@@ -184,9 +187,10 @@ const BaseReport = ({
         serviceNum: serviceNum || undefined,
         fromDate: fromDate || undefined,
         toDate: toDate || undefined,
-        // Always send documentTypes (note the parameter name change) - if none selected, send all available codes
+        // Always send documentTypes - if none selected, send all available codes
         documentTypes: selectedDocumentType || 
           (documentTypes.length > 0 ? documentTypes.map(dt => dt.documentTypeCode).join(',') : undefined),
+        excludeMappedLocations: excludeMappedLocations // Updated parameter name
       };
       
       // Create options for axios request
@@ -222,7 +226,7 @@ const BaseReport = ({
     } finally {
       setLoading(false);
     }
-  }, [documentNum, accountNum, serviceNum, fromDate, toDate, selectedLocations, selectedDocumentType, apiEndpoint, documentTypes]);
+  }, [documentNum, accountNum, serviceNum, fromDate, toDate, selectedLocations, selectedDocumentType, apiEndpoint, documentTypes, excludeMappedLocations]); // Update in dependency array
 
   // Location handling functions
   const handleAddLocation = (locationCode) => {
@@ -478,7 +482,24 @@ const BaseReport = ({
                           </small>
                         )}
                       </div>
+                      
+                      {/* Add the new checkbox below the document type dropdown */}
+                      <div className="form-group mt-2">
+                        <div className="custom-control custom-checkbox">
+                          <input
+                            type="checkbox"
+                            className="custom-control-input"
+                            id="excludeMappedLocations"
+                            checked={excludeMappedLocations}
+                            onChange={(e) => setExcludeMappedLocations(e.target.checked)}
+                          />
+                          <label className="custom-control-label" htmlFor="excludeMappedLocations">
+                            Show transactions from inactive locations
+                          </label>
+                        </div>
+                      </div>
                     </div>
+                    
                     <div className="col-md-3">
                       <div className="form-group">
                         <label>From Date</label>
