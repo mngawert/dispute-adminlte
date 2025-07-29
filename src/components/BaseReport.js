@@ -457,6 +457,26 @@ const BaseReport = ({
                     </div>
                   </div>
                   
+                  {/* New checkbox row */}
+                  <div className="row mb-3">
+                    <div className="col-12">
+                      <div className="form-group">
+                        <div className="custom-control custom-checkbox">
+                          <input
+                            type="checkbox"
+                            className="custom-control-input"
+                            id="excludeMappedLocations"
+                            checked={excludeMappedLocations}
+                            onChange={(e) => setExcludeMappedLocations(e.target.checked)}
+                          />
+                          <label className="custom-control-label" htmlFor="excludeMappedLocations">
+                            Show transactions from inactive locations
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
                   {/* Filters row */}
                   <div className="row mb-3">
                     <div className="col-md-3">
@@ -481,22 +501,6 @@ const BaseReport = ({
                             Only showing {title.replace('Report - ', '')} document types
                           </small>
                         )}
-                      </div>
-                      
-                      {/* Add the new checkbox below the document type dropdown */}
-                      <div className="form-group mt-2">
-                        <div className="custom-control custom-checkbox">
-                          <input
-                            type="checkbox"
-                            className="custom-control-input"
-                            id="excludeMappedLocations"
-                            checked={excludeMappedLocations}
-                            onChange={(e) => setExcludeMappedLocations(e.target.checked)}
-                          />
-                          <label className="custom-control-label" htmlFor="excludeMappedLocations">
-                            Show transactions from inactive locations
-                          </label>
-                        </div>
                       </div>
                     </div>
                     

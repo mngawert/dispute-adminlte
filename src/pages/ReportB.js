@@ -43,6 +43,9 @@ const ReportB = () => {
   const [selectedDepartment, setSelectedDepartment] = useState('');
   const [selectedSector, setSelectedSector] = useState('');
 
+  // Add the state for excludeMappedLocations
+  const [excludeMappedLocations, setExcludeMappedLocations] = useState(false);
+
   // Fetch locations when component mounts
   useEffect(() => {
     fetchLocations();
@@ -129,6 +132,7 @@ const ReportB = () => {
       const params = {
         fromDate: fromDate || undefined,
         toDate: toDate || undefined,
+        excludeMappedLocations: excludeMappedLocations // Add the new parameter
       };
       
       // Create options for axios request
@@ -165,7 +169,7 @@ const ReportB = () => {
     } finally {
       setLoading(false);
     }
-  }, [fromDate, toDate, selectedLocations]);
+  }, [fromDate, toDate, selectedLocations, excludeMappedLocations]); // Add to dependency array
 
   // Function to handle adding a location to selected locations
   const handleAddLocation = (locationCode) => {
@@ -392,6 +396,26 @@ const ReportB = () => {
                               ))}
                             </ul>
                           )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Checkbox for excludeMappedLocations in a separate row */}
+                  <div className="row mb-3">
+                    <div className="col-12">
+                      <div className="form-group">
+                        <div className="custom-control custom-checkbox">
+                          <input
+                            type="checkbox"
+                            className="custom-control-input"
+                            id="excludeMappedLocations"
+                            checked={excludeMappedLocations}
+                            onChange={(e) => setExcludeMappedLocations(e.target.checked)}
+                          />
+                          <label className="custom-control-label" htmlFor="excludeMappedLocations">
+                            Show transactions from inactive locations
+                          </label>
                         </div>
                       </div>
                     </div>
