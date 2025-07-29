@@ -322,7 +322,7 @@ export default function Sidebar() {
                   <li className="nav-item">
                     <a href="/NTAdjustor/AdjustmentTypeDetail" className={`nav-link ${isActive('/AdjustmentTypeDetail')}`}>
                       <i className="far fa-circle nav-icon" />
-                      <p>Adjustment Types</p>
+                      <p>Account Code Config</p>
                     </a>
                   </li>
                 }

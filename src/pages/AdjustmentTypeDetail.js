@@ -31,7 +31,6 @@ const AdjustmentTypeDetail = () => {
         startDate: '',
         endDate: ''
     });
-    const [isEditMode, setIsEditMode] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [loading, setLoading] = useState(false);
 
@@ -84,24 +83,6 @@ const AdjustmentTypeDetail = () => {
         setFilteredAdjustmentTypeDetails(filtered);
     };
 
-    const handleCreateAdjustmentTypeDetail = async () => {
-        try {
-            // Format dates for API
-            const payload = {
-                ...adjustmentTypeDetailForm,
-                startDate: adjustmentTypeDetailForm.startDate || null,
-                endDate: adjustmentTypeDetailForm.endDate || null
-            };
-            
-            await api.post('/api/AdjustmentTypeDetail/CreateAdjustmentTypeDetail', payload);
-            fetchAdjustmentTypeDetails();
-            closeModal();
-        } catch (error) {
-            console.error('Error creating adjustment type detail:', error);
-            alert('Error creating adjustment type detail: ' + (error.response?.data || error.message));
-        }
-    };
-
     const handleEditAdjustmentTypeDetail = async () => {
         try {
             // Format dates for API
@@ -120,33 +101,6 @@ const AdjustmentTypeDetail = () => {
         }
     };
 
-    const handleDeleteAdjustmentTypeDetail = async (id) => {
-        if (!window.confirm('Are you sure you want to delete this adjustment type detail?')) {
-            return;
-        }
-        
-        try {
-            await api.delete(`/api/AdjustmentTypeDetail/DeleteAdjustmentTypeDetail/${id}`);
-            fetchAdjustmentTypeDetails();
-        } catch (error) {
-            console.error('Error deleting adjustment type detail:', error);
-            alert('Error deleting adjustment type detail: ' + (error.response?.data || error.message));
-        }
-    };
-
-    const openCreateModal = () => {
-        setAdjustmentTypeDetailForm({
-            adjustmentTypeId: 0, // Set to 0 instead of empty string
-            adjustmentTypeName: '',
-            adjustmentTypeDesc: '',
-            accountCode: '',
-            startDate: '',
-            endDate: ''
-        });
-        setIsEditMode(false);
-        setShowModal(true);
-    };
-
     const openEditModal = async (id) => {
         try {
             const response = await api.get(`/api/AdjustmentTypeDetail/GetAdjustmentTypeDetailById/${id}`);
@@ -155,7 +109,6 @@ const AdjustmentTypeDetail = () => {
                 startDate: response.data.startDate ? response.data.startDate.split('T')[0] : '',
                 endDate: response.data.endDate ? response.data.endDate.split('T')[0] : ''
             });
-            setIsEditMode(true);
             setShowModal(true);
         } catch (error) {
             console.error('Error fetching adjustment type detail:', error);
@@ -169,14 +122,14 @@ const AdjustmentTypeDetail = () => {
 
     return (
         <div className="content-wrapper-x">
-            <ContentHeader title="Adjustment Type Details Management" />
+            <ContentHeader title="Account Code Configuration" />
             <div className="content">
                 <div className="container-fluid">
                     <div className="row">
                         <div className="col-12">
                             <div className="card">
                                 <div className="card-body">
-                                    <div className="d-flex justify-content-between mb-3">
+                                    <div className="mb-3">
                                         <input
                                             type="text"
                                             className="form-control w-50"
@@ -184,9 +137,6 @@ const AdjustmentTypeDetail = () => {
                                             value={searchText}
                                             onChange={handleSearchChange}
                                         />
-                                        <button className="btn btn-primary" onClick={openCreateModal}>
-                                            Create Adjustment Type Detail
-                                        </button>
                                     </div>
                                     <div className="table-responsive" style={{ height: 500, overflowY: 'auto' }}>
                                         <table className="table table-head-fixed text-nowrap table-bordered table-hover">
@@ -221,16 +171,10 @@ const AdjustmentTypeDetail = () => {
                                                             <td>{formatDateForDisplay(item.endDate)}</td>
                                                             <td>
                                                                 <button
-                                                                    className="btn btn-sm mr-2"
+                                                                    className="btn btn-sm"
                                                                     onClick={() => openEditModal(item.adjustmentTypeId)}
                                                                 >
                                                                     <i className="fa fa-pencil-alt" aria-hidden="true"></i> Edit
-                                                                </button>
-                                                                <button
-                                                                    className="btn btn-sm btn-danger"
-                                                                    onClick={() => handleDeleteAdjustmentTypeDetail(item.adjustmentTypeId)}
-                                                                >
-                                                                    <i className="fa fa-trash" aria-hidden="true"></i> Delete
                                                                 </button>
                                                             </td>
                                                         </tr>
@@ -246,32 +190,28 @@ const AdjustmentTypeDetail = () => {
                 </div>
             </div>
 
-            {/* Create/Edit Modal */}
+            {/* Edit Modal */}
             {showModal && (
                 <div className="modal" style={{ display: 'block' }}>
                     <div className="modal-dialog">
                         <div className="modal-content">
                             <div className="modal-header">
-                                <h5 className="modal-title">
-                                    {isEditMode ? 'Edit Adjustment Type Detail' : 'Create Adjustment Type Detail'}
-                                </h5>
+                                <h5 className="modal-title">Edit Adjustment Type Detail</h5>
                                 <button type="button" className="close" onClick={closeModal}>
                                     <span>&times;</span>
                                 </button>
                             </div>
                             <div className="modal-body">
-                                {isEditMode && (
-                                    <div className="form-group">
-                                        <label>ID</label>
-                                        <input
-                                            type="text"
-                                            name="adjustmentTypeId"
-                                            value={adjustmentTypeDetailForm.adjustmentTypeId}
-                                            className="form-control"
-                                            disabled
-                                        />
-                                    </div>
-                                )}
+                                <div className="form-group">
+                                    <label>ID</label>
+                                    <input
+                                        type="text"
+                                        name="adjustmentTypeId"
+                                        value={adjustmentTypeDetailForm.adjustmentTypeId}
+                                        className="form-control"
+                                        disabled
+                                    />
+                                </div>
                                 <div className="form-group">
                                     <label>Name</label>
                                     <input
@@ -368,9 +308,9 @@ const AdjustmentTypeDetail = () => {
                                 <button
                                     type="button"
                                     className="btn btn-primary"
-                                    onClick={isEditMode ? handleEditAdjustmentTypeDetail : handleCreateAdjustmentTypeDetail}
+                                    onClick={handleEditAdjustmentTypeDetail}
                                 >
-                                    {isEditMode ? 'Update' : 'Create'}
+                                    Update
                                 </button>
                                 <button type="button" className="btn btn-secondary" onClick={closeModal}>
                                     Cancel
