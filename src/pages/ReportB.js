@@ -46,6 +46,10 @@ const ReportB = () => {
   // Add the state for excludeMappedLocations
   const [excludeMappedLocations, setExcludeMappedLocations] = useState(false);
 
+  // Add new state variables for user function and name filters
+  const [userFunction, setUserFunction] = useState('');
+  const [userName, setUserName] = useState('');
+
   // Fetch locations when component mounts
   useEffect(() => {
     fetchLocations();
@@ -132,7 +136,9 @@ const ReportB = () => {
       const params = {
         fromDate: fromDate || undefined,
         toDate: toDate || undefined,
-        excludeMappedLocations: excludeMappedLocations // Add the new parameter
+        excludeMappedLocations: excludeMappedLocations,
+        userFunction: userFunction || undefined, // Add user function parameter
+        name: userName || undefined // Add name parameter
       };
       
       // Create options for axios request
@@ -169,7 +175,7 @@ const ReportB = () => {
     } finally {
       setLoading(false);
     }
-  }, [fromDate, toDate, selectedLocations, excludeMappedLocations]); // Add to dependency array
+  }, [fromDate, toDate, selectedLocations, excludeMappedLocations, userFunction, userName]); // Add new dependencies
 
   // Function to handle adding a location to selected locations
   const handleAddLocation = (locationCode) => {
@@ -421,9 +427,26 @@ const ReportB = () => {
                     </div>
                   </div>
                   
-                  {/* Second row with date filters and action buttons */}
+                  {/* Row with User Function and date filters - 3 columns */}
                   <div className="row mb-3">
-                    <div className="col-md-3">
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label>User Function</label>
+                        <select
+                          className="form-control"
+                          value={userFunction}
+                          onChange={(e) => setUserFunction(e.target.value)}
+                        >
+                          <option value="">All Functions</option>
+                          <option value="Created">Created</option>
+                          <option value="Reviewed">Reviewed</option>
+                          <option value="Approved">Approved</option>
+                          <option value="Finance">Finance</option>
+                        </select>
+                      </div>
+                    </div>
+                    
+                    <div className="col-md-4">
                       <div className="form-group">
                         <label>From Date</label>
                         <div className="input-group">
@@ -455,7 +478,8 @@ const ReportB = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="col-md-3">
+                    
+                    <div className="col-md-4">
                       <div className="form-group">
                         <label>To Date</label>
                         <div className="input-group">
@@ -487,8 +511,42 @@ const ReportB = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="col-md-3">
-                      <div className="form-group" style={{ marginTop: '32px' }}>
+                  </div>
+                  
+                  {/* Row for User Name filter */}
+                  <div className="row mb-3">
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label>User Name</label>
+                        <div className="input-group">
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Enter name to filter"
+                            value={userName}
+                            onChange={(e) => setUserName(e.target.value)}
+                          />
+                          {userName && (
+                            <div className="input-group-append">
+                              <button 
+                                className="btn btn-outline-secondary" 
+                                type="button"
+                                onClick={() => setUserName('')}
+                                title="Clear name"
+                              >
+                                <i className="fa fa-times"></i>
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Separate row for action buttons - aligned left instead of center */}
+                  <div className="row mb-3">
+                    <div className="col-12">
+                      <div className="form-group">
                         <button 
                           type="button" 
                           className="btn btn-primary mr-2" 

@@ -60,6 +60,10 @@ const BaseReport = ({
   // Update the state variable name
   const [excludeMappedLocations, setExcludeMappedLocations] = useState(false);
 
+  // Add new state variables at the top of the component
+  const [userFunction, setUserFunction] = useState('');
+  const [userName, setUserName] = useState('');
+
   // Fetch data when component mounts
   useEffect(() => {
     fetchLocations();
@@ -190,7 +194,9 @@ const BaseReport = ({
         // Always send documentTypes - if none selected, send all available codes
         documentTypes: selectedDocumentType || 
           (documentTypes.length > 0 ? documentTypes.map(dt => dt.documentTypeCode).join(',') : undefined),
-        excludeMappedLocations: excludeMappedLocations // Updated parameter name
+        excludeMappedLocations: excludeMappedLocations,
+        userFunction: userFunction || undefined, // Add the user function parameter
+        name: userName || undefined // Add the name parameter
       };
       
       // Create options for axios request
@@ -226,7 +232,7 @@ const BaseReport = ({
     } finally {
       setLoading(false);
     }
-  }, [documentNum, accountNum, serviceNum, fromDate, toDate, selectedLocations, selectedDocumentType, apiEndpoint, documentTypes, excludeMappedLocations]); // Update in dependency array
+  }, [documentNum, accountNum, serviceNum, fromDate, toDate, selectedLocations, selectedDocumentType, apiEndpoint, documentTypes, excludeMappedLocations, userFunction, userName]); // Update dependency array
 
   // Location handling functions
   const handleAddLocation = (locationCode) => {
@@ -477,34 +483,26 @@ const BaseReport = ({
                     </div>
                   </div>
                   
-                  {/* Filters row */}
+                  {/* Row with User Function and date filters - 3 columns */}
                   <div className="row mb-3">
-                    <div className="col-md-3">
+                    <div className="col-md-4">
                       <div className="form-group">
-                        <label>{documentFilterLabel}</label>
+                        <label>User Function</label>
                         <select
                           className="form-control"
-                          value={selectedDocumentType}
-                          onChange={(e) => setSelectedDocumentType(e.target.value)}
+                          value={userFunction}
+                          onChange={(e) => setUserFunction(e.target.value)}
                         >
-                          <option value="">
-                            {allowedDocumentTypes ? `All ${title.replace('Report - ', '')} Document Types` : 'All Document Types'}
-                          </option>
-                          {documentTypes.map(docType => (
-                            <option key={docType.documentTypeCode} value={docType.documentTypeCode}>
-                              {docType.documentTypeDesc}
-                            </option>
-                          ))}
+                          <option value="">All Functions</option>
+                          <option value="Created">Created</option>
+                          <option value="Reviewed">Reviewed</option>
+                          <option value="Approved">Approved</option>
+                          <option value="Finance">Finance</option>
                         </select>
-                        {allowedDocumentTypes && (
-                          <small className="text-muted">
-                            Only showing {title.replace('Report - ', '')} document types
-                          </small>
-                        )}
                       </div>
                     </div>
                     
-                    <div className="col-md-3">
+                    <div className="col-md-4">
                       <div className="form-group">
                         <label>From Date</label>
                         <div className="input-group">
@@ -536,7 +534,8 @@ const BaseReport = ({
                         </div>
                       </div>
                     </div>
-                    <div className="col-md-3">
+                    
+                    <div className="col-md-4">
                       <div className="form-group">
                         <label>To Date</label>
                         <div className="input-group">
@@ -568,8 +567,68 @@ const BaseReport = ({
                         </div>
                       </div>
                     </div>
-                    <div className="col-md-3">
-                      <div className="form-group" style={{ marginTop: '32px' }}>
+                  </div>
+
+                  {/* Row for User Name filter */}
+                  <div className="row mb-3">
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label>User Name</label>
+                        <div className="input-group">
+                          <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Enter name to filter"
+                            value={userName}
+                            onChange={(e) => setUserName(e.target.value)}
+                          />
+                          {userName && (
+                            <div className="input-group-append">
+                              <button 
+                                className="btn btn-outline-secondary" 
+                                type="button"
+                                onClick={() => setUserName('')}
+                                title="Clear name"
+                              >
+                                <i className="fa fa-times"></i>
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* If document type filter is needed, it would go here */}
+                    <div className="col-md-4">
+                      <div className="form-group">
+                        <label>{documentFilterLabel}</label>
+                        <select
+                          className="form-control"
+                          value={selectedDocumentType}
+                          onChange={(e) => setSelectedDocumentType(e.target.value)}
+                        >
+                          <option value="">
+                            {allowedDocumentTypes ? `All ${title.replace('Report - ', '')} Document Types` : 'All Document Types'}
+                          </option>
+                          {documentTypes.map(docType => (
+                            <option key={docType.documentTypeCode} value={docType.documentTypeCode}>
+                              {docType.documentTypeDesc}
+                            </option>
+                          ))}
+                        </select>
+                        {allowedDocumentTypes && (
+                          <small className="text-muted">
+                            Only showing {title.replace('Report - ', '')} document types
+                          </small>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Separate row for action buttons */}
+                  <div className="row mb-3">
+                    <div className="col-12">
+                      <div className="form-group">
                         <button 
                           type="button" 
                           className="btn btn-primary mr-2" 
