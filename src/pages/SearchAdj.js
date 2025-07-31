@@ -1,13 +1,16 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import api from '../api';
 import { DOCUMENT_STATUS_LIST, SEARCH_BY_LIST } from '../contexts/Constants';
-import ContentHeader from '../components/ContentHeader'; // Adjust the import path as necessary
+import ContentHeader from '../components/ContentHeader';
 import DocumentTable from '../components/DocumentTable';
 import DocumentDetails from '../components/DocumentDetails';
 import SearchBox from '../components/SearchBox';
-import { exportAdjustmentRequestsToExcel } from '../utils/exportUtils'; // Import the new export function
+import { exportAdjustmentRequestsToExcel } from '../utils/exportUtils';
 
 const SearchAdj = ({ myAdjust, title, fetchDataAtStart }) => {
+    // Initialize date fields with current date when myAdjust is 'Yes'
+    const today = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
+    
     const [documentNum, setDocumentNum] = useState('');
     const [documents, setDocuments] = useState([]);
     const [selectedDocument, setSelectedDocument] = useState(null);
@@ -15,8 +18,8 @@ const SearchAdj = ({ myAdjust, title, fetchDataAtStart }) => {
     const [searchBy, setSearchBy] = useState(SEARCH_BY_LIST);
     const [selectedSearchBy, setSelectedSearchBy] = useState(null);
     const [filterBy, setFilterBy] = useState('createdBy');
-    const [fromDate, setFromDate] = useState('');
-    const [toDate, setToDate] = useState('');
+    const [fromDate, setFromDate] = useState(myAdjust === 'Yes' ? today : '');
+    const [toDate, setToDate] = useState(myAdjust === 'Yes' ? today : '');
 
     const getAllDocuments = useCallback(async () => {
         try {
@@ -51,6 +54,11 @@ const SearchAdj = ({ myAdjust, title, fetchDataAtStart }) => {
     const handleSearchByChange = (e) => {
         const selectedOption = searchBy.find(search => search.value === e.target.value);
         setSelectedSearchBy(selectedOption);
+        
+        // Clear the documentNum when "All" is selected
+        if (e.target.value === '') {
+            setDocumentNum('');
+        }
     }
 
     const handleInputChange = (e) => {

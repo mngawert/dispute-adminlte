@@ -245,10 +245,10 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
         
         // let remainingAmount = (parseFloat(selectedInvoice?.invoiceNetMny) - parseFloat(selectedInvoice?.adjustedMny) - parseFloat(selectedInvoice?.pendingAdjustmentMny));
         // console.log('remainingAmount:', remainingAmount);
-    
+
         const userLogin = JSON.parse(localStorage.getItem('userLogin'));
         const creditLimit = userLogin?.creditLimit || 9999; // Default to 9999 if creditLimit is not available
-    
+
         if (!accountNumBMinus || !accountNumBPlus) {
             return getTranslation('enterAccountNumber', language);
         }
@@ -261,6 +261,10 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
         }
         if (selectedAccountBMinus.invoicingCoName !== selectedAccountBPlus.invoicingCoName) {
             return getTranslation('invoicingCoNameMustMatch', language);
+        }
+        // New validation: cpsId must match between the two accounts
+        if (selectedAccountBMinus.cpsId !== selectedAccountBPlus.cpsId) {
+            return getTranslation('cpsIdMustMatch', language) || 'Both accounts must belong to the same VAT Rate (CPS ID)';
         }
         if (!selectedInvoiceBMinus || Object.keys(selectedInvoiceBMinus).length === 0) {
             return getTranslation('selectInvoice', language);
