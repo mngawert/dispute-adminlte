@@ -41,7 +41,21 @@ const Login = () => {
       window.location.href = redirectUrl;      
     } catch (error) {
       console.error("There was an error!", error);
-      setErrorMessage("Invalid username or password. Please try again.");
+      
+      // Extract error message from API response if available
+      let errorMsg = "Invalid username or password. Please try again.";
+      
+      if (error.response && error.response.data) {
+        // Check if the API returned a message
+        if (error.response.data.message) {
+          errorMsg = error.response.data.message;
+        } else if (typeof error.response.data === 'string') {
+          // Some APIs return the error message directly as a string
+          errorMsg = error.response.data;
+        }
+      }
+      
+      setErrorMessage(errorMsg);
       setLoading(false); // Reset loading state on error
     }
   };
