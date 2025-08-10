@@ -5,6 +5,7 @@ const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false); // Add loading state
 
   const handleLogin = async () => {
     // Check if username and password are filled
@@ -12,6 +13,10 @@ const Login = () => {
       setErrorMessage("Username and password are required.");
       return;
     }
+
+    // Set loading to true when starting the request
+    setLoading(true);
+    setErrorMessage("");
 
     // Handle login logic here
     try {
@@ -37,6 +42,14 @@ const Login = () => {
     } catch (error) {
       console.error("There was an error!", error);
       setErrorMessage("Invalid username or password. Please try again.");
+      setLoading(false); // Reset loading state on error
+    }
+  };
+
+  // Handle Enter key press to submit the form
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleLogin();
     }
   };
 
@@ -56,6 +69,8 @@ const Login = () => {
                 placeholder="User"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
+                onKeyPress={handleKeyPress}
+                disabled={loading}
                 required
               />
               <div className="input-group-append">
@@ -71,6 +86,8 @@ const Login = () => {
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                onKeyPress={handleKeyPress}
+                disabled={loading}
                 required
               />
               <div className="input-group-append">
@@ -86,7 +103,21 @@ const Login = () => {
             )}
             <div className="row">
               <div className="col-12">
-                <button type="button" className="btn btn-primary btn-block" onClick={handleLogin}>Sign In</button>
+                <button 
+                  type="button" 
+                  className="btn btn-primary btn-block" 
+                  onClick={handleLogin}
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <>
+                      <span className="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>
+                      Signing in...
+                    </>
+                  ) : (
+                    'Sign In'
+                  )}
+                </button>
               </div>
             </div>
           </div>
