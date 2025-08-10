@@ -20,9 +20,11 @@ const SearchAdj = ({ myAdjust, title, fetchDataAtStart }) => {
     const [filterBy, setFilterBy] = useState('createdBy');
     const [fromDate, setFromDate] = useState(myAdjust === 'Yes' ? today : '');
     const [toDate, setToDate] = useState(myAdjust === 'Yes' ? today : '');
+    const [loading, setLoading] = useState(false);
 
     const getAllDocuments = useCallback(async () => {
         try {
+            setLoading(true);
             const userId = JSON.parse(localStorage.getItem('userLogin'))?.userId;
 
             const params = {
@@ -40,8 +42,10 @@ const SearchAdj = ({ myAdjust, title, fetchDataAtStart }) => {
             /* Clear selected document and adjustment requests */
             setSelectedDocument(null);
             setAdjustmentRequests([]);
+            setLoading(false);
         } catch (error) {
             console.error('Error fetching data', error);
+            setLoading(false);
         }
     }, [documentNum, selectedSearchBy, myAdjust, filterBy, fromDate, toDate]);
 
@@ -144,10 +148,29 @@ const SearchAdj = ({ myAdjust, title, fetchDataAtStart }) => {
                             <div className="card">
                                 <div className="card-body">
                                     <div className="d-flex justify-content-end mb-3">
-                                        <button className="btn btn-default mr-2" onClick={exportToExcel}>Export Current</button>
-                                        <button className="btn btn-default" onClick={exportAllToExcel}>Export All Documents</button>
+                                        <div>
+                                            <button className="btn btn-default mr-2" onClick={exportToExcel} disabled={!selectedDocument}>
+                                                Export Current
+                                            </button>
+                                            <button className="btn btn-default" onClick={exportAllToExcel} disabled={documents.length === 0}>
+                                                Export All Documents
+                                            </button>
+                                        </div>
                                     </div>
+                                    
+                                    {/* Document table */}
                                     <DocumentTable documents={documents} selectedDocument={selectedDocument} handleSelectDocument={handleSelectDocument} />
+                                    
+                                    {/* Total Records display moved below the document table */}
+                                    <div className="mt-2 mb-3">
+                                        {loading ? (
+                                            <span>Loading documents...</span>
+                                        ) : (
+                                            <span>Total Records: {documents.length}</span>
+                                        )}
+                                    </div>
+                                    
+                                    {/* Document details */}
                                     <DocumentDetails selectedDocument={selectedDocument} adjustmentRequests={adjustmentRequests} />
                                 </div>
                             </div>
