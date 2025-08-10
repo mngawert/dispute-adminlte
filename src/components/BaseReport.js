@@ -64,6 +64,9 @@ const BaseReport = ({
   const [userFunction, setUserFunction] = useState('');
   const [userName, setUserName] = useState('');
 
+  // Add a new state variable for the status filter
+  const [showOnlyInactiveLocations, setShowOnlyInactiveLocations] = useState(false);
+
   // Fetch data when component mounts
   useEffect(() => {
     fetchLocations();
@@ -194,7 +197,7 @@ const BaseReport = ({
         // Always send documentTypes - if none selected, send all available codes
         documentTypes: selectedDocumentType || 
           (documentTypes.length > 0 ? documentTypes.map(dt => dt.documentTypeCode).join(',') : undefined),
-        excludeMappedLocations: excludeMappedLocations,
+        showOnlyInactiveLocations: showOnlyInactiveLocations,
         userFunction: userFunction || undefined, // Add the user function parameter
         name: userName || undefined // Add the name parameter
       };
@@ -232,7 +235,7 @@ const BaseReport = ({
     } finally {
       setLoading(false);
     }
-  }, [documentNum, accountNum, serviceNum, fromDate, toDate, selectedLocations, selectedDocumentType, apiEndpoint, documentTypes, excludeMappedLocations, userFunction, userName]); // Update dependency array
+  }, [documentNum, accountNum, serviceNum, fromDate, toDate, selectedLocations, selectedDocumentType, apiEndpoint, documentTypes, showOnlyInactiveLocations, userFunction, userName]); // Update dependency array
 
   // Location handling functions
   const handleAddLocation = (locationCode) => {
@@ -305,6 +308,11 @@ const BaseReport = ({
   // Get filtered locations for display
   const getFilteredLocations = () => {
     let filtered = [...locations];
+    
+    // Filter to show only locations with status=null when checkbox is checked
+    if (showOnlyInactiveLocations) {
+      filtered = filtered.filter(loc => loc.status === null);
+    }
     
     if (selectedWorkarea) {
       filtered = filtered.filter(loc => loc.workarea === selectedWorkarea);
@@ -463,7 +471,7 @@ const BaseReport = ({
                     </div>
                   </div>
                   
-                  {/* New checkbox row */}
+                  {/* Single checkbox for inactive locations */}
                   <div className="row mb-3">
                     <div className="col-12">
                       <div className="form-group">
@@ -471,12 +479,12 @@ const BaseReport = ({
                           <input
                             type="checkbox"
                             className="custom-control-input"
-                            id="excludeMappedLocations"
-                            checked={excludeMappedLocations}
-                            onChange={(e) => setExcludeMappedLocations(e.target.checked)}
+                            id="showOnlyInactiveLocations"
+                            checked={showOnlyInactiveLocations}
+                            onChange={(e) => setShowOnlyInactiveLocations(e.target.checked)}
                           />
-                          <label className="custom-control-label" htmlFor="excludeMappedLocations">
-                            Show transactions from inactive locations
+                          <label className="custom-control-label" htmlFor="showOnlyInactiveLocations">
+                            Show only inactive locations
                           </label>
                         </div>
                       </div>
