@@ -3,6 +3,7 @@ import { Table } from 'react-bootstrap';
 import api from '../api';
 import ContentHeader from '../components/ContentHeader';
 import { exportToExcel } from '../utils/exportUtils';
+import LocationFilter from '../components/LocationFilter';
 
 const formatDateForDisplay = (dateString) => {
   if (!dateString) return '';
@@ -25,21 +26,9 @@ const ReportUser = () => {
   const [reportData, setReportData] = useState([]);
   const [loading, setLoading] = useState(false);
   
-  // Add state variables for location filtering
-  const [locations, setLocations] = useState([]);
+  // Location state (simplified using LocationFilter component)
   const [selectedLocations, setSelectedLocations] = useState([]);
-  const [loadingLocations, setLoadingLocations] = useState(false);
-
-  // State variables for the cascade filter
-  const [workareas, setWorkareas] = useState([]);
-  const [regions, setRegions] = useState([]);
-  const [departments, setDepartments] = useState([]);
-  const [sectors, setSectors] = useState([]);
-
-  const [selectedWorkarea, setSelectedWorkarea] = useState('');
-  const [selectedRegion, setSelectedRegion] = useState('');
-  const [selectedDepartment, setSelectedDepartment] = useState('');
-  const [selectedSector, setSelectedSector] = useState('');
+  const [showInactiveLocations, setShowInactiveLocations] = useState(false);
   
   // User filter states
   const [empCode, setEmpCode] = useState('');
@@ -51,28 +40,10 @@ const ReportUser = () => {
   const [roles, setRoles] = useState([]);
   const [loadingRoles, setLoadingRoles] = useState(false);
 
-  // Fetch locations when component mounts
+  // Fetch roles when component mounts
   useEffect(() => {
-    fetchLocations();
-    fetchRoles(); // Add this to fetch roles
+    fetchRoles();
   }, []);
-
-  // Function to fetch locations
-  const fetchLocations = async () => {
-    setLoadingLocations(true);
-    try {
-      const response = await api.get('/api/ServiceLocation/GetAllServiceLocations');
-      setLocations(response.data);
-      
-      // Extract unique values for each level of the hierarchy
-      const uniqueWorkareas = [...new Set(response.data.map(loc => loc.workarea))].filter(Boolean).sort();
-      setWorkareas(uniqueWorkareas);
-    } catch (error) {
-      console.error('Error fetching locations:', error);
-    } finally {
-      setLoadingLocations(false);
-    }
-  };
 
   // Add a function to fetch available roles
   const fetchRoles = async () => {
@@ -86,63 +57,6 @@ const ReportUser = () => {
       setLoadingRoles(false);
     }
   };
-
-  // Update regions when workarea changes
-  useEffect(() => {
-    if (selectedWorkarea) {
-      const filteredLocations = locations.filter(loc => loc.workarea === selectedWorkarea);
-      const uniqueRegions = [...new Set(filteredLocations.map(loc => loc.region))].filter(Boolean).sort();
-      setRegions(uniqueRegions);
-      setSelectedRegion('');
-      setSelectedDepartment('');
-      setSelectedSector('');
-      setDepartments([]);
-      setSectors([]);
-    } else {
-      setRegions([]);
-      setDepartments([]);
-      setSectors([]);
-      setSelectedRegion('');
-      setSelectedDepartment('');
-      setSelectedSector('');
-    }
-  }, [selectedWorkarea, locations]);
-
-  // Update departments when region changes
-  useEffect(() => {
-    if (selectedRegion) {
-      const filteredLocations = locations.filter(loc => 
-        loc.workarea === selectedWorkarea && loc.region === selectedRegion
-      );
-      const uniqueDepartments = [...new Set(filteredLocations.map(loc => loc.department))].filter(Boolean).sort();
-      setDepartments(uniqueDepartments);
-      setSelectedDepartment('');
-      setSelectedSector('');
-      setSectors([]);
-    } else {
-      setDepartments([]);
-      setSectors([]);
-      setSelectedDepartment('');
-      setSelectedSector('');
-    }
-  }, [selectedRegion, selectedWorkarea, locations]);
-
-  // Update sectors when department changes
-  useEffect(() => {
-    if (selectedDepartment) {
-      const filteredLocations = locations.filter(loc => 
-        loc.workarea === selectedWorkarea && 
-        loc.region === selectedRegion && 
-        loc.department === selectedDepartment
-      );
-      const uniqueSectors = [...new Set(filteredLocations.map(loc => loc.sector))].filter(Boolean).sort();
-      setSectors(uniqueSectors);
-      setSelectedSector('');
-    } else {
-      setSectors([]);
-      setSelectedSector('');
-    }
-  }, [selectedDepartment, selectedRegion, selectedWorkarea, locations]);
 
   const fetchReportData = useCallback(async () => {
     setLoading(true);
@@ -189,19 +103,23 @@ const ReportUser = () => {
     } finally {
       setLoading(false);
     }
-  }, [empCode, firstName, lastName, roleId, selectedLocations]); // Update dependency array
+  }, [empCode, firstName, lastName, roleId, selectedLocations, showInactiveLocations]); // Update dependency array
 
   // Function to handle adding a location to selected locations
-  const handleAddLocation = (locationCode) => {
-    const locationToAdd = locations.find(loc => loc.locationCode === locationCode);
-    if (locationToAdd && !selectedLocations.some(loc => loc.locationCode === locationCode)) {
-      setSelectedLocations([...selectedLocations, locationToAdd]);
+  const handleAddLocation = (location) => {
+    if (!selectedLocations.some(loc => loc.locationCode === location.locationCode)) {
+      setSelectedLocations([...selectedLocations, location]);
     }
   };
 
   // Function to handle removing a location from selected locations
   const handleRemoveLocation = (locationCode) => {
     setSelectedLocations(selectedLocations.filter(loc => loc.locationCode !== locationCode));
+  };
+
+  // Handle toggle for inactive locations
+  const handleToggleInactiveLocations = (checked) => {
+    setShowInactiveLocations(checked);
   };
 
   const handleExportToExcel = () => {
@@ -239,29 +157,6 @@ const ReportUser = () => {
     exportToExcel(exportData, 'UserReport.xlsx');
   };
 
-  // Get filtered locations based on selections
-  const getFilteredLocations = () => {
-    let filtered = [...locations];
-    
-    if (selectedWorkarea) {
-      filtered = filtered.filter(loc => loc.workarea === selectedWorkarea);
-    }
-    
-    if (selectedRegion) {
-      filtered = filtered.filter(loc => loc.region === selectedRegion);
-    }
-    
-    if (selectedDepartment) {
-      filtered = filtered.filter(loc => loc.department === selectedDepartment);
-    }
-    
-    if (selectedSector) {
-      filtered = filtered.filter(loc => loc.sector === selectedSector);
-    }
-    
-    return filtered.filter(loc => !selectedLocations.some(selected => selected.locationCode === loc.locationCode));
-  };
-
   return (
     <div className="content-wrapper-x">
       <ContentHeader title="Report - User" />
@@ -271,131 +166,17 @@ const ReportUser = () => {
             <div className="col-12">
               <div className="card">
                 <div className="card-body">
-                  {/* Top row with location filters - with consistent fixed heights */}
+                  {/* Use the LocationFilter component */}
                   <div className="row mb-3">
-                    <div className="col-md-4">
-                      <div className="card">
-                        <div className="card-header">
-                          <h3 className="card-title">Location Filters</h3>
-                        </div>
-                        <div className="card-body" style={{ height: '350px', overflowY: 'auto' }}>
-                          <div className="form-group mb-2">
-                            <label>Workarea</label>
-                            <select
-                              className="form-control"
-                              value={selectedWorkarea}
-                              onChange={(e) => setSelectedWorkarea(e.target.value)}
-                            >
-                              <option value="">-- Select Workarea --</option>
-                              {workareas.map(workarea => (
-                                <option key={workarea} value={workarea}>{workarea}</option>
-                              ))}
-                            </select>
-                          </div>
-                          <div className="form-group mb-2">
-                            <label>Region</label>
-                            <select
-                              className="form-control"
-                              value={selectedRegion}
-                              onChange={(e) => setSelectedRegion(e.target.value)}
-                              disabled={!selectedWorkarea}
-                            >
-                              <option value="">-- Select Region --</option>
-                              {regions.map(region => (
-                                <option key={region} value={region}>{region}</option>
-                              ))}
-                            </select>
-                          </div>
-                          <div className="form-group mb-2">
-                            <label>Department</label>
-                            <select
-                              className="form-control"
-                              value={selectedDepartment}
-                              onChange={(e) => setSelectedDepartment(e.target.value)}
-                              disabled={!selectedRegion}
-                            >
-                              <option value="">-- Select Department --</option>
-                              {departments.map(dept => (
-                                <option key={dept} value={dept}>{dept}</option>
-                              ))}
-                            </select>
-                          </div>
-                          <div className="form-group">
-                            <label>Sector</label>
-                            <select
-                              className="form-control"
-                              value={selectedSector}
-                              onChange={(e) => setSelectedSector(e.target.value)}
-                              disabled={!selectedDepartment}
-                            >
-                              <option value="">-- Select Sector --</option>
-                              {sectors.map(sector => (
-                                <option key={sector} value={sector}>{sector}</option>
-                              ))}
-                            </select>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="col-md-4">
-                      <div className="card">
-                        <div className="card-header">
-                          <h3 className="card-title">Available Locations</h3>
-                        </div>
-                        <div className="card-body" style={{ height: '350px', overflowY: 'auto' }}>
-                          {loadingLocations ? (
-                            <p className="text-center">Loading locations...</p>
-                          ) : (
-                            <ul className="list-group">
-                              {getFilteredLocations().map(location => (
-                                <li key={location.locationCode} className="list-group-item d-flex align-items-center justify-content-between">
-                                  <span>{location.locationCode} - {location.locationName}</span>
-                                  <button
-                                    className="btn btn-sm btn-primary"
-                                    onClick={() => handleAddLocation(location.locationCode)}
-                                    title="Add Location"
-                                  >
-                                    <i className="fa fa-plus-circle" aria-hidden="true"></i>
-                                  </button>
-                                </li>
-                              ))}
-                            </ul>
-                          )}
-                          
-                          {getFilteredLocations().length === 0 && !loadingLocations && (
-                            <p className="text-center text-muted mt-3">No locations match the selected criteria</p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="col-md-4">
-                      <div className="card">
-                        <div className="card-header">
-                          <h3 className="card-title">Selected Locations</h3>
-                        </div>
-                        <div className="card-body" style={{ height: '350px', overflowY: 'auto' }}>
-                          {selectedLocations.length === 0 ? (
-                            <p className="text-muted">No locations selected (will search all locations)</p>
-                          ) : (
-                            <ul className="list-group">
-                              {selectedLocations.map(location => (
-                                <li key={location.locationCode} className="list-group-item d-flex align-items-center justify-content-between">
-                                  <span>{location.locationCode} - {location.locationName}</span>
-                                  <button
-                                    className="btn btn-sm btn-danger"
-                                    onClick={() => handleRemoveLocation(location.locationCode)}
-                                    title="Remove Location"
-                                  >
-                                    <i className="fa fa-minus-circle" aria-hidden="true"></i>
-                                  </button>
-                                </li>
-                              ))}
-                            </ul>
-                          )}
-                        </div>
-                      </div>
+                    <div className="col-12">
+                      <LocationFilter
+                        selectedLocations={selectedLocations}
+                        onLocationSelect={handleAddLocation}
+                        onLocationRemove={handleRemoveLocation}
+                        showOnlyInactiveLocations={showInactiveLocations}
+                        onInactiveLocationsChange={handleToggleInactiveLocations}
+                        loading={loading}
+                      />
                     </div>
                   </div>
                   
