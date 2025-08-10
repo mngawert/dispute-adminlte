@@ -66,6 +66,9 @@ const BaseReport = ({
 
   // Add a new state variable for the status filter
   const [showOnlyInactiveLocations, setShowOnlyInactiveLocations] = useState(false);
+  
+  // Add state for location text filter
+  const [locationFilter, setLocationFilter] = useState('');
 
   // Fetch data when component mounts
   useEffect(() => {
@@ -314,6 +317,15 @@ const BaseReport = ({
       filtered = filtered.filter(loc => loc.status === null);
     }
     
+    // Apply text filter if provided
+    if (locationFilter) {
+      const searchTerm = locationFilter.toLowerCase();
+      filtered = filtered.filter(loc => 
+        loc.locationCode.toLowerCase().includes(searchTerm) || 
+        (loc.locationName && loc.locationName.toLowerCase().includes(searchTerm))
+      );
+    }
+    
     if (selectedWorkarea) {
       filtered = filtered.filter(loc => loc.workarea === selectedWorkarea);
     }
@@ -416,6 +428,15 @@ const BaseReport = ({
                           <h3 className="card-title">Available Locations</h3>
                         </div>
                         <div className="card-body" style={{ height: '350px', overflowY: 'auto' }}>
+                          {/* Add text filter for locations */}
+                          <div className="input-group mb-2">
+                            <input
+                              type="text"
+                              className="form-control"
+                              placeholder="Filter locations..."
+                              onChange={(e) => setLocationFilter(e.target.value)}
+                            />
+                          </div>
                           {loadingLocations ? (
                             <p className="text-center">Loading locations...</p>
                           ) : (
