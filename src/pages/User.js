@@ -132,6 +132,12 @@ const User = () => {
     };
 
     const handleCreateUser = async () => {
+        // Validate credit limit is provided
+        if (!userForm.creditLimit && userForm.creditLimit !== 0) {
+            alert('Credit Limit is required.');
+            return;
+        }
+
         try {
             const payload = prepareUserPayload();
             await api.post('/api/User/CreateUser', payload);
@@ -146,6 +152,12 @@ const User = () => {
     };
 
     const handleEditUser = async () => {
+        // Validate credit limit is provided
+        if (!userForm.creditLimit && userForm.creditLimit !== 0) {
+            alert('Credit Limit is required.');
+            return;
+        }
+        
         try {
             const payload = prepareUserPayload();
             await api.put(`/api/User/UpdateUser/${userForm.userId}`, payload);
@@ -527,14 +539,16 @@ const User = () => {
                                             </select>
                                         </div>
                                         <div className="form-group">
-                                            <label>Credit Limit</label>
+                                            <label>Credit Limit <span className="text-danger">*</span></label>
                                             <input
                                                 type="number"
                                                 name="creditLimit"
                                                 value={userForm.creditLimit}
                                                 onChange={handleInputChange}
                                                 className="form-control"
+                                                required
                                             />
+                                            <small className="text-muted">This field is required</small>
                                         </div>
                                         <div className="form-group">
                                             <label>Start Date</label>
