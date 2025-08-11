@@ -76,6 +76,8 @@ const User = () => {
             fetchUserGroups(selectedUserId);
         } catch (error) {
             console.error('Error adding group to user:', error);
+            const errorMessage = error.response?.data?.message || 'Failed to add group to user. Please try again.';
+            alert(errorMessage);
         }
     };
 
@@ -85,6 +87,8 @@ const User = () => {
             fetchUserGroups(selectedUserId);
         } catch (error) {
             console.error('Error removing group from user:', error);
+            const errorMessage = error.response?.data?.message || 'Failed to remove group from user. Please try again.';
+            alert(errorMessage);
         }
     };
 
@@ -136,7 +140,8 @@ const User = () => {
             closeModal();
         } catch (error) {
             console.error('Error creating user:', error);
-            alert('Failed to create user. Please try again.');
+            const errorMessage = error.response?.data?.message || 'Failed to create user. Please try again.';
+            alert(errorMessage);
         }
     };
 
@@ -154,7 +159,8 @@ const User = () => {
             closeModal();
         } catch (error) {
             console.error('Error updating user:', error);
-            alert('Failed to update user. Please try again.');
+            const errorMessage = error.response?.data?.message || 'Failed to update user. Please try again.';
+            alert(errorMessage);
         }
     };
 
@@ -165,7 +171,8 @@ const User = () => {
             closeModal();
         } catch (error) {
             console.error('Error resetting password:', error);
-            alert('Failed to reset password. Please try again.');
+            const errorMessage = error.response?.data?.message || 'Failed to reset password. Please try again.';
+            alert(errorMessage);
         }
     };
 
