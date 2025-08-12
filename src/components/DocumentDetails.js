@@ -57,6 +57,7 @@ const DocumentDetails = ({ selectedDocument, adjustmentRequests }) => {
             selectedDocument?.reviewNote ? `[Reviewer]: ${selectedDocument.reviewNote}` : null,
             selectedDocument?.approveNote ? `[Approver]: ${selectedDocument.approveNote}` : null,
             selectedDocument?.financeNote ? `[Financial Reviewer]: ${selectedDocument.financeNote}` : null,
+            selectedDocument?.retriedNote ? `[Retrier]: ${selectedDocument.retriedNote}` : null,
             selectedDocument?.cancelNote ? `[Canceller]: ${selectedDocument.cancelNote}` : null
         ];
         // Remove duplicate notes and join with newline
@@ -147,6 +148,15 @@ const DocumentDetails = ({ selectedDocument, adjustmentRequests }) => {
                 </div>
                 <div className="col-sm-6 col-md-4 col-lg-2">
                     <div className="form-group mb-2">
+                        <label>Retried by</label>
+                        <input type="text" className="form-control" readOnly value={selectedDocument?.retriedByName || ''} />
+                    </div>
+                    <div className="form-group">
+                        <input type="text" className="form-control" readOnly value={selectedDocument?.retriedDtm ? formatDate(selectedDocument.retriedDtm) : ''} />
+                    </div>
+                </div>
+                <div className="col-sm-6 col-md-4 col-lg-2">
+                    <div className="form-group mb-2">
                         <label>Cancelled by</label>
                         <input type="text" className="form-control" readOnly value={selectedDocument?.canceledByName || ''} />
                     </div>
@@ -154,6 +164,8 @@ const DocumentDetails = ({ selectedDocument, adjustmentRequests }) => {
                         <input type="text" className="form-control" readOnly value={selectedDocument?.canceledDtm ? formatDate(selectedDocument.canceledDtm) : ''} />
                     </div>
                 </div>
+            </div>
+            <div className="row">
                 <div className="col-sm-6 col-md-4 col-lg-2">
                     <div className="form-group mb-2">
                         <label>SAP Doc</label>
