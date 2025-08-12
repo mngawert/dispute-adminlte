@@ -249,11 +249,18 @@ const ReportUser = () => {
                         </button>
                         <button 
                           type="button" 
-                          className="btn btn-success" 
+                          className="btn btn-success mr-2" 
                           onClick={handleExportToExcel} 
                           disabled={loading || reportData.length === 0}
                         >
                           Export to Excel
+                        </button>
+                        <button 
+                          type="button" 
+                          className="btn btn-secondary" 
+                          onClick={() => window.location.reload()}
+                        >
+                          Clear All
                         </button>
                       </div>
                     </div>
