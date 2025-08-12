@@ -34,7 +34,8 @@ const ReportUser = () => {
   const [empCode, setEmpCode] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [roleId, setRoleId] = useState(''); // Replace userStatus with roleId
+  const [roleId, setRoleId] = useState('');
+  const [userStatus, setUserStatus] = useState(''); // New userStatus filter
 
   // Add a new state to store available roles
   const [roles, setRoles] = useState([]);
@@ -61,12 +62,13 @@ const ReportUser = () => {
   const fetchReportData = useCallback(async () => {
     setLoading(true);
     try {
-      // Create base params object with scalar values - replace userStatus with roleId
+      // Create base params object with scalar values
       const params = {
         empCode: empCode || undefined,
         firstName: firstName || undefined,
         lastName: lastName || undefined,
-        roleId: roleId || undefined, // Replace userStatus with roleId
+        roleId: roleId || undefined,
+        userStatus: userStatus || undefined, // Add userStatus to params
       };
       
       // Create options for axios request
@@ -103,7 +105,7 @@ const ReportUser = () => {
     } finally {
       setLoading(false);
     }
-  }, [empCode, firstName, lastName, roleId, selectedLocations, showInactiveLocations]); // Update dependency array
+  }, [empCode, firstName, lastName, roleId, userStatus, selectedLocations, showInactiveLocations]); // Update dependency array
 
   // Function to handle adding a location to selected locations
   const handleAddLocation = (location) => {
@@ -237,8 +239,26 @@ const ReportUser = () => {
                         {loadingRoles && <small className="text-muted">Loading roles...</small>}
                       </div>
                     </div>
-                    <div className="col-md-4">
-                      <div className="form-group" style={{ marginTop: '32px' }}>
+                    <div className="col-md-2">
+                      <div className="form-group">
+                        <label>User Status</label>
+                        <select
+                          className="form-control"
+                          value={userStatus}
+                          onChange={(e) => setUserStatus(e.target.value)}
+                        >
+                          <option value="">All Statuses</option>
+                          <option value="Active">Active</option>
+                          <option value="Inactive">Inactive</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* New row for buttons */}
+                  <div className="row mb-3">
+                    <div className="col-12">
+                      <div className="form-group">
                         <button 
                           type="button" 
                           className="btn btn-primary mr-2" 
