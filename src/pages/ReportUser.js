@@ -309,13 +309,15 @@ const ReportUser = () => {
                           <th>Department</th>
                           <th>Region</th>
                           <th>Workarea</th>
+                          <th>Start Date</th>
+                          <th>End Date</th>
                           <th>Last Used</th>
                         </tr>
                       </thead>
                       <tbody>
                         {reportData.length === 0 ? (
                           <tr>
-                            <td colSpan="19" className="text-center">{loading ? 'Loading...' : 'No data available'}</td>
+                            <td colSpan="21" className="text-center">{loading ? 'Loading...' : 'No data available'}</td>
                           </tr>
                         ) : (
                           reportData.map((item, index) => (
@@ -338,6 +340,8 @@ const ReportUser = () => {
                               <td>{item.department}</td>
                               <td>{item.region}</td>
                               <td>{item.workarea}</td>
+                              <td>{formatDateForDisplay(item.startDate)}</td>
+                              <td>{formatDateForDisplay(item.endDate)}</td>
                               <td>{formatDateForDisplay(item.lastUsed)}</td>
                             </tr>
                           ))
