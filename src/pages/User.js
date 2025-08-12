@@ -106,8 +106,13 @@ const User = () => {
 
         const filtered = users.filter(user =>
             (user.username || '').toLowerCase().includes(value.toLowerCase()) ||
+            (user.empCode || '').toLowerCase().includes(value.toLowerCase()) ||
+            (user.firstNameTh || '').toLowerCase().includes(value.toLowerCase()) ||
+            (user.lastNameTh || '').toLowerCase().includes(value.toLowerCase()) ||
             (user.userStatus || '').toLowerCase().includes(value.toLowerCase()) ||
-            (user.homeLocationCode || '').toLowerCase().includes(value.toLowerCase())
+            (user.homeLocationCode || '').toLowerCase().includes(value.toLowerCase()) ||
+            (user.locationName || '').toLowerCase().includes(value.toLowerCase()) ||
+            (user.sector || '').toLowerCase().includes(value.toLowerCase())
         );
         setFilteredUsers(filtered);
     };
@@ -359,9 +364,14 @@ const User = () => {
                                         <table className="table table-head-fixed text-nowrap table-bordered table-hover">
                                             <thead>
                                                 <tr>
+                                                    <th>Employee Code</th>
+                                                    <th>First Name</th>
+                                                    <th>Last Name</th>
+                                                    <th>Sector</th>
                                                     <th>Username</th>
                                                     <th>Status</th>
                                                     <th>Home Location Code</th>
+                                                    <th>Home Location Name</th>
                                                     <th>Credit Limit</th>
                                                     <th>Start Date</th>
                                                     <th>End Date</th>
@@ -371,9 +381,14 @@ const User = () => {
                                             <tbody>
                                                 {filteredUsers.map(user => (
                                                     <tr key={user.userId}>
+                                                        <td>{user.empCode}</td>
+                                                        <td>{user.firstNameTh}</td>
+                                                        <td>{user.lastNameTh}</td>
+                                                        <td>{user.sector}</td>
                                                         <td>{user.username}</td>
                                                         <td>{user.userStatus}</td>
                                                         <td>{user.homeLocationCode}</td>
+                                                        <td>{user.homeLocationName}</td>
                                                         <td>{user.creditLimit}</td>
                                                         <td>{formatDateForDisplay(user.startDate)}</td>
                                                         <td>{formatDateForDisplay(user.endDate)}</td>
