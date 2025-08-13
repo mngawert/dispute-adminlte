@@ -239,8 +239,10 @@ export default function Sidebar() {
               </li>
             }
 
-            {/* Reports - Admin and Finance */}
-            {(userHasRole("Admin") || userHasRole("Report")) && 
+            {/* Reports section with new role-based access */}
+            {(userHasRole("Admin") || userHasRole("Report") || 
+              userHasRole("ReportAll") || userHasRole("ReportP3") || 
+              userHasRole("ReportB1") || userHasRole("ReportUser")) && 
               <li className="nav-item menu-is-opening menu-open">
                 <a href="#" className="nav-link">
                   <p>
@@ -248,30 +250,38 @@ export default function Sidebar() {
                   </p>
                 </a>
                 <ul className="nav nav-treeview">
-                  <li className="nav-item">
-                    <a href="/NTAdjustor/ReportA" className={`nav-link ${isActive('/ReportA')}`}>
-                      <i className="far fa-circle nav-icon"></i>
-                      <p>All</p>
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a href="/NTAdjustor/ReportP" className={`nav-link ${isActive('/ReportP')}`}>
-                      <i className="far fa-circle nav-icon"></i>
-                      <p>P3-P3+</p>
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a href="/NTAdjustor/ReportB" className={`nav-link ${isActive('/ReportB')}`}>
-                      <i className="far fa-circle nav-icon"></i>
-                      <p>B1+/-</p>
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a href="/NTAdjustor/ReportUser" className={`nav-link ${isActive('/ReportUser')}`}>
-                      <i className="far fa-circle nav-icon"></i>
-                      <p>User</p>
-                    </a>
-                  </li>
+                  {(userHasRole("Admin") || userHasRole("Report") || userHasRole("ReportAll")) && (
+                    <li className="nav-item">
+                      <a href="/NTAdjustor/ReportA" className={`nav-link ${isActive('/ReportA')}`}>
+                        <i className="far fa-circle nav-icon"></i>
+                        <p>All</p>
+                      </a>
+                    </li>
+                  )}
+                  {(userHasRole("Admin") || userHasRole("Report") || userHasRole("ReportP3")) && (
+                    <li className="nav-item">
+                      <a href="/NTAdjustor/ReportP" className={`nav-link ${isActive('/ReportP')}`}>
+                        <i className="far fa-circle nav-icon"></i>
+                        <p>P3-P3+</p>
+                      </a>
+                    </li>
+                  )}
+                  {(userHasRole("Admin") || userHasRole("Report") || userHasRole("ReportB1")) && (
+                    <li className="nav-item">
+                      <a href="/NTAdjustor/ReportB" className={`nav-link ${isActive('/ReportB')}`}>
+                        <i className="far fa-circle nav-icon"></i>
+                        <p>B1+/-</p>
+                      </a>
+                    </li>
+                  )}
+                  {(userHasRole("Admin") || userHasRole("Report") || userHasRole("ReportUser")) && (
+                    <li className="nav-item">
+                      <a href="/NTAdjustor/ReportUser" className={`nav-link ${isActive('/ReportUser')}`}>
+                        <i className="far fa-circle nav-icon"></i>
+                        <p>User</p>
+                      </a>
+                    </li>
+                  )}
                 </ul>
               </li>
             }

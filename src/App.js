@@ -86,10 +86,10 @@ function App() {
             <Route path="/User" element={<PrivateRoute element={<User />} allowedRoles={['Admin']} />} />
             <Route path="/Group" element={<PrivateRoute element={<Group />} allowedRoles={['Admin']} />} />
             <Route path="/Change-password" element={<PrivateRoute element={<ChangePassword />} allowedRoles={["*"]} />} />
-            <Route path="/ReportA" element={<PrivateRoute element={<ReportA />} allowedRoles={['Admin', 'Report']} />} />
-            <Route path="/ReportB" element={<PrivateRoute element={<ReportB />} allowedRoles={['Admin', 'Report']} />} />
-            <Route path="/ReportP" element={<PrivateRoute element={<ReportP />} allowedRoles={['Admin', 'Report']} />} />
-            <Route path="/ReportUser" element={<PrivateRoute element={<ReportUser />} allowedRoles={['Admin', 'Report']} />} />
+            <Route path="/ReportA" element={<PrivateRoute element={<ReportA />} allowedRoles={['Admin', 'ReportAll']} />} />
+            <Route path="/ReportB" element={<PrivateRoute element={<ReportB />} allowedRoles={['Admin', 'ReportB1']} />} />
+            <Route path="/ReportP" element={<PrivateRoute element={<ReportP />} allowedRoles={['Admin', 'ReportP3']} />} />
+            <Route path="/ReportUser" element={<PrivateRoute element={<ReportUser />} allowedRoles={['Admin', 'ReportUser']} />} />
             <Route path="/AdjustmentTypeDetail" element={<PrivateRoute element={<AdjustmentTypeDetail />} allowedRoles={['Admin']} />} />
             {/* <Route path="/test" element={<Test />} /> */}
             {/* <Route path="/Dashboard" element={<PrivateRoute element={<Dashboard />} allowedRoles={['Admin']} />} /> */}
