@@ -41,13 +41,8 @@ const PendingDocument = ({ pendingDocument, adjustmentRequests, fetchPendingDocu
     let totalVAT = adjustmentRequests.reduce((sum, adj) => sum + Math.abs(adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100)), 0);
     let total = adjustmentRequests.reduce((sum, adj) => sum + Math.abs(adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100)), 0);
 
-    // If document type is B1+/-, divide totals by 2
-    if (pendingDocument?.documentTypeDesc === 'B1+/-') {
-        totalAmount = totalAmount / 2;
-        totalVAT = totalVAT / 2;
-        total = total / 2;
-    }
-
+    // No need to divide by 2 for B1+/- as rows already contain merged data
+    
     totalAmount = totalAmount.toFixed(2);
     totalVAT = totalVAT.toFixed(2);
     total = total.toFixed(2);
@@ -71,9 +66,25 @@ const PendingDocument = ({ pendingDocument, adjustmentRequests, fetchPendingDocu
                         <thead>
                             <tr>
                                 <th className="sortable" onClick={() => requestSort('adjustmentTypeName')}>Adjustment Type {getSortIndicator('adjustmentTypeName')}</th>
-                                <th className="sortable" onClick={() => requestSort('accountNum')}>Account Number {getSortIndicator('accountNum')}</th>
-                                <th className="sortable" onClick={() => requestSort('invoiceNum')}>Invoice Number {getSortIndicator('invoiceNum')}</th>
-                                <th className="sortable" onClick={() => requestSort('serviceNum')}>Service Number {getSortIndicator('serviceNum')}</th>
+                                {pendingDocument?.documentTypeDesc === 'B1+/-' ? (
+                                    <>
+                                        <th className="sortable" onClick={() => requestSort('accountNum')}>B1- Account Number {getSortIndicator('accountNum')}</th>
+                                        <th className="sortable" onClick={() => requestSort('invoiceNum')}>B1- Invoice Number {getSortIndicator('invoiceNum')}</th>
+                                        <th className="sortable" onClick={() => requestSort('serviceNum')}>B1- Service Number {getSortIndicator('serviceNum')}</th>
+                                    </>
+                                ) : (
+                                    <>
+                                        <th className="sortable" onClick={() => requestSort('accountNum')}>Account Number {getSortIndicator('accountNum')}</th>
+                                        <th className="sortable" onClick={() => requestSort('invoiceNum')}>Invoice Number {getSortIndicator('invoiceNum')}</th>
+                                        <th className="sortable" onClick={() => requestSort('serviceNum')}>Service Number {getSortIndicator('serviceNum')}</th>
+                                    </>
+                                )}
+                                {pendingDocument?.documentTypeDesc === 'B1+/-' && (
+                                    <>
+                                        <th className="sortable" onClick={() => requestSort('accountNumBPlus')}>B1+ Account Number {getSortIndicator('accountNumBPlus')}</th>
+                                        <th className="sortable" onClick={() => requestSort('serviceNumBPlus')}>B1+ Service Number {getSortIndicator('serviceNumBPlus')}</th>
+                                    </>
+                                )}
                                 <th className="sortable" onClick={() => requestSort('disputeMny')}>Amount {getSortIndicator('disputeMny')}</th>
                                 <th className="sortable" onClick={() => requestSort('vat')}>VAT {getSortIndicator('vat')}</th>
                                 <th className="sortable" onClick={() => requestSort('total')}>Total {getSortIndicator('total')}</th>
@@ -87,6 +98,12 @@ const PendingDocument = ({ pendingDocument, adjustmentRequests, fetchPendingDocu
                                     <td>{adj.accountNum}</td>
                                     <td>{adj.invoiceNum}</td>
                                     <td>{adj.serviceNum}</td>
+                                    {pendingDocument?.documentTypeDesc === 'B1+/-' && (
+                                        <>
+                                            <td>{adj.accountNumBPlus}</td>
+                                            <td>{adj.serviceNumBPlus}</td>
+                                        </>
+                                    )}
                                     <td align='center'>{formatNumber(Math.abs(adj.disputeMny).toFixed(2))}</td>
                                     <td align='center'>{formatNumber(Math.abs(adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100)).toFixed(2))}</td>
                                     <td align='center'>{formatNumber(Math.abs(adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100)).toFixed(2))}</td>
@@ -98,7 +115,7 @@ const PendingDocument = ({ pendingDocument, adjustmentRequests, fetchPendingDocu
                                 </tr>
                             ))}
                             <tr>
-                                <td colSpan="4" align='right'><strong>Total</strong></td>
+                                <td colSpan={pendingDocument?.documentTypeDesc === 'B1+/-' ? "6" : "4"} align='right'><strong>Total</strong></td>
                                 <td align='center'><strong>{formatNumber(totalAmount)}</strong></td>
                                 <td align='center'><strong>{formatNumber(totalVAT)}</strong></td>
                                 <td align='center'><strong>{formatNumber(total)}</strong></td>
