@@ -42,6 +42,7 @@ const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, select
                 selectedDocument?.reviewNote ? `[Reviewer]: ${selectedDocument.reviewNote}` : null,
                 selectedDocument?.approveNote ? `[Approver]: ${selectedDocument.approveNote}` : null,
                 selectedDocument?.financeNote ? `[Financial Reviewer]: ${selectedDocument.financeNote}` : null,
+                selectedDocument?.retriedNote ? `[Retrier]: ${selectedDocument.retriedNote}` : null,
             ];
             // Only show distinct notes
             const distinctNotes = Array.from(new Set(notes.filter(note => note)));
@@ -52,6 +53,7 @@ const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, select
                 selectedDocument?.reviewNote ? `[Reviewer]: ${selectedDocument.reviewNote}` : null,
                 selectedDocument?.approveNote ? `[Approver]: ${selectedDocument.approveNote}` : null,
                 selectedDocument?.financeNote ? `[Financial Reviewer]: ${selectedDocument.financeNote}` : null,
+                selectedDocument?.retriedNote ? `[Retrier]: ${selectedDocument.retriedNote}` : null,
             ];
             // Only show distinct notes
             const distinctNotes = Array.from(new Set(notes.filter(note => note)));
