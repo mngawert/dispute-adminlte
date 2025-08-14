@@ -118,13 +118,8 @@ const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, select
     let totalVAT = sortedAdjustmentRequests.reduce((sum, adj) => sum + Math.abs(adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100)), 0);
     let total = sortedAdjustmentRequests.reduce((sum, adj) => sum + Math.abs(adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100)), 0);
 
-    // If documentTypeDesc is 'B1+/-', divide totals by 2
-    if (documentTypeDesc === 'B1+/-') {
-        totalAmount = totalAmount / 2;
-        totalVAT = totalVAT / 2;
-        total = total / 2;
-    }
-
+    // No need to divide by 2 for B1+/- as rows already contain merged data
+    
     totalAmount = totalAmount.toFixed(2);
     totalVAT = totalVAT.toFixed(2);
     total = total.toFixed(2);
@@ -229,12 +224,28 @@ const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, select
                                     <table className="table table-head-fixed text-nowrap table-bordered table-hover">
                                         <thead>
                                             <tr>
-                                                <th className="sortable" onClick={() => requestSort('accountNum')}>Account Number {getSortIndicator('accountNum')}</th>
-                                                <th className="sortable" onClick={() => requestSort('invoiceNum')}>Invoice Number {getSortIndicator('invoiceNum')}</th>
-                                                <th className="sortable" onClick={() => requestSort('serviceNum')}>Service Number {getSortIndicator('serviceNum')}</th>
+                                                {documentTypeDesc === 'B1+/-' ? (
+                                                    <>
+                                                        <th className="sortable" onClick={() => requestSort('accountNum')}>B1- Account Number {getSortIndicator('accountNum')}</th>
+                                                        <th className="sortable" onClick={() => requestSort('invoiceNum')}>B1- Invoice Number {getSortIndicator('invoiceNum')}</th>
+                                                        <th className="sortable" onClick={() => requestSort('serviceNum')}>B1- Service Number {getSortIndicator('serviceNum')}</th>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <th className="sortable" onClick={() => requestSort('accountNum')}>Account Number {getSortIndicator('accountNum')}</th>
+                                                        <th className="sortable" onClick={() => requestSort('invoiceNum')}>Invoice Number {getSortIndicator('invoiceNum')}</th>
+                                                        <th className="sortable" onClick={() => requestSort('serviceNum')}>Service Number {getSortIndicator('serviceNum')}</th>
+                                                    </>
+                                                )}
                                                 <th className="sortable" onClick={() => requestSort('adjustmentTypeName')}>Adjustment Type {getSortIndicator('adjustmentTypeName')}</th>
                                                 {reviewType === 'Retry' && (
                                                     <th className="sortable" onClick={() => requestSort('requestStatus')}>Request Status {getSortIndicator('requestStatus')}</th>
+                                                )}
+                                                {documentTypeDesc === 'B1+/-' && (
+                                                    <>
+                                                        <th className="sortable" onClick={() => requestSort('accountNumBPlus')}>B1+ Account Number {getSortIndicator('accountNumBPlus')}</th>
+                                                        <th className="sortable" onClick={() => requestSort('serviceNumBPlus')}>B1+ Service Number {getSortIndicator('serviceNumBPlus')}</th>
+                                                    </>
                                                 )}
                                                 <th className="sortable" onClick={() => requestSort('disputeMny')}>Amount {getSortIndicator('disputeMny')}</th>
                                                 <th className="sortable" onClick={() => requestSort('vat')}>VAT {getSortIndicator('vat')}</th>
@@ -251,13 +262,22 @@ const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, select
                                                     {reviewType === 'Retry' && (
                                                         <td>{adj.requestStatus}</td>
                                                     )}
+                                                    {documentTypeDesc === 'B1+/-' && (
+                                                        <>
+                                                            <td>{adj.accountNumBPlus}</td>
+                                                            <td>{adj.serviceNumBPlus}</td>
+                                                        </>
+                                                    )}
                                                     <td align='center'>{formatNumber(Math.abs(adj.disputeMny).toFixed(2))}</td>
                                                     <td align='center'>{formatNumber(Math.abs(adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100)).toFixed(2))}</td>
                                                     <td align='center'>{formatNumber(Math.abs(adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100)).toFixed(2))}</td>
                                                 </tr>
                                             ))}
                                             <tr>
-                                                <td colSpan={reviewType === 'Retry' ? 5 : 4} align='right'><strong>Total</strong></td>
+                                                <td colSpan={
+                                                    (documentTypeDesc === 'B1+/-' ? 2 : 0) + // Add 2 for B1+ columns if document type is B1+/-
+                                                    (reviewType === 'Retry' ? 5 : 4) // Base columns including retry status if needed
+                                                } align='right'><strong>Total</strong></td>
                                                 <td align='center'><strong>{formatNumber(Math.abs(totalAmount))}</strong></td>
                                                 <td align='center'><strong>{formatNumber(Math.abs(totalVAT))}</strong></td>
                                                 <td align='center'><strong>{formatNumber(Math.abs(total))}</strong></td>
