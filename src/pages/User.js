@@ -124,15 +124,15 @@ const User = () => {
             // Convert empty date strings to null
             startDate: userForm.startDate || null,
             endDate: userForm.endDate || null,
-            empCode: staffInfo?.empCode || '',
-            titleTh: staffInfo?.titleTh || '',
-            firstNameTh: staffInfo?.firstNameTh || '',
-            lastNameTh: staffInfo?.lastNameTh || '',
-            currDepFull: staffInfo?.currDepFull || '',
-            posAbbr: staffInfo?.posAbbr || '',
-            email: staffInfo?.email || '',
-            tel: staffInfo?.tel || '',
-            cctr: staffInfo?.cctr || '' // Add cctr from staffInfo
+            empCode: staffInfo?.empCode || userForm.empCode || '',
+            titleTh: staffInfo?.titleTh || userForm.titleTh || '',
+            firstNameTh: staffInfo?.firstNameTh || userForm.firstNameTh || '',
+            lastNameTh: staffInfo?.lastNameTh || userForm.lastNameTh || '',
+            currDepFull: staffInfo?.currDepFull || userForm.currDepFull || '',
+            posAbbr: staffInfo?.posAbbr || userForm.posAbbr || '',
+            email: staffInfo?.email || userForm.email || '',
+            tel: staffInfo?.tel || userForm.tel || '',
+            cctr: staffInfo?.cctr || userForm.cctr || ''
         };
     };
 
