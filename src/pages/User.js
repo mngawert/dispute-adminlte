@@ -421,15 +421,15 @@ const User = () => {
             {/* Modal */}
             {showModal && (
                 <div className="modal" style={{ display: 'block' }}>
-                    <div className="modal-dialog" style={{ maxWidth: 900 }}>
-                        <div className="modal-content">
+                    <div className="modal-dialog" style={{ maxWidth: 900, maxHeight: '90vh' }}>
+                        <div className="modal-content" style={{ maxHeight: '90vh', display: 'flex', flexDirection: 'column' }}>
                             <div className="modal-header">
                                 <h5 className="modal-title">{isEditMode ? 'Edit User' : 'Create User'}</h5>
                                 <button type="button" className="close" onClick={closeModal}>
                                     <span>&times;</span>
                                 </button>
                             </div>
-                            <div className="modal-body">
+                            <div className="modal-body" style={{ overflowY: 'auto' }}>
                                 <div className="row">
                                     {/* Left Column */}
                                     <div className="col-md-6">
@@ -663,8 +663,8 @@ const User = () => {
             {/* Group Management Modal */}
             {showGroupModal && (
                 <div className="modal" style={{ display: 'block' }}>
-                    <div className="modal-dialog">
-                        <div className="modal-content">
+                    <div className="modal-dialog" style={{ maxWidth: 600, maxHeight: '90vh' }}>
+                        <div className="modal-content" style={{ maxHeight: '90vh', display: 'flex', flexDirection: 'column' }}>
                             <div className="modal-header">
                                 <h5 className="modal-title">
                                     Manage Groups for User: <strong>{users.find(user => user.userId === selectedUserId)?.username}</strong>
@@ -673,7 +673,7 @@ const User = () => {
                                     <span>&times;</span>
                                 </button>
                             </div>
-                            <div className="modal-body">
+                            <div className="modal-body" style={{ overflowY: 'auto' }}>
                                 <h6>Assigned Groups</h6>
                                 <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
                                     <ul className="list-group">
