@@ -1,8 +1,26 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { CPS_MAP_HASH, DOCUMENT_TYPE } from "../contexts/Constants";
 import { formatNumber } from '../utils/utils'; // Import the utility function
 
 const MakeAdjustment = ({ adjustmentTypes, selectedAdjustmentType, setSelectedAdjustmentType, selectedCostedEvent, adjustmentNote, setAdjustmentNote, adjustmentAmount, setAdjustmentAmount, handleCreateAdjustmentRequest, documentType, selectedAccount }) => {
+    const [filteredAdjustmentTypes, setFilteredAdjustmentTypes] = useState([]);
+    const [adjustmentTypeFilter, setAdjustmentTypeFilter] = useState('');
+
+    // Filter adjustment types when the filter changes or on initial load
+    useEffect(() => {
+        if (documentType === DOCUMENT_TYPE.ADJUST_PLUS) {
+            if (!adjustmentTypeFilter) {
+                setFilteredAdjustmentTypes(adjustmentTypes);
+            } else {
+                const filtered = adjustmentTypes.filter(adjType => 
+                    adjType.adjustmentTypeName.toLowerCase().includes(adjustmentTypeFilter.toLowerCase())
+                );
+                setFilteredAdjustmentTypes(filtered);
+            }
+        } else {
+            setFilteredAdjustmentTypes(adjustmentTypes);
+        }
+    }, [adjustmentTypeFilter, adjustmentTypes, documentType]);
 
     const handleChangeAdjustmentType = (e) => {
         const selectedAdjustmentTypeId = e.target.value;
@@ -26,36 +44,56 @@ const MakeAdjustment = ({ adjustmentTypes, selectedAdjustmentType, setSelectedAd
     return (
         <>
             <div className="row">
-                <div className="col-sm-3 form-group">
-                    {documentType === DOCUMENT_TYPE.B ? (
-                        <div>
-                            <label>Make adjustment type</label>
-                            <div className="form-control-plaintext font-weight-bold">B1+/-</div>
-                        </div>
-                    ) : (
-                        <>
-                            <label>Make adjustment type</label>
-                            <select className="form-control" value={selectedAdjustmentType?.adjustmentTypeId || ''} onChange={handleChangeAdjustmentType}>
-                                <option value="">Select Adjustment Type</option>
-                                {adjustmentTypes.map((adjType) => (
-                                    <option key={adjType.adjustmentTypeId} value={adjType.adjustmentTypeId}>
-                                        {adjType.adjustmentTypeName}
-                                    </option>
-                                ))}
-                            </select>
-                        </>
-                    )}
+                {documentType === DOCUMENT_TYPE.B ? (
+                    <div className="col-sm-3 form-group">
+                        <label>Make adjustment type</label>
+                        <div className="form-control-plaintext font-weight-bold">B1+/-</div>
+                    </div>
+                ) : (
+                    <div className="col-sm-3 form-group">
+                        <label>Make adjustment type</label>
+                        {documentType === DOCUMENT_TYPE.ADJUST_PLUS && (
+                            <div className="input-group mb-2">
+                                <input 
+                                    type="text" 
+                                    className="form-control" 
+                                    placeholder="Filter adjustment types..." 
+                                    value={adjustmentTypeFilter} 
+                                    onChange={(e) => setAdjustmentTypeFilter(e.target.value)} 
+                                />
+                                {adjustmentTypeFilter && (
+                                    <div className="input-group-append">
+                                        <button 
+                                            className="btn btn-outline-secondary" 
+                                            type="button"
+                                            onClick={() => setAdjustmentTypeFilter('')}
+                                            title="Clear filter"
+                                        >
+                                            <i className="fa fa-times"></i>
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                        <select className="form-control" value={selectedAdjustmentType?.adjustmentTypeId || ''} onChange={handleChangeAdjustmentType}>
+                            <option value="">Select Adjustment Type</option>
+                            {filteredAdjustmentTypes.map((adjType) => (
+                                <option key={adjType.adjustmentTypeId} value={adjType.adjustmentTypeId}>
+                                    {adjType.adjustmentTypeName}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                )}
+                <div className="col-sm-3 form-group d-flex flex-column" style={{ justifyContent: documentType === DOCUMENT_TYPE.ADJUST_PLUS ? 'flex-end' : 'flex-start' }}>
+                    <label>Amount <small>Thai Baht (excl VAT).</small> </label>
+                    <input type="number" className="form-control" value={adjustmentAmount} onChange={handleAmountChange} />                    
                 </div>
-                <div className="col-sm-3 form-group">
-                    <label>Amount</label>
-                    <input type="number" className="form-control" value={adjustmentAmount} onChange={handleAmountChange} />
-                    <small>Thai Baht (excl VAT).</small>
-                </div>
-                <div className="col-sm-3 form-group">
+                <div className="col-sm-3 form-group d-flex flex-column" style={{ justifyContent: documentType === DOCUMENT_TYPE.ADJUST_PLUS ? 'flex-end' : 'flex-start' }}>
                     <label>VAT</label>
                     <input type="text" className="form-control" readOnly value={formatNumber(vat)} />
                 </div>
-                <div className="col-sm-3 form-group">
+                <div className="col-sm-3 form-group d-flex flex-column" style={{ justifyContent: documentType === DOCUMENT_TYPE.ADJUST_PLUS ? 'flex-end' : 'flex-start' }}>
                     <label>Total</label>
                     <input type="text" className="form-control" readOnly value={formatNumber(total)} />
                 </div>
