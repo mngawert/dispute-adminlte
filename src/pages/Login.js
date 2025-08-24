@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import api from "../api";
 
 const Login = () => {
@@ -6,6 +6,17 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false); // Add loading state
+
+  useEffect(() => {
+    // Check if there's a session query parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionParam = urlParams.get('session');
+    
+    // If no session parameter, redirect to intranet
+    if (!sessionParam) {
+      window.location.href = 'https://intranet.ntplc.co.th';
+    }
+  }, []);
 
   const handleLogin = async () => {
     // Check if username and password are filled
@@ -36,7 +47,7 @@ const Login = () => {
       }
 
       // Redirect to the earlier wanted URL or default to "/home"
-      const redirectUrl = '/NTAdjustor/home';
+      const redirectUrl = '/NTAdjustor';
       localStorage.removeItem('redirectUrl');
       window.location.href = redirectUrl;      
     } catch (error) {
