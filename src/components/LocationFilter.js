@@ -117,6 +117,9 @@ const LocationFilter = ({
   const getFilteredLocations = () => {
     let filtered = [...locations];
     
+    // Filter out items with null locationCode
+    filtered = filtered.filter(loc => loc.locationCode != null);
+    
     // Filter to show only locations with status=null when checkbox is checked
     if (showOnlyInactiveLocations) {
       filtered = filtered.filter(loc => loc.status === null);
