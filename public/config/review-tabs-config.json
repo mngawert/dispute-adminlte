@@ -1,0 +1,14 @@
+{
+  "tabConfig": {
+    "Adjust-": true,
+    "Adjust+": true,
+    "P31": true,
+    "P32": true,
+    "P35": true,
+    "P36": true,
+    "P3-": true,
+    "P3+": true,
+    "B1+/-": true
+  },
+  "financeRestrictedTabs": ["Adjust-", "Adjust+", "B1+/-"]
+}

@@ -3,6 +3,7 @@ import api from '../api';
 import { Tab, Tabs } from 'react-bootstrap';
 import ReviewDocType from './ReviewDocType';
 import ContentHeader from '../components/ContentHeader';
+import { loadReviewTabsConfig } from '../utils/configLoader';
 
 const Review = ({ reviewType, prevDocumentStatus }) => {
 
@@ -11,10 +12,46 @@ const Review = ({ reviewType, prevDocumentStatus }) => {
   const [selectedDocument, setSelectedDocument] = useState({});
   const [adjustmentRequests, setAdjustmentRequests] = useState([]);
   const [activeTab, setActiveTab] = useState('P35');
+  const [visibleTabs, setVisibleTabs] = useState({});
+  const [config, setConfig] = useState({
+    tabConfig: {}, 
+    financeRestrictedTabs: []
+  });
 
+  // Load configuration on component mount
   useEffect(() => {
-    getAllDocuments();
+    const loadConfig = async () => {
+      const configData = await loadReviewTabsConfig();
+      setConfig(configData);
+    };
+    
+    loadConfig();
   }, []);
+
+  // Update visible tabs when config or reviewType changes
+  useEffect(() => {
+    if (Object.keys(config.tabConfig).length === 0) return;
+
+    // Calculate visible tabs based on configuration and review type
+    const calculatedVisibleTabs = { ...config.tabConfig };
+    
+    // For Finance review, hide restricted tabs regardless of config
+    if (reviewType === 'Finance') {
+      config.financeRestrictedTabs.forEach(tab => {
+        calculatedVisibleTabs[tab] = false;
+      });
+    }
+    
+    setVisibleTabs(calculatedVisibleTabs);
+    
+    // Find the first visible tab to set as active by default
+    const firstVisibleTab = Object.keys(calculatedVisibleTabs).find(tab => calculatedVisibleTabs[tab]);
+    if (firstVisibleTab && !calculatedVisibleTabs[activeTab]) {
+      setActiveTab(firstVisibleTab);
+    }
+    
+    getAllDocuments();
+  }, [config, reviewType]);
 
   const handleInputChange = (e) => {
     setDocumentNum(e.target.value);
@@ -37,8 +74,14 @@ const Review = ({ reviewType, prevDocumentStatus }) => {
         const doc = fetchedDocuments[0];
         console.log('Selected Document:', doc);
         setSelectedDocument(doc);
-        setActiveTab(doc.documentTypeDesc);
-        fetchAdjustmentRequests(doc.documentNum);
+        // Only set active tab if it's visible
+        if (visibleTabs[doc.documentTypeDesc]) {
+          setActiveTab(doc.documentTypeDesc);
+          fetchAdjustmentRequests(doc.documentNum);
+        } else {
+          // If tab isn't visible, don't switch to it
+          setAdjustmentRequests([]);
+        }
       } else {
         setSelectedDocument({});
         setAdjustmentRequests([]);
@@ -96,9 +139,11 @@ const Review = ({ reviewType, prevDocumentStatus }) => {
   };
 
   const handleTabSelect = (k) => {
-    setActiveTab(k);
-    setSelectedDocument({});
-    setAdjustmentRequests([]);
+    if (visibleTabs[k]) {
+      setActiveTab(k);
+      setSelectedDocument({});
+      setAdjustmentRequests([]);
+    }
   };
 
   return (
@@ -120,35 +165,47 @@ const Review = ({ reviewType, prevDocumentStatus }) => {
               </div>
 
               <Tabs activeKey={activeTab} onSelect={handleTabSelect}>
-                {reviewType !== 'Finance' && (
+                {visibleTabs['Adjust-'] && (
                   <Tab eventKey="Adjust-" title="Adjust-">
                     <ReviewDocType documentTypeDesc='Adjust-' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} />
                   </Tab>
                 )}
-                {reviewType !== 'Finance' && (
+                {visibleTabs['Adjust+'] && (
                   <Tab eventKey="Adjust+" title="Adjust+">
                     <ReviewDocType documentTypeDesc='Adjust+' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} />
                   </Tab>
                 )}
-                <Tab eventKey="P31" title="P31">
-                  <ReviewDocType documentTypeDesc='P31' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} />
-                </Tab>
-                <Tab eventKey="P32" title="P32">
-                  <ReviewDocType documentTypeDesc='P32' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} />
-                </Tab>
-                <Tab eventKey="P35" title="P35">
-                  <ReviewDocType documentTypeDesc='P35' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} />
-                </Tab>
-                <Tab eventKey="P36" title="P36">
-                  <ReviewDocType documentTypeDesc='P36' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} />
-                </Tab>
-                <Tab eventKey="P3-" title="P3-">
-                  <ReviewDocType documentTypeDesc='P3-' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} />
-                </Tab>
-                <Tab eventKey="P3+" title="P3+">
-                  <ReviewDocType documentTypeDesc='P3+' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} />
-                </Tab>
-                {reviewType !== 'Finance' && (
+                {visibleTabs['P31'] && (
+                  <Tab eventKey="P31" title="P31">
+                    <ReviewDocType documentTypeDesc='P31' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} />
+                  </Tab>
+                )}
+                {visibleTabs['P32'] && (
+                  <Tab eventKey="P32" title="P32">
+                    <ReviewDocType documentTypeDesc='P32' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} />
+                  </Tab>
+                )}
+                {visibleTabs['P35'] && (
+                  <Tab eventKey="P35" title="P35">
+                    <ReviewDocType documentTypeDesc='P35' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} />
+                  </Tab>
+                )}
+                {visibleTabs['P36'] && (
+                  <Tab eventKey="P36" title="P36">
+                    <ReviewDocType documentTypeDesc='P36' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} />
+                  </Tab>
+                )}
+                {visibleTabs['P3-'] && (
+                  <Tab eventKey="P3-" title="P3-">
+                    <ReviewDocType documentTypeDesc='P3-' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} />
+                  </Tab>
+                )}
+                {visibleTabs['P3+'] && (
+                  <Tab eventKey="P3+" title="P3+">
+                    <ReviewDocType documentTypeDesc='P3+' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} />
+                  </Tab>
+                )}
+                {visibleTabs['B1+/-'] && (
                   <Tab eventKey="B1+/-" title="B1+/-">
                     <ReviewDocType documentTypeDesc='B1+/-' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} />
                   </Tab>
