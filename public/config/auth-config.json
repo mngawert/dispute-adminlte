@@ -1,0 +1,6 @@
+{
+  "auth": {
+    "requireSessionQueryParam": true,
+    "intranetRedirectUrl": "https://intranet.ntplc.co.th"
+  }
+}

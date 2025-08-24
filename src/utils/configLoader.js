@@ -43,3 +43,19 @@ export const loadReviewTabsConfig = async () => {
   const config = await loadConfig('/config/review-tabs-config.json');
   return config || defaultConfig;
 };
+
+/**
+ * Loads the authentication configuration
+ * @returns {Promise<{auth: {requireSessionQueryParam: boolean, intranetRedirectUrl: string}}>}
+ */
+export const loadAuthConfig = async () => {
+  const defaultConfig = {
+    auth: {
+      requireSessionQueryParam: true,
+      intranetRedirectUrl: 'https://intranet.ntplc.co.th'
+    }
+  };
+  
+  const config = await loadConfig('/config/auth-config.json');
+  return config || defaultConfig;
+};

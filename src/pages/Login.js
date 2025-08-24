@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import api from "../api";
+import config from "../config";
+import { loadAuthConfig } from "../utils/configLoader";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -8,14 +10,38 @@ const Login = () => {
   const [loading, setLoading] = useState(false); // Add loading state
 
   useEffect(() => {
-    // Check if there's a session query parameter
-    const urlParams = new URLSearchParams(window.location.search);
-    const sessionParam = urlParams.get('session');
+    // Load authentication config from the public config file
+    const checkSessionParam = async () => {
+      try {
+        // Load auth config from public directory
+        const authConfig = await loadAuthConfig();
+        
+        // Only check for session parameter if the feature is enabled in config
+        if (authConfig.auth.requireSessionQueryParam) {
+          // Check if there's a session query parameter
+          const urlParams = new URLSearchParams(window.location.search);
+          const sessionParam = urlParams.get('session');
+          
+          // If no session parameter, redirect to intranet
+          if (!sessionParam) {
+            window.location.href = authConfig.auth.intranetRedirectUrl;
+          }
+        }
+      } catch (error) {
+        console.error("Failed to load auth config:", error);
+        // Fallback to static config if dynamic loading fails
+        if (config.auth.requireSessionQueryParam) {
+          const urlParams = new URLSearchParams(window.location.search);
+          const sessionParam = urlParams.get('session');
+          
+          if (!sessionParam) {
+            window.location.href = config.auth.intranetRedirectUrl;
+          }
+        }
+      }
+    };
     
-    // If no session parameter, redirect to intranet
-    if (!sessionParam) {
-      window.location.href = 'https://intranet.ntplc.co.th';
-    }
+    checkSessionParam();
   }, []);
 
   const handleLogin = async () => {
