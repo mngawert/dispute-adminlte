@@ -8,12 +8,25 @@
  * @returns {Promise<any>} - Promise resolving to the configuration object
  */
 export const loadConfig = async (configPath) => {
+  // Get the base URL from the current window location
+  const baseUrl = window.location.origin + (window.location.pathname.endsWith('/') ? window.location.pathname.slice(0, -1) : window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/')));
+  
+  // Add a timestamp to prevent caching
+  const timestamp = new Date().getTime();
+  const fullPath = `${baseUrl}${configPath}?t=${timestamp}`;
+  
+  console.log(`Loading configuration from: ${fullPath}`);
+  
   try {
-    const response = await fetch(configPath);
+    const response = await fetch(fullPath);
     if (!response.ok) {
+      console.error(`Failed to load config: ${response.status} ${response.statusText}`);
       throw new Error(`Failed to load config: ${response.status} ${response.statusText}`);
     }
-    return await response.json();
+    
+    const config = await response.json();
+    console.log(`Successfully loaded config from ${configPath}:`, config);
+    return config;
   } catch (error) {
     console.error(`Error loading configuration from ${configPath}:`, error);
     return null;

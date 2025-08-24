@@ -13,19 +13,28 @@ const Login = () => {
     // Load authentication config from the public config file
     const checkSessionParam = async () => {
       try {
+        console.log("Login: Loading auth configuration...");
         // Load auth config from public directory
         const authConfig = await loadAuthConfig();
+        console.log("Login: Auth configuration loaded:", authConfig);
         
         // Only check for session parameter if the feature is enabled in config
         if (authConfig.auth.requireSessionQueryParam) {
+          console.log("Login: Session parameter check is enabled");
           // Check if there's a session query parameter
           const urlParams = new URLSearchParams(window.location.search);
           const sessionParam = urlParams.get('session');
+          console.log("Login: Session parameter value:", sessionParam);
           
           // If no session parameter, redirect to intranet
           if (!sessionParam) {
+            console.log("Login: No session parameter, redirecting to:", authConfig.auth.intranetRedirectUrl);
             window.location.href = authConfig.auth.intranetRedirectUrl;
+          } else {
+            console.log("Login: Session parameter found, continuing to login page");
           }
+        } else {
+          console.log("Login: Session parameter check is disabled in config");
         }
       } catch (error) {
         console.error("Failed to load auth config:", error);

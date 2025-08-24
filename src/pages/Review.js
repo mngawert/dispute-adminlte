@@ -21,8 +21,14 @@ const Review = ({ reviewType, prevDocumentStatus }) => {
   // Load configuration on component mount
   useEffect(() => {
     const loadConfig = async () => {
-      const configData = await loadReviewTabsConfig();
-      setConfig(configData);
+      try {
+        console.log("Review: Loading tab configuration...");
+        const configData = await loadReviewTabsConfig();
+        console.log("Review: Tab configuration loaded:", configData);
+        setConfig(configData);
+      } catch (error) {
+        console.error("Review: Failed to load tab configuration:", error);
+      }
     };
     
     loadConfig();
