@@ -24,6 +24,9 @@ const headers = {
     status: 'Status',
     comments: 'Comments',
     errorMessage: 'Error Message',
+    accountNumBPlus: 'Account Number B1+',
+    serviceNumBPlus: 'Service Number B1+',
+    adjustmentTypeNameBPlus: 'Adjustment Type B1+'
     // Add other headers as needed
 };
 
