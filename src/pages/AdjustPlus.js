@@ -40,27 +40,8 @@ const AdjustPlus = ({
         pendingDocument, adjustmentRequests, fetchPendingDocumentAndRequests, deleteAdjustmentRequest, updateDocumentStatus,
     } = useDocumentContext();
 
-    // State for adjustment type names and filtering
+    // State for adjustment type names
     const [adjustmentTypeNames, setAdjustmentTypeNames] = useState(initialAdjustmentTypeNames);
-    const [adjustmentTypeFilter, setAdjustmentTypeFilter] = useState('');
-    const [filteredAdjustmentTypes, setFilteredAdjustmentTypes] = useState([]);
-
-    // Filter adjustment types based on search text
-    useEffect(() => {
-        if (!adjustmentTypes) {
-            setFilteredAdjustmentTypes([]);
-            return;
-        }
-        
-        if (adjustmentTypeFilter.trim() === '') {
-            setFilteredAdjustmentTypes(adjustmentTypes);
-        } else {
-            const filtered = adjustmentTypes.filter(type => 
-                type.adjustmentTypeName.toLowerCase().includes(adjustmentTypeFilter.toLowerCase())
-            );
-            setFilteredAdjustmentTypes(filtered);
-        }
-    }, [adjustmentTypeFilter, adjustmentTypes]);
 
     const handleSelectAccount = (account) => {
         setSelectedAccount(account);
@@ -132,12 +113,12 @@ const AdjustPlus = ({
                             </div>
                         </div>
                         
-                        {/* Adjustment Type Names Filter and Text Filter in same row */}
+                        {/* Adjustment Type Names Filter */}
                         {showAdjustmentTypeNamesFilter && (
                             <div className="card">
                                 <div className="card-body">
                                     <div className="row">
-                                        <div className="col-md-6">
+                                        <div className="col-md-12">
                                             {/* Keep the existing AdjustmentTypeNamesFilter component */}
                                             <AdjustmentTypeNamesFilter 
                                                 initialAdjustmentTypeNames={initialAdjustmentTypeNames} 
@@ -145,35 +126,6 @@ const AdjustPlus = ({
                                                 setAdjustmentTypeNames={setAdjustmentTypeNames} 
                                                 getAdjustmentTypes={getAdjustmentTypes} 
                                             />
-                                        </div>
-                                        <div className="col-md-6">
-                                            <div className="form-group">
-                                                <label>Filter Adjustment Types</label>
-                                                <div className="input-group">
-                                                    <input
-                                                        type="text"
-                                                        className="form-control"
-                                                        placeholder="Type to filter adjustment types..."
-                                                        value={adjustmentTypeFilter}
-                                                        onChange={(e) => setAdjustmentTypeFilter(e.target.value)}
-                                                    />
-                                                    {adjustmentTypeFilter && (
-                                                        <div className="input-group-append">
-                                                            <button 
-                                                                className="btn btn-outline-secondary" 
-                                                                type="button"
-                                                                onClick={() => setAdjustmentTypeFilter('')}
-                                                                title="Clear filter"
-                                                            >
-                                                                <i className="fa fa-times"></i>
-                                                            </button>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                                {/* <small className="form-text text-muted">
-                                                    {filteredAdjustmentTypes.length} of {adjustmentTypes?.length || 0} adjustment types shown
-                                                </small> */}
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -184,7 +136,7 @@ const AdjustPlus = ({
                         <div className="card">
                             <div className="card-body">
                                 <MakeAdjustment 
-                                    adjustmentTypes={filteredAdjustmentTypes} 
+                                    adjustmentTypes={adjustmentTypes} 
                                     selectedAdjustmentType={selectedAdjustmentType} 
                                     setSelectedAdjustmentType={setSelectedAdjustmentType} 
                                     adjustmentNote={adjustmentNote} 
