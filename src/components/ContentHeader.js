@@ -3,11 +3,13 @@ import './ContentHeader.css'; // We'll create this file for custom styling
 
 const ContentHeader = ({ title }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [imageError, setImageError] = useState(false);
   const dropdownRef = useRef(null);
   
   const userLogin = JSON.parse(localStorage.getItem('userLogin'));
   const username = userLogin?.username;
   const homeLocationCode = userLogin?.homeLocationCode;
+  const empCode = userLogin?.empCode;
   const titleTh = userLogin?.titleTh || '';
   const firstNameTh = userLogin?.firstNameTh || '';
   const lastNameTh = userLogin?.lastNameTh || '';
@@ -50,14 +52,30 @@ const ContentHeader = ({ title }) => {
             <div className="float-sm-right user-profile-container" ref={dropdownRef}>
               <div className="user-profile-icon" onClick={toggleDropdown}>
                 <div className="user-avatar">
-                  <i className="nav-icon fas fa-user"></i>
+                  {empCode && !imageError ? (
+                    <img 
+                      src={`http://intra.tot.co.th/data/intranet/data/employee/${empCode}.jpg`}
+                      alt="Profile"
+                      onError={() => setImageError(true)}
+                    />
+                  ) : (
+                    <i className="nav-icon fas fa-user"></i>
+                  )}
                 </div>
               </div>
               {dropdownOpen && (
                 <div className="user-profile-dropdown">
                   <div className="user-profile-header">
                     <div className="user-avatar-large">
-                      <i className="nav-icon fas fa-user"></i>
+                      {empCode && !imageError ? (
+                        <img 
+                          src={`http://intra.tot.co.th/data/intranet/data/employee/${empCode}.jpg`}
+                          alt="Profile"
+                          onError={() => setImageError(true)}
+                        />
+                      ) : (
+                        <i className="nav-icon fas fa-user"></i>
+                      )}
                     </div>
                     <h5>{username}</h5>
                   </div>
