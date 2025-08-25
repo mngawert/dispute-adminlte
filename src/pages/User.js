@@ -119,6 +119,10 @@ const User = () => {
 
     // Update the prepareUserPayload function to include cctr
     const prepareUserPayload = () => {
+
+        console.log("userForm:", userForm);
+        console.log("Staff Info:", staffInfo);
+
         return {
             ...userForm,
             // Convert empty date strings to null
