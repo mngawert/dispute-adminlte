@@ -38,6 +38,7 @@
 
 .user-avatar i {
   font-size: 16px;
+  line-height: 0; /* Fix vertical alignment of icons */
 }
 
 .user-avatar-large {
@@ -61,6 +62,7 @@
 
 .user-avatar-large i {
   font-size: 28px;
+  line-height: 0; /* Fix vertical alignment of icons */
 }
 
 .user-profile-dropdown {
@@ -96,6 +98,25 @@
 
 .user-detail-item:last-child {
   border-bottom: none;
+}
+
+.logout-item {
+  cursor: pointer;
+  color: #dc3545;
+  transition: background-color 0.2s;
+  padding: 8px;
+  border-radius: 4px;
+  margin: 0 -8px;
+}
+
+.logout-item:hover {
+  background-color: rgba(220, 53, 69, 0.1);
+}
+
+.dropdown-divider {
+  height: 1px;
+  background-color: #e9ecef;
+  margin: 8px 0;
 }
 
 @keyframes fadeIn {

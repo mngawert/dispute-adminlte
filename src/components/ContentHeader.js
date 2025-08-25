@@ -33,6 +33,11 @@ const ContentHeader = ({ title }) => {
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
+  
+  const handleLogout = () => {
+    localStorage.removeItem("authToken");
+    window.location.href = "/NTAdjustor/login"; // Redirect to login page with basepath
+  };
 
   return (
     <div className="content-header">
@@ -45,32 +50,37 @@ const ContentHeader = ({ title }) => {
             <div className="float-sm-right user-profile-container" ref={dropdownRef}>
               <div className="user-profile-icon" onClick={toggleDropdown}>
                 <div className="user-avatar">
-                  <i className="fas fa-user"></i>
+                  <i className="nav-icon fas fa-user"></i>
                 </div>
               </div>
               {dropdownOpen && (
                 <div className="user-profile-dropdown">
                   <div className="user-profile-header">
                     <div className="user-avatar-large">
-                      <i className="fas fa-user"></i>
+                      <i className="nav-icon fas fa-user"></i>
                     </div>
                     <h5>{username}</h5>
                   </div>
                   <div className="user-profile-details">
                     <div className="user-detail-item">
-                      <i className="fas fa-user mr-2"></i>
+                      <i className="nav-icon fas fa-user mr-2"></i>
                       <span>Username: {username}</span>
                     </div>
                     <div className="user-detail-item">
-                      <i className="fas fa-map-marker-alt mr-2"></i>
+                      <i className="nav-icon fas fa-map-marker-alt mr-2"></i>
                       <span>Location: {homeLocationCode}</span>
                     </div>
                     {thaiNameDisplay && (
                       <div className="user-detail-item">
-                        <i className="fas fa-id-card mr-2"></i>
+                        <i className="nav-icon fas fa-id-card mr-2"></i>
                         <span>Name: {thaiNameDisplay}</span>
                       </div>
                     )}
+                    <div className="dropdown-divider"></div>
+                    <div className="user-detail-item logout-item" onClick={handleLogout}>
+                      <i className="nav-icon fas fa-sign-out-alt mr-2"></i>
+                      <span>Logout</span>
+                    </div>
                   </div>
                 </div>
               )}

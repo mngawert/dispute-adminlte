@@ -33,7 +33,7 @@ export default function Sidebar() {
   return (
     <aside className="main-sidebar sidebar-dark-primary elevation-4">
       <a href="/NTAdjustor/" className="brand-link"> {/* Add basepath */}
-        <img src="dist/img/logo_nt.svg" alt="NT" className="brand-image" />
+        <img src={`${process.env.PUBLIC_URL}/dist/img/logo_nt.svg`} alt="NT" className="brand-image" />
         <span className="brand-text font-weight-light"> Adjustor Online</span>
       </a>
       <div className="sidebar">
