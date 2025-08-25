@@ -85,18 +85,53 @@ const MakeAdjustment = ({ adjustmentTypes, selectedAdjustmentType, setSelectedAd
                         </select>
                     </div>
                 )}
-                <div className="col-sm-3 form-group d-flex flex-column" style={{ justifyContent: documentType === DOCUMENT_TYPE.ADJUST_PLUS ? 'flex-end' : 'flex-start' }}>
-                    <label>Amount <small>Thai Baht (excl VAT).</small> </label>
-                    <input type="number" className="form-control" value={adjustmentAmount} onChange={handleAmountChange} />                    
-                </div>
-                <div className="col-sm-3 form-group d-flex flex-column" style={{ justifyContent: documentType === DOCUMENT_TYPE.ADJUST_PLUS ? 'flex-end' : 'flex-start' }}>
-                    <label>VAT</label>
-                    <input type="text" className="form-control" readOnly value={formatNumber(vat)} />
-                </div>
-                <div className="col-sm-3 form-group d-flex flex-column" style={{ justifyContent: documentType === DOCUMENT_TYPE.ADJUST_PLUS ? 'flex-end' : 'flex-start' }}>
-                    <label>Total</label>
-                    <input type="text" className="form-control" readOnly value={formatNumber(total)} />
-                </div>
+                
+                {documentType === DOCUMENT_TYPE.ADJUST_PLUS ? (
+                    // For Adjust+, align the input with the dropdown from the first column
+                    <div className="col-sm-3 form-group d-flex flex-column">
+                        <label>Amount <small>Thai Baht (excl VAT).</small></label>
+                        {/* Using flex layout with margin-top to perfectly align with dropdown */}
+                        <div className="d-flex flex-column" style={{ flex: 1, justifyContent: 'flex-end' }}>
+                            <input type="number" className="form-control" value={adjustmentAmount} onChange={handleAmountChange} />
+                        </div>
+                    </div>
+                ) : (
+                    // For other document types, use the existing layout
+                    <div className="col-sm-3 form-group d-flex flex-column" style={{ justifyContent: 'flex-start' }}>
+                        <label>Amount <small>Thai Baht (excl VAT).</small> </label>
+                        <input type="number" className="form-control" value={adjustmentAmount} onChange={handleAmountChange} />                    
+                    </div>
+                )}
+                
+                {documentType === DOCUMENT_TYPE.ADJUST_PLUS ? (
+                    <div className="col-sm-3 form-group d-flex flex-column">
+                        <label>VAT</label>
+                        {/* Using flex layout with margin-top to perfectly align with dropdown */}
+                        <div className="d-flex flex-column" style={{ flex: 1, justifyContent: 'flex-end' }}>
+                            <input type="text" className="form-control" readOnly value={formatNumber(vat)} />
+                        </div>
+                    </div>
+                ) : (
+                    <div className="col-sm-3 form-group d-flex flex-column" style={{ justifyContent: 'flex-start' }}>
+                        <label>VAT</label>
+                        <input type="text" className="form-control" readOnly value={formatNumber(vat)} />
+                    </div>
+                )}
+                
+                {documentType === DOCUMENT_TYPE.ADJUST_PLUS ? (
+                    <div className="col-sm-3 form-group d-flex flex-column">
+                        <label>Total</label>
+                        {/* Using flex layout with margin-top to perfectly align with dropdown */}
+                        <div className="d-flex flex-column" style={{ flex: 1, justifyContent: 'flex-end' }}>
+                            <input type="text" className="form-control" readOnly value={formatNumber(total)} />
+                        </div>
+                    </div>
+                ) : (
+                    <div className="col-sm-3 form-group d-flex flex-column" style={{ justifyContent: 'flex-start' }}>
+                        <label>Total</label>
+                        <input type="text" className="form-control" readOnly value={formatNumber(total)} />
+                    </div>
+                )}
             </div>
             <div className="row">
                 <div className="col-sm-6 form-group">
