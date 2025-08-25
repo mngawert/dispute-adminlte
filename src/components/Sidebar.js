@@ -336,12 +336,6 @@ export default function Sidebar() {
                     </a>
                   </li>
                 }
-                <li className="nav-item">
-                  <a href="#" className="nav-link" onClick={() => { handleLogout() }} >
-                    <i className="far fa-circle nav-icon"></i>
-                    <p>Logout</p>
-                  </a>
-                </li>
               </ul>
             </li>
 
