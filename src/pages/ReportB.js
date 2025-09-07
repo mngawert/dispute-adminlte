@@ -4,6 +4,7 @@ import api from '../api';
 import ContentHeader from '../components/ContentHeader';
 import LocationFilter from '../components/LocationFilter';
 import { exportToExcel } from '../utils/exportUtils';
+import { formatNumber, truncateText } from '../utils/utils';
 
 const formatDateForDisplay = (dateString) => {
   if (!dateString) return '';
@@ -145,14 +146,11 @@ const ReportB = () => {
       'Home Location Code': item.homeLocationCode,
       'Service Location Code': item.serviceLocationCode,
       'Sector': item.sector,
-      'Adjustment Status': item.adjustmentStatus
+      'Adjustment Status': item.adjustmentStatus,
+      'Reason': item.reason // Use the full reason text for export
     }));
 
     exportToExcel(exportData, 'ReportB.xlsx');
-  };
-
-  const formatNumber = (num) => {
-    return num !== null ? num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '';
   };
 
   return (
@@ -357,12 +355,13 @@ const ReportB = () => {
                           <th>Service Location</th>
                           <th>Sector</th>
                           <th>Status</th>
+                          <th>Reason</th>
                         </tr>
                       </thead>
                       <tbody>
                         {reportData.length === 0 ? (
                           <tr>
-                            <td colSpan="31" className="text-center">{loading ? 'Loading...' : 'No data available'}</td>
+                            <td colSpan="32" className="text-center">{loading ? 'Loading...' : 'No data available'}</td>
                           </tr>
                         ) : (
                           reportData.map((item, index) => (
@@ -398,6 +397,7 @@ const ReportB = () => {
                               <td>{item.serviceLocationCode}</td>
                               <td>{item.sector}</td>
                               <td>{item.adjustmentStatus}</td>
+                              <td title={item.reason}>{truncateText(item.reason, 30)}</td>
                             </tr>
                           ))
                         )}

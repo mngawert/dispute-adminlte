@@ -4,6 +4,7 @@ import api from '../api';
 import ContentHeader from '../components/ContentHeader';
 import LocationFilter from '../components/LocationFilter';
 import { exportToExcel } from '../utils/exportUtils';
+import { truncateText } from '../utils/utils';
 
 const formatDateForDisplay = (dateString) => {
   if (!dateString) return '';
@@ -203,7 +204,8 @@ const BaseReport = ({
       'Home Location Code': item.homeLocationCode,
       'Service Location Code': item.serviceLocationCode,
       'Sector': item.sector,
-      'Adjustment Status': item.adjustmentStatus
+      'Adjustment Status': item.adjustmentStatus,
+      'Reason': item.reason
     }));
 
     exportToExcel(exportData, exportFileName);
@@ -440,12 +442,13 @@ const BaseReport = ({
                           <th>Service Location</th>
                           <th>Sector</th>
                           <th>Status</th>
+                          <th>Reason</th>
                         </tr>
                       </thead>
                       <tbody>
                         {reportData.length === 0 ? (
                           <tr>
-                            <td colSpan="28" className="text-center">{loading ? 'Loading...' : 'No data available'}</td>
+                            <td colSpan="29" className="text-center">{loading ? 'Loading...' : 'No data available'}</td>
                           </tr>
                         ) : (
                           reportData.map((item, index) => (
@@ -478,6 +481,7 @@ const BaseReport = ({
                               <td>{item.serviceLocationCode}</td>
                               <td>{item.sector}</td>
                               <td>{item.adjustmentStatus}</td>
+                              <td title={item.reason}>{truncateText(item.reason, 30)}</td>
                             </tr>
                           ))
                         )}
