@@ -1,12 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import { CPS_MAP_HASH, DOCUMENT_TYPE } from "../contexts/Constants";
 import { formatNumber } from '../utils/utils'; // Import the utility function
+import api from '../api'; // Import the API
 
 const MakeAdjustment = ({ adjustmentTypes, selectedAdjustmentType, setSelectedAdjustmentType, selectedCostedEvent, adjustmentNote, setAdjustmentNote, adjustmentAmount, setAdjustmentAmount, handleCreateAdjustmentRequest, documentType, selectedAccount }) => {
     const [filteredAdjustmentTypes, setFilteredAdjustmentTypes] = useState([]);
     const [adjustmentTypeFilter, setAdjustmentTypeFilter] = useState('');
+    const [adjustmentReasons, setAdjustmentReasons] = useState([]);
+    const [selectedReason, setSelectedReason] = useState('');
+    const [isLoadingReasons, setIsLoadingReasons] = useState(false);
+    const [reasonError, setReasonError] = useState('');
 
-    // Filter adjustment types when the filter changes or on initial load
+    // Fetch adjustment reasons on component mount
+    useEffect(() => {
+        const fetchAdjustmentReasons = async () => {
+            setIsLoadingReasons(true);
+            try {
+                const response = await api.get('/api/AdjustmentReason/GetAllAdjustmentReasons');
+                setAdjustmentReasons(response.data);
+                setReasonError('');
+            } catch (error) {
+                console.error('Error fetching adjustment reasons:', error);
+                setReasonError('Failed to load adjustment reasons. Please try again.');
+            } finally {
+                setIsLoadingReasons(false);
+            }
+        };
+
+        fetchAdjustmentReasons();
+    }, []);
     useEffect(() => {
         if (documentType === DOCUMENT_TYPE.ADJUST_PLUS) {
             if (!adjustmentTypeFilter) {
@@ -135,11 +157,54 @@ const MakeAdjustment = ({ adjustmentTypes, selectedAdjustmentType, setSelectedAd
             </div>
             <div className="row">
                 <div className="col-sm-6 form-group">
+                    <label>Reason to Adjust <span className="text-danger">*</span></label>
+                    {isLoadingReasons ? (
+                        <div className="d-flex align-items-center">
+                            <div className="spinner-border spinner-border-sm text-primary mr-2" role="status">
+                                <span className="sr-only">Loading...</span>
+                            </div>
+                            <span>Loading reasons...</span>
+                        </div>
+                    ) : (
+                        <>
+                            <select 
+                                className={`form-control ${reasonError ? 'is-invalid' : ''}`} 
+                                value={selectedReason} 
+                                onChange={(e) => setSelectedReason(e.target.value)}
+                                required
+                            >
+                                <option value="">Select Reason</option>
+                                {adjustmentReasons.map((reason) => (
+                                    <option key={reason.reasonId} value={reason.reasonId}>
+                                        {reason.reasonName}
+                                    </option>
+                                ))}
+                            </select>
+                            {reasonError && <div className="invalid-feedback">{reasonError}</div>}
+                        </>
+                    )}
+                </div>
+            </div>
+            <div className="row">
+                <div className="col-sm-6 form-group">
                     <label>Note</label>
                     <textarea className="form-control" rows={3} value={adjustmentNote} onChange={(e) => setAdjustmentNote(e.target.value)} />
                 </div>
                 <div className="col-sm-6 form-group d-flex" style={{ alignItems: 'flex-end' }}>
-                    <button type="submit" className="btn btn-default" onClick={() => handleCreateAdjustmentRequest(documentType)} >Submit</button>
+                    <button 
+                        type="submit" 
+                        className="btn btn-default" 
+                        onClick={() => {
+                            if (!selectedReason) {
+                                setReasonError('Please select a reason to adjust');
+                                return;
+                            }
+                            handleCreateAdjustmentRequest(documentType, selectedReason);
+                        }} 
+                        disabled={!selectedReason || isLoadingReasons}
+                    >
+                        Submit
+                    </button>
                 </div>
             </div>
         </>
