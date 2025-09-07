@@ -102,7 +102,7 @@ const AdjustMinusInvoice = ({documentType=DOCUMENT_TYPE.ADJUST_MINUS, documentTy
         //setAdjustmentAmount(data?.eventCostMny);
     }
 
-    const handleCreateAdjustmentRequest = async () => {
+    const handleCreateAdjustmentRequest = async (documentType, selectedReason) => {
 
         const validationError = validateInputsAdjustMinus(documentType);
         if(validationError) {
@@ -110,7 +110,7 @@ const AdjustMinusInvoice = ({documentType=DOCUMENT_TYPE.ADJUST_MINUS, documentTy
             return;
         }
 
-        await createAdjustmentRequest(documentType);
+        await createAdjustmentRequest(documentType, selectedReason);
         await fetchPendingDocumentAndRequests(documentType);
     }
 

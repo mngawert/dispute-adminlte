@@ -443,7 +443,7 @@ export const DocumentProvider = ({ children }) => {
 
     /** Create Adjustment Request */
 
-    const createAdjustmentRequest = async (documentType) => {
+    const createAdjustmentRequest = async (documentType, selectedReason) => {
         
         const isSelectedInvoiceValid = selectedInvoice && Object.keys(selectedInvoice).length > 0;
         const disputeAmount = isSelectedInvoiceValid ? parseFloat(adjustmentAmount) : parseFloat(adjustmentAmount) * -1; 
@@ -472,6 +472,7 @@ export const DocumentProvider = ({ children }) => {
                 note: adjustmentNote,
                 pairKey: null,
                 serviceLocationCode: selectedInvoiceDataService?.serviceLocationCode || selectedService?.serviceLocationCode,
+                reasonId: selectedReason
             });
             console.log('Adjustment Request Created:', response.data);
             alert(getTranslation('adjustmentRequestCreated', language));

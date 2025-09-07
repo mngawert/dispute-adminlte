@@ -157,7 +157,7 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
       setAdjustmentTypes(adjustmentTypes);
     }
 
-    const handleCreateAdjustmentRequest = async () => {
+    const handleCreateAdjustmentRequest = async (documentType, selectedReason) => {
         const validationError = validateInputsAdjustB(documentType);
         if(validationError) {
             alert(validationError);
@@ -166,15 +166,15 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
 
         const pairKey = uuidv4(); // Generate a unique key for this pair
 
-        await createAdjustmentRequestLocal(documentType, selectedInvoiceBMinus, adjustmentAmount, selectedAccountBMinus, selectedServiceBMinus?.productId, null, null, selectedServiceBMinus?.productSeq, null, null, 6, selectedServiceBMinus?.serviceNum, adjustmentNote, pairKey, selectedServiceBMinus?.serviceLocationCode);
-        await createAdjustmentRequestLocal(documentType, null, adjustmentAmount, selectedAccountBPlus, null, null, null, null, null, null, 5, selectedServiceBPlus?.serviceNum, adjustmentNote, pairKey, selectedServiceBPlus?.serviceLocationCode);
+        await createAdjustmentRequestLocal(documentType, selectedInvoiceBMinus, adjustmentAmount, selectedAccountBMinus, selectedServiceBMinus?.productId, null, null, selectedServiceBMinus?.productSeq, null, null, 6, selectedServiceBMinus?.serviceNum, adjustmentNote, pairKey, selectedServiceBMinus?.serviceLocationCode, selectedReason);
+        await createAdjustmentRequestLocal(documentType, null, adjustmentAmount, selectedAccountBPlus, null, null, null, null, null, null, 5, selectedServiceBPlus?.serviceNum, adjustmentNote, pairKey, selectedServiceBPlus?.serviceLocationCode, selectedReason);
 
         alert(getTranslation('adjustmentRequestCreated', 'th'));
         await fetchPendingDocumentAndRequests(documentType);
     }
 
     const createAdjustmentRequestLocal = async (
-        documentType, selectedInvoice, adjustmentAmount, selectedAccount, productId, tariffId, callType, productSeq, eventRef, eventTypeId, adjustmentTypeId, serviceNum, adjustmentNote, pairKey, serviceLocationCode
+        documentType, selectedInvoice, adjustmentAmount, selectedAccount, productId, tariffId, callType, productSeq, eventRef, eventTypeId, adjustmentTypeId, serviceNum, adjustmentNote, pairKey, serviceLocationCode, selectedReason
     ) => {
         
       const isSelectedInvoiceValid = selectedInvoice && Object.keys(selectedInvoice).length > 0;
@@ -204,7 +204,8 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
             requestStatus: "Create-Pending",
             note: adjustmentNote,
             pairKey: pairKey,
-            serviceLocationCode: serviceLocationCode
+            serviceLocationCode: serviceLocationCode,
+            reasonId: selectedReason
         });
 
         clearStates(); // Clear states after creating adjustment request

@@ -51,14 +51,14 @@ const AdjustPlus = ({
         getAdjustmentTypes(adjustmentTypeNames);
     }
 
-    const handleCreateAdjustmentRequest = async () => {
+    const handleCreateAdjustmentRequest = async (documentType, selectedReason) => {
         const validationError = validateInputsAdjustPlus(documentType);
         if(validationError) {
             alert(validationError);
             return;
         }
 
-        await createAdjustmentRequest(documentType);
+        await createAdjustmentRequest(documentType, selectedReason);
         await fetchPendingDocumentAndRequests(documentType);
     }
 
