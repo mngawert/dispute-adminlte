@@ -170,7 +170,18 @@ const MakeAdjustment = ({ adjustmentTypes, selectedAdjustmentType, setSelectedAd
                             <select 
                                 className={`form-control ${reasonError ? 'is-invalid' : ''}`} 
                                 value={selectedReason} 
-                                onChange={(e) => setSelectedReason(e.target.value)}
+                                onChange={(e) => {
+                                    const reasonId = e.target.value;
+                                    setSelectedReason(reasonId);
+                                    
+                                    // If a reason is selected, update the adjustment note
+                                    if (reasonId) {
+                                        const selectedReasonObj = adjustmentReasons.find(reason => reason.reasonId === reasonId);
+                                        if (selectedReasonObj) {
+                                            setAdjustmentNote(`${selectedReasonObj.reasonName}`);
+                                        }
+                                    }
+                                }}
                                 required
                             >
                                 <option value="">Select Reason</option>
@@ -188,7 +199,13 @@ const MakeAdjustment = ({ adjustmentTypes, selectedAdjustmentType, setSelectedAd
             <div className="row">
                 <div className="col-sm-6 form-group">
                     <label>Note</label>
-                    <textarea className="form-control" rows={3} value={adjustmentNote} onChange={(e) => setAdjustmentNote(e.target.value)} />
+                    <textarea 
+                        className="form-control" 
+                        rows={3} 
+                        value={adjustmentNote} 
+                        onChange={(e) => setAdjustmentNote(e.target.value)} 
+                        placeholder="Note will be automatically updated when a reason is selected. You can also edit it manually."
+                    />
                 </div>
                 <div className="col-sm-6 form-group d-flex" style={{ alignItems: 'flex-end' }}>
                     <button 
