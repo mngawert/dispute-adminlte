@@ -26,10 +26,21 @@ export default function Home() {
                   <div className="col-12">
                     <h5>ข่าวสาร/ประชาสัมพันธ์ :</h5>
                     <ul>
+                      <li>ระบบปรับปรุงบิล (Web Adjustor) เปิดใช้งาน Adjust+,Adjust-,P3+,P3-,B1+/-,รายงาน  ในวันที่ 11 กันยายน 2568</li>
                       <li>ระบบปรับปรุงบิล (Web Adjustor) เปิดใช้งาน P35,P36 ในวันที่ 23 เม.ย. 2568</li>
                     </ul>
                     <h5>เอกสาร Download :</h5>
                     <ul>
+                      <li>
+                        <a href="/NTAdjustor/files/Adjust_Ph2_present_100868.pdf" target="_blank" rel="noopener noreferrer">
+                          เอกสารนำเสนอระบบปรับปรุงบิล Adjust+,Adjust-,P3+,P3-,B1+/-,รายงาน 
+                        </a>
+                      </li>
+                      <li>
+                        <a href="/NTAdjustor/files/NT_Adjustment_Manual_Ph2_User.pdf" target="_blank" rel="noopener noreferrer">
+                          คู่มือการใช้งานระบบปรับปรุงบิล Adjust+,Adjust-,P3+,P3-,B1+/- ,รายงาน
+                        </a>
+                      </li>                      
                       <li>
                         <a href="/NTAdjustor/files/adj_present220468_intro.pdf" target="_blank" rel="noopener noreferrer">
                           เอกสารนำเสนอระบบปรับปรุงบิล (Web Adjustor) P35, P36
@@ -48,6 +59,24 @@ export default function Home() {
                       <li>
                         <a href="/NTAdjustor/files/Adjust_user_password.doc" target="_blank" rel="noopener noreferrer">
                           แบบฟอร์มขอ Username/Password Adjustment
+                        </a>
+                      </li>
+                    </ul>
+                    <h5>Streaming สอนการใช้งานระบบปรับปรุงบิล :</h5>
+                    <ul>
+                      <li>
+                        <a href="/NTAdjustor/files/Login_P35P36.mp4" target="_blank" rel="noopener noreferrer">
+                          การเข้าใช้งานระบบปรับปรุงบิล
+                        </a>
+                      </li>
+                      <li>
+                        <a href="/NTAdjustor/files/CreateP36Usage.mp4" target="_blank" rel="noopener noreferrer">
+                          การสร้าง Create รายการปรับปรุงบิล P35, P36
+                        </a>
+                      </li>                      
+                      <li>
+                        <a href="/NTAdjustor/files/ReviewApproveAdjustment.mp4" target="_blank" rel="noopener noreferrer">
+                          การใช้งาน Review, Approval P35, P36
                         </a>
                       </li>
                     </ul>
