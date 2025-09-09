@@ -8,7 +8,7 @@ const ReportA = () => {
       exportFileName="ReportA.xlsx"
       documentFilterLabel="Document Type"
       apiEndpoint="/api/Adjustment/ReportA"
-      // No allowed document types list means all document types will be shown
+      allowedDocumentTypes={['Adjust-', 'Adjust+', 'P31', 'P32', 'P35', 'P36']}
     />
   );
 };
