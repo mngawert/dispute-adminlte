@@ -9,7 +9,36 @@ const ChangePassword = () => {
     const [errorMessage, setErrorMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
 
+    // Password validation function
+    const validatePassword = (password) => {
+        const minLength = 8;
+        const hasUpperCase = /[A-Z]/.test(password);
+        const hasLowerCase = /[a-z]/.test(password);
+        const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+        
+        if (password.length < minLength) {
+            return 'Password must be at least 8 characters long.';
+        }
+        if (!hasUpperCase) {
+            return 'Password must contain at least one uppercase letter.';
+        }
+        if (!hasLowerCase) {
+            return 'Password must contain at least one lowercase letter.';
+        }
+        if (!hasSpecialChar) {
+            return 'Password must contain at least one special character.';
+        }
+        return null; // Valid password
+    };
+
     const handleChangePassword = async () => {
+        // Validate new password
+        const passwordValidationError = validatePassword(newPassword);
+        if (passwordValidationError) {
+            setErrorMessage(passwordValidationError);
+            return;
+        }
+
         if (newPassword !== confirmPassword) {
             setErrorMessage('New password and confirm password do not match.');
             return;
@@ -69,6 +98,9 @@ const ChangePassword = () => {
                                             onChange={(e) => setNewPassword(e.target.value)}
                                             placeholder="Enter new password"
                                         />
+                                        <small className="text-muted">
+                                            Password must be at least 8 characters and contain: one uppercase letter, one lowercase letter, and one special character.
+                                        </small>
                                     </div>
                                     <div className="form-group col-md-6 mx-auto">
                                         <label>Confirm New Password</label>
