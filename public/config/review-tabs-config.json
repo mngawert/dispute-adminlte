@@ -10,5 +10,16 @@
     "P3+": true,
     "B1+/-": true
   },
-  "financeRestrictedTabs": ["Adjust-", "Adjust+", "B1+/-"]
+  "financeRestrictedTabs": ["Adjust-", "Adjust+", "B1+/-"],
+  "creationMenuConfig": {
+    "Adjust-": true,
+    "Adjust+": true,
+    "P31": false,
+    "P32": false,
+    "P35": true,
+    "P36": true,
+    "P3-": true,
+    "P3+": true,
+    "B1+/-": true
+  }
 }

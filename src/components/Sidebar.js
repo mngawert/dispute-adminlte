@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
+import { loadReviewTabsConfig } from '../utils/configLoader';
 
 export default function Sidebar() {
   const location = useLocation();
   const token = localStorage.getItem('authToken');
+  const [creationMenuConfig, setCreationMenuConfig] = useState({});
+  
   let decodedToken = null;
   let roles = [];
 
@@ -14,6 +17,32 @@ export default function Sidebar() {
     const roleData = decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
     roles = Array.isArray(roleData) ? roleData : [roleData];
   }
+
+  // Load creation menu configuration
+  useEffect(() => {
+    const loadConfig = async () => {
+      try {
+        const config = await loadReviewTabsConfig();
+        setCreationMenuConfig(config.creationMenuConfig || {});
+      } catch (error) {
+        console.error('Error loading creation menu config:', error);
+        // Set default configuration if loading fails
+        setCreationMenuConfig({
+          "Adjust-": true,
+          "Adjust+": true,
+          "P31": true,
+          "P32": true,
+          "P35": true,
+          "P36": true,
+          "P3-": true,
+          "P3+": true,
+          "B1+/-": true
+        });
+      }
+    };
+
+    loadConfig();
+  }, []);
 
   const userHasRole = (role) => {
     if (!roles || roles.length === 0) return false;
@@ -30,9 +59,14 @@ export default function Sidebar() {
     return location.pathname === path ? 'active' : '';
   };
 
+  // Helper function to check if menu item should be visible
+  const isMenuItemVisible = (menuItem) => {
+    return creationMenuConfig[menuItem] === true;
+  };
+
   return (
     <aside className="main-sidebar sidebar-dark-primary elevation-4">
-      <a href="/NTAdjustor/" className="brand-link"> {/* Add basepath */}
+      <a href="/NTAdjustor/" className="brand-link">
         <img src={`${process.env.PUBLIC_URL}/dist/img/logo_nt.svg`} alt="NT" className="brand-image" />
         <span className="brand-text font-weight-light"> Adjustor Online</span>
       </a>
@@ -40,7 +74,7 @@ export default function Sidebar() {
         <nav className="mt-2">
           <ul className="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
             <li className="nav-item">
-              <a href="/NTAdjustor/" className={`nav-link ${isActive('/')}`}> {/* Add basepath */}
+              <a href="/NTAdjustor/" className={`nav-link ${isActive('/')}`}>
                 <i className="nav-icon fas fa-th"></i>
                 <p>Home</p>
               </a>
@@ -60,7 +94,7 @@ export default function Sidebar() {
                   </p>
                 </a>
                 <ul className="nav nav-treeview">
-                  {(userHasRole("Admin") || userHasRole("Creator") || userHasRole("Creator_Adjust-")) && (
+                  {(userHasRole("Admin") || userHasRole("Creator") || userHasRole("Creator_Adjust-")) && isMenuItemVisible("Adjust-") && (
                     <li className="nav-item">
                       <a href="/NTAdjustor/AdjustMinus" className={`nav-link ${isActive('/AdjustMinus')}`}>
                         <i className="far fa-circle nav-icon" />
@@ -69,7 +103,7 @@ export default function Sidebar() {
                     </li>
                   )}
                   
-                  {(userHasRole("Admin") || userHasRole("Creator") || userHasRole("Creator_Adjust+")) && (
+                  {(userHasRole("Admin") || userHasRole("Creator") || userHasRole("Creator_Adjust+")) && isMenuItemVisible("Adjust+") && (
                     <li className="nav-item">
                       <a href="/NTAdjustor/AdjustPlus" className={`nav-link ${isActive('/AdjustPlus')}`}>
                         <i className="far fa-circle nav-icon" />
@@ -78,7 +112,7 @@ export default function Sidebar() {
                     </li>
                   )}
                   
-                  {(userHasRole("Admin") || userHasRole("Creator") || userHasRole("Creator_P31")) && (
+                  {(userHasRole("Admin") || userHasRole("Creator") || userHasRole("Creator_P31")) && isMenuItemVisible("P31") && (
                     <li className="nav-item">
                       <a href="/NTAdjustor/AdjustP31" className={`nav-link ${isActive('/AdjustP31')}`}>
                         <i className="far fa-circle nav-icon" />
@@ -87,7 +121,7 @@ export default function Sidebar() {
                     </li>
                   )}
                   
-                  {(userHasRole("Admin") || userHasRole("Creator") || userHasRole("Creator_P32")) && (
+                  {(userHasRole("Admin") || userHasRole("Creator") || userHasRole("Creator_P32")) && isMenuItemVisible("P32") && (
                     <li className="nav-item">
                       <a href="/NTAdjustor/AdjustP32" className={`nav-link ${isActive('/AdjustP32')}`}>
                         <i className="far fa-circle nav-icon" />
@@ -96,7 +130,7 @@ export default function Sidebar() {
                     </li>
                   )}
                   
-                  {(userHasRole("Admin") || userHasRole("Creator") || userHasRole("Creator_P35")) && (
+                  {(userHasRole("Admin") || userHasRole("Creator") || userHasRole("Creator_P35")) && isMenuItemVisible("P35") && (
                     <li className="nav-item">
                       <a href="/NTAdjustor/AdjustP35" className={`nav-link ${isActive('/AdjustP35')}`}>
                         <i className="far fa-circle nav-icon" />
@@ -105,7 +139,7 @@ export default function Sidebar() {
                     </li>
                   )}
                   
-                  {(userHasRole("Admin") || userHasRole("Creator") || userHasRole("Creator_P36")) && (
+                  {(userHasRole("Admin") || userHasRole("Creator") || userHasRole("Creator_P36")) && isMenuItemVisible("P36") && (
                     <li className="nav-item">
                       <a href="/NTAdjustor/AdjustP36" className={`nav-link ${isActive('/AdjustP36')}`}>
                         <i className="far fa-circle nav-icon" />
@@ -114,7 +148,7 @@ export default function Sidebar() {
                     </li>
                   )}
 
-                  {(userHasRole("Admin") || userHasRole("Creator") || userHasRole("Creator_P3-")) && (
+                  {(userHasRole("Admin") || userHasRole("Creator") || userHasRole("Creator_P3-")) && isMenuItemVisible("P3-") && (
                     <li className="nav-item">
                       <a href="/NTAdjustor/AdjustP3Minus" className={`nav-link ${isActive('/AdjustP3Minus')}`}>
                         <i className="far fa-circle nav-icon" />
@@ -123,7 +157,7 @@ export default function Sidebar() {
                     </li>
                   )}
                   
-                  {(userHasRole("Admin") || userHasRole("Creator") || userHasRole("Creator_P3+")) && (
+                  {(userHasRole("Admin") || userHasRole("Creator") || userHasRole("Creator_P3+")) && isMenuItemVisible("P3+") && (
                     <li className="nav-item">
                       <a href="/NTAdjustor/AdjustP3Plus" className={`nav-link ${isActive('/AdjustP3Plus')}`}>
                         <i className="far fa-circle nav-icon" />
@@ -132,7 +166,7 @@ export default function Sidebar() {
                     </li>
                   )}
                   
-                  {(userHasRole("Admin") || userHasRole("Creator") || userHasRole("Creator_B1+/-")) && (
+                  {(userHasRole("Admin") || userHasRole("Creator") || userHasRole("Creator_B1+/-")) && isMenuItemVisible("B1+/-") && (
                     <li className="nav-item">
                       <a href="/NTAdjustor/AdjustB" className={`nav-link ${isActive('/AdjustB')}`}>
                         <i className="far fa-circle nav-icon" />
