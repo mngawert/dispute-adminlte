@@ -82,14 +82,31 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
     const [servicesBPlus, setServicesBPlus] = useState([]);
     const [selectedServiceBPlus, setSelectedServiceBPlus] = useState(null);
 
-    const getAccountsByAccountNumLocalBMinus = async (accountNum) => {
+    const getAccountsByAccountNumLocalBMinus = async (accountNum) => {        
         const accounts = await getAccountsByAccountNum(accountNum);
         setAccountsBMinus(accounts);
     }
 
     const getAccountsByAccountNumLocalBPlus = async (accountNum) => {
-        const accounts = await getAccountsByAccountNum(accountNum);
-        setAccountsBPlus(accounts);
+        //const accounts = await getAccountsByAccountNum(accountNum);
+        //setAccountsBPlus(accounts);
+
+        try {
+            const response = await api.get('/api/Account/GetAccountsByAccountNum', {
+                params: {
+                    accountNum: accountNum,
+                    bypassLocation: 'Y'
+                }
+            });
+            setAccountsBPlus(response.data);
+
+            if (response.data.length === 0) {
+                alert(getTranslation('noAccountsFound', language));
+            }
+
+        } catch (error) {
+            console.error('Error fetching accounts:', error);
+        }
     }
 
     const getAccountsByServiceNumLocalBMinus = async (serviceNum) => {
@@ -98,8 +115,25 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
     }
 
     const getAccountsByServiceNumLocalBPlus = async (serviceNum) => {
-        const accounts = await getAccountsByServiceNum(serviceNum);
-        setAccountsBPlus(accounts);
+        //const accounts = await getAccountsByServiceNum(serviceNum);
+        //setAccountsBPlus(accounts);
+
+        try {
+            const response = await api.get('/api/Account/GetAccountsByServiceNum', {
+                params: {
+                    serviceNum: serviceNum,
+                    bypassLocation: 'Y'
+                }
+            });
+            setAccountsBPlus(response.data);
+
+            if (response.data.length === 0) {
+                alert(getTranslation('noAccountsFound', language));
+            }
+
+        } catch (error) {
+            console.error('Error fetching accounts:', error);
+        }
     }
 
     const handleSelectAccountBMinus = async (account) => {
