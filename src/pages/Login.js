@@ -183,6 +183,17 @@ const Login = () => {
           </div>
         </div>
       </div>
+
+      <div style={{ marginTop: "16px" }}>
+        <a
+          href="/NTAdjustor/files/Adjust_user_password.doc"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: "#0808086e" }}
+        >
+          แบบฟอร์มขอใช้งานระบบปรับปรุงบิล
+        </a>
+      </div>       
     </div>
   );
 };

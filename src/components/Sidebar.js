@@ -6,7 +6,18 @@ import { loadReviewTabsConfig } from '../utils/configLoader';
 export default function Sidebar() {
   const location = useLocation();
   const token = localStorage.getItem('authToken');
-  const [creationMenuConfig, setCreationMenuConfig] = useState({});
+  // Initialize with default config to show items immediately
+  const [creationMenuConfig, setCreationMenuConfig] = useState({
+    "Adjust-": true,
+    "Adjust+": true,
+    "P31": false,
+    "P32": false,
+    "P35": true,
+    "P36": true,
+    "P3-": true,
+    "P3+": true,
+    "B1+/-": true
+  });
   
   let decodedToken = null;
   let roles = [];
@@ -23,21 +34,12 @@ export default function Sidebar() {
     const loadConfig = async () => {
       try {
         const config = await loadReviewTabsConfig();
-        setCreationMenuConfig(config.creationMenuConfig || {});
+        if (config && config.creationMenuConfig) {
+          setCreationMenuConfig(config.creationMenuConfig);
+        }
       } catch (error) {
         console.error('Error loading creation menu config:', error);
-        // Set default configuration if loading fails
-        setCreationMenuConfig({
-          "Adjust-": true,
-          "Adjust+": true,
-          "P31": false,
-          "P32": false,
-          "P35": true,
-          "P36": true,
-          "P3-": true,
-          "P3+": true,
-          "B1+/-": true
-        });
+        // Keep the default configuration if loading fails
       }
     };
 
@@ -61,6 +63,22 @@ export default function Sidebar() {
 
   // Helper function to check if menu item should be visible
   const isMenuItemVisible = (menuItem) => {
+    // If config is not loaded or the specific item is not defined, use default behavior
+    if (!creationMenuConfig || creationMenuConfig[menuItem] === undefined) {
+      // Default visibility based on the original configuration
+      const defaultConfig = {
+        "Adjust-": true,
+        "Adjust+": true,
+        "P31": false,
+        "P32": false,
+        "P35": true,
+        "P36": true,
+        "P3-": true,
+        "P3+": true,
+        "B1+/-": true
+      };
+      return defaultConfig[menuItem] === true;
+    }
     return creationMenuConfig[menuItem] === true;
   };
 

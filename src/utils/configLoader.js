@@ -8,8 +8,9 @@
  * @returns {Promise<any>} - Promise resolving to the configuration object
  */
 export const loadConfig = async (configPath) => {
-  // Get the base URL from the current window location
-  const baseUrl = window.location.origin + (window.location.pathname.endsWith('/') ? window.location.pathname.slice(0, -1) : window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/')));
+  // For React development server, files in public folder are served from root
+  // Use process.env.PUBLIC_URL to handle different deployment scenarios
+  const baseUrl = process.env.PUBLIC_URL || '';
   
   // Add a timestamp to prevent caching
   const timestamp = new Date().getTime();
@@ -24,7 +25,10 @@ export const loadConfig = async (configPath) => {
       throw new Error(`Failed to load config: ${response.status} ${response.statusText}`);
     }
     
-    const config = await response.json();
+    const text = await response.text();
+    console.log(`Raw response from ${configPath}:`, text.substring(0, 100));
+    
+    const config = JSON.parse(text);
     console.log(`Successfully loaded config from ${configPath}:`, config);
     return config;
   } catch (error) {
