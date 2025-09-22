@@ -254,7 +254,7 @@ export default function Sidebar() {
             }
 
             {/* Cancel Tasks */}
-            {(userHasRole("Admin") || userHasRole("Finance")) && 
+            {(userHasRole("Admin") || userHasRole("Finance") || userHasRole("Approver")) && 
               <li className="nav-item menu-is-opening menu-open">
                 <a href="#" className="nav-link">
                   <p>
