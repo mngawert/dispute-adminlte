@@ -105,13 +105,15 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
     const handleSelectAccountBMinus = async (account) => {
         setSelectedAccountBMinus(account);
         const services = await getServicesByAccountNum(account.accountNum);
-        setServicesBMinus(services);
+        const sortedServices = services.sort((a, b) => a.serviceNum.localeCompare(b.serviceNum));
+        setServicesBMinus(sortedServices);
     }
 
     const handleSelectAccountBPlus = async (account) => {
         setSelectedAccountBPlus(account);
         const services = await getServicesByAccountNum(account.accountNum);
-        setServicesBPlus(services);
+        const sortedServices = services.sort((a, b) => a.serviceNum.localeCompare(b.serviceNum));
+        setServicesBPlus(sortedServices);
     }
 
     const handleSelectInvoiceBMinus = async (invoice) => {
@@ -128,7 +130,8 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
             productSeq: inv.productSeq,
             serviceLocationCode: inv.serviceLocationCode
         }));
-        setServicesBMinus(servicesBMinus);
+        const sortedServicesBMinus = servicesBMinus.sort((a, b) => a.serviceNum.localeCompare(b.serviceNum));
+        setServicesBMinus(sortedServicesBMinus);
 
         const selected = servicesBMinus.filter(service => service.serviceNum === selectedServiceBMinus?.serviceNum)[0] || {};
         setSelectedServiceBMinus(selected);
