@@ -30,8 +30,8 @@ export default function Sidebar() {
         setCreationMenuConfig({
           "Adjust-": true,
           "Adjust+": true,
-          "P31": true,
-          "P32": true,
+          "P31": false,
+          "P32": false,
           "P35": true,
           "P36": true,
           "P3-": true,
