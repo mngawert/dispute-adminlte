@@ -124,6 +124,7 @@ const ReportB = () => {
       'Invoicing Company (B-)': item.invoicingCoName,
       'Invoice Number': item.invoiceNum,
       'Service Number (B-)': item.serviceNum,
+      'Bill Month': item.billMonth,
       'Bill Date': formatDateForDisplay(item.billDtm),
       'Actual Bill Date': formatDateForDisplay(item.actualBillDtm),
       'Account Number (B+)': item.accountNum2,
@@ -332,6 +333,7 @@ const ReportB = () => {
                           <th>Invoicing Company (B-)</th>
                           <th>Invoice #</th>
                           <th>Service # (B-)</th>
+                          <th>Bill Month</th>
                           <th>Bill Date</th>
                           <th>Actual Bill Date</th>
                           <th>Account # (B+)</th>
@@ -361,7 +363,7 @@ const ReportB = () => {
                       <tbody>
                         {reportData.length === 0 ? (
                           <tr>
-                            <td colSpan="32" className="text-center">{loading ? 'Loading...' : 'No data available'}</td>
+                            <td colSpan="33" className="text-center">{loading ? 'Loading...' : 'No data available'}</td>
                           </tr>
                         ) : (
                           reportData.map((item, index) => (
@@ -374,6 +376,7 @@ const ReportB = () => {
                               <td>{item.invoicingCoName}</td>
                               <td>{item.invoiceNum}</td>
                               <td>{item.serviceNum}</td>
+                              <td>{item.billMonth}</td>
                               <td>{formatDateForDisplay(item.billDtm)}</td>
                               <td>{formatDateForDisplay(item.actualBillDtm)}</td>
                               <td>{item.accountNum2}</td>

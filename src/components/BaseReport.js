@@ -185,6 +185,7 @@ const BaseReport = ({
       'Invoicing Company': item.invoicingCoName,
       'Invoice Number': item.invoiceNum,
       'Service Number': item.serviceNum,
+      'Bill Month': item.billMonth,
       'Bill Date': formatDateForDisplay(item.billDtm),
       'Actual Bill Date': formatDateForDisplay(item.actualBillDtm),
       'Adjustment Type': item.adjustmentTypeName,
@@ -422,6 +423,7 @@ const BaseReport = ({
                           <th>Invoicing Company</th>
                           <th>Invoice #</th>
                           <th>Service #</th>
+                          <th>Bill Month</th>
                           <th>Bill Date</th>
                           <th>Actual Bill Date</th>
                           <th>Adjustment Type</th>
@@ -448,7 +450,7 @@ const BaseReport = ({
                       <tbody>
                         {reportData.length === 0 ? (
                           <tr>
-                            <td colSpan="29" className="text-center">{loading ? 'Loading...' : 'No data available'}</td>
+                            <td colSpan="30" className="text-center">{loading ? 'Loading...' : 'No data available'}</td>
                           </tr>
                         ) : (
                           reportData.map((item, index) => (
@@ -461,6 +463,7 @@ const BaseReport = ({
                               <td>{item.invoicingCoName}</td>
                               <td>{item.invoiceNum}</td>
                               <td>{item.serviceNum}</td>
+                              <td>{item.billMonth}</td>
                               <td>{formatDateForDisplay(item.billDtm)}</td>
                               <td>{formatDateForDisplay(item.actualBillDtm)}</td>
                               <td>{item.adjustmentTypeName}</td>
