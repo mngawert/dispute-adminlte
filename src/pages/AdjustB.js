@@ -138,6 +138,13 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
 
     const handleSelectAccountBMinus = async (account) => {
         setSelectedAccountBMinus(account);
+        
+        // Clear previous selections when account changes
+        setSelectedServiceBMinus(null);
+        setSelectedInvoiceBMinus(null);
+        setInvoicesBMinus([]);
+        
+        // Load basic services (these won't have productSeq/productId until invoice is selected)
         const services = await getServicesByAccountNum(account.accountNum);
         const sortedServices = services.sort((a, b) => a.serviceNum.localeCompare(b.serviceNum));
         setServicesBMinus(sortedServices);
@@ -154,21 +161,61 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
         setSelectedInvoiceBMinus(invoice);
 
         const invoiceDataServices = await getInvoiceDataServices(invoice);
+        
+        // Validate API response
+        if (!invoiceDataServices || invoiceDataServices.length === 0) {
+            console.error('No invoice data services returned for invoice:', invoice);
+            alert('No services found for this invoice.');
+            setServicesBMinus([]);
+            setSelectedServiceBMinus(null);
+            return;
+        }
+        
+        // Validate required fields
+        const invalidServices = invoiceDataServices.filter(inv => 
+            !inv.productSeq || !inv.productId || !inv.serviceNumber
+        );
+        
+        if (invalidServices.length > 0) {
+            console.error('Some services missing required fields:', invalidServices);
+            console.warn(`${invalidServices.length} out of ${invoiceDataServices.length} services are missing required product information.`);
+        }
 
-        // convert invoiceDataServices to servicesBMinus
-        const servicesBMinus = invoiceDataServices.map(inv => ({
-            accountNum: inv.accountNum,
-            billSeq: inv.billSeq,
-            serviceNum: inv.serviceNumber,
-            productId: inv.productId,
-            productSeq: inv.productSeq,
-            serviceLocationCode: inv.serviceLocationCode
-        }));
+        // convert invoiceDataServices to servicesBMinus - only include services with complete data
+        const servicesBMinus = invoiceDataServices
+            .filter(inv => inv.productSeq && inv.productId && inv.serviceNumber) // Only include valid services
+            .map(inv => ({
+                accountNum: inv.accountNum,
+                billSeq: inv.billSeq,
+                serviceNum: inv.serviceNumber,
+                productId: inv.productId,
+                productSeq: inv.productSeq,
+                serviceLocationCode: inv.serviceLocationCode
+            }));
+        
         const sortedServicesBMinus = servicesBMinus.sort((a, b) => a.serviceNum.localeCompare(b.serviceNum));
         setServicesBMinus(sortedServicesBMinus);
 
-        const selected = servicesBMinus.filter(service => service.serviceNum === selectedServiceBMinus?.serviceNum)[0] || {};
-        setSelectedServiceBMinus(selected);
+        // Auto-select first service if available and no service was previously selected
+        if (sortedServicesBMinus.length > 0) {
+            if (!selectedServiceBMinus) {
+                setSelectedServiceBMinus(sortedServicesBMinus[0]);
+            } else {
+                // Update existing selection with complete data
+                const selected = sortedServicesBMinus.find(service => 
+                    service.serviceNum === selectedServiceBMinus.serviceNum
+                );
+                if (selected) {
+                    setSelectedServiceBMinus(selected);
+                } else {
+                    // Previously selected service not in invoice data, select first
+                    setSelectedServiceBMinus(sortedServicesBMinus[0]);
+                }
+            }
+        } else {
+            setSelectedServiceBMinus(null);
+            alert('No valid services with complete product information found for this invoice.');
+        }
 
         // console.log('invoiceDataServices:', invoiceDataServices);
         // console.log('selectedServiceBMinus:', selectedServiceBMinus);
@@ -182,6 +229,29 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
 
         setAdjustmentAmount(0);
     }
+
+    const handleSelectServiceBMinus = (service) => {
+        // Check if invoice is selected first for B- services
+        if (!selectedInvoiceBMinus) {
+            alert('Please select an invoice first before selecting a service for B- adjustments.');
+            return;
+        }
+        
+        // Ensure the selected service has productSeq and productId from invoice data
+        if (servicesBMinus.length > 0) {
+            const serviceWithDetails = servicesBMinus.find(s => s.serviceNum === service.serviceNum);
+            if (serviceWithDetails && serviceWithDetails.productSeq && serviceWithDetails.productId) {
+                setSelectedServiceBMinus(serviceWithDetails);
+            } else {
+                alert('Selected service is missing required product information. Please select an invoice first.');
+                console.error('Service missing productSeq/productId:', service);
+                return;
+            }
+        } else {
+            alert('No services available. Please select an invoice first.');
+            return;
+        }
+    };
 
     const getInvoicesByAccountNumLocalBMinus = async (accountNum) => {
         const invoices = await getInvoicesByAccountNum(accountNum);
@@ -216,6 +286,23 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
         
       const isSelectedInvoiceValid = selectedInvoice && Object.keys(selectedInvoice).length > 0;
       const disputeAmount = isSelectedInvoiceValid ? parseFloat(adjustmentAmount) : parseFloat(adjustmentAmount) * -1; 
+
+      // Validation: Check for critical missing data for B- adjustments
+      if (isSelectedInvoiceValid && adjustmentTypeId === 6) { // 6 is for B- adjustments
+        if (!productId || !productSeq) {
+          const errorMsg = `Critical error: productId (${productId}) or productSeq (${productSeq}) is null for B- adjustment`;
+          console.error(errorMsg, {
+            productId,
+            productSeq,
+            serviceNum,
+            selectedAccount: selectedAccount?.accountNum,
+            adjustmentTypeId,
+            isSelectedInvoiceValid
+          });
+          alert('Product information is missing for B- adjustment. Please:\n1. Select an account\n2. Select an invoice\n3. Select a service from the invoice');
+          throw new Error(errorMsg);
+        }
+      }
 
       try 
       {
@@ -309,6 +396,10 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
         }
         if (!selectedServiceBMinus || Object.keys(selectedServiceBMinus).length === 0 || !selectedServiceBPlus || Object.keys(selectedServiceBPlus).length === 0) {
             return getTranslation('selectServiceNumber', language);
+        }
+        // Additional validation: Check if B- service has required product information
+        if (!selectedServiceBMinus.productSeq || !selectedServiceBMinus.productId) {
+            return 'B- service is missing required product information. Please select an invoice first, then select the service.';
         }
         if (!adjustmentAmount) {
             return getTranslation('enterAdjustmentAmount', language);
@@ -436,7 +527,7 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
                                   <Services
                                       services={servicesBMinus}
                                       selectedService={selectedServiceBMinus}
-                                      setSelectedService={setSelectedServiceBMinus}
+                                      setSelectedService={handleSelectServiceBMinus}
                                   />
                               </div>
                               <div className="col-sm-4">
