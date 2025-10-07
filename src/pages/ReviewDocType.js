@@ -2,7 +2,7 @@ import { CPS_MAP_HASH } from '../contexts/Constants';
 import React, { useState, useRef, useEffect } from 'react';
 import { formatNumber } from '../utils/utils'; 
 
-const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, selectedDocument, reviewType, handleSelectDocument, handleUpdateDocumentStatus }) => {
+const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, selectedDocument, reviewType, handleSelectDocument, handleUpdateDocumentStatus, isUpdating }) => {
     const [myNote, setMyNote] = useState('');
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
     const [selectedAdjustmentRequest, setSelectedAdjustmentRequest] = useState(null);
@@ -354,20 +354,36 @@ const ReviewDocType = ({ documentTypeDesc, documents, adjustmentRequests, select
                                             type="button"
                                             className="btn btn-primary mr-1"
                                             onClick={handleAccept}
+                                            disabled={isUpdating?.current || false}
                                         >
-                                            {reviewType === 'Cancel'
-                                                ? 'Cancel Selected'
-                                                : reviewType === 'Retry'
-                                                    ? 'Retry Selected'
-                                                    : 'Accept Selected'}
+                                            {isUpdating?.current ? (
+                                                <>
+                                                    <span className="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span>
+                                                    Processing...
+                                                </>
+                                            ) : (
+                                                reviewType === 'Cancel'
+                                                    ? 'Cancel Selected'
+                                                    : reviewType === 'Retry'
+                                                        ? 'Retry Selected'
+                                                        : 'Accept Selected'
+                                            )}
                                         </button>
                                         {reviewType !== 'Cancel' && reviewType !== 'Retry' && (
                                             <button
                                                 type="button"
                                                 className="btn btn-default"
                                                 onClick={handleReject}
+                                                disabled={isUpdating?.current || false}
                                             >
-                                                Reject Selected
+                                                {isUpdating?.current ? (
+                                                    <>
+                                                        <span className="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span>
+                                                        Processing...
+                                                    </>
+                                                ) : (
+                                                    'Reject Selected'
+                                                )}
                                             </button>
                                         )}
                                     </p>

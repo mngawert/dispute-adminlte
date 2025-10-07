@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import api from '../api';
 import { Tab, Tabs } from 'react-bootstrap';
 import ReviewDocType from './ReviewDocType';
@@ -17,6 +17,11 @@ const Review = ({ reviewType, prevDocumentStatus }) => {
     tabConfig: {}, 
     financeRestrictedTabs: []
   });
+
+  // Add refs to prevent double API calls
+  const isUpdatingRef = useRef(false);
+  const isFetchingRef = useRef(false);
+  const lastUpdateRef = useRef(null);
 
   // Load configuration on component mount
   useEffect(() => {
@@ -56,7 +61,10 @@ const Review = ({ reviewType, prevDocumentStatus }) => {
       setActiveTab(firstVisibleTab);
     }
     
-    getAllDocuments();
+    // Only fetch documents if not currently updating
+    if (!isUpdatingRef.current) {
+      getAllDocuments();
+    }
   }, [config, reviewType]);
 
   const handleInputChange = (e) => {
@@ -64,7 +72,16 @@ const Review = ({ reviewType, prevDocumentStatus }) => {
   };
 
   const getAllDocuments = async () => {
+    // Prevent double API calls
+    if (isFetchingRef.current) {
+      console.log('getAllDocuments: Already fetching, skipping duplicate call');
+      return;
+    }
+
+    isFetchingRef.current = true;
+    
     try {
+      console.log('getAllDocuments: Starting API call');
       const response = await api.get(`/api/Document/GetAllDocuments`, {
         params: {
           documentStatus: prevDocumentStatus,
@@ -94,6 +111,8 @@ const Review = ({ reviewType, prevDocumentStatus }) => {
       }
     } catch (error) {
       console.error('Error fetching data', error);
+    } finally {
+      isFetchingRef.current = false;
     }
   };
 
@@ -120,7 +139,34 @@ const Review = ({ reviewType, prevDocumentStatus }) => {
   };
 
   const handleUpdateDocumentStatus = async (doc, _documentStatus, note, resetMyNote, sapDocNo, sapDocDate) => {
+    // SAFETY CHECK 1: Validate required parameters
+    if (!doc || !doc.documentNum || !_documentStatus) {
+      console.error('handleUpdateDocumentStatus: Missing required parameters', { doc, _documentStatus });
+      alert('Error: Missing required document information');
+      return;
+    }
+
+    // SAFETY CHECK 2: Prevent double API calls with debouncing
+    if (isUpdatingRef.current) {
+      console.log('handleUpdateDocumentStatus: Update already in progress, skipping duplicate call');
+      return;
+    }
+
+    // SAFETY CHECK 3: Prevent rapid successive calls
+    const currentTime = Date.now();
+    if (lastUpdateRef.current && (currentTime - lastUpdateRef.current) < 2000) {
+      console.log('handleUpdateDocumentStatus: Recent update detected, skipping duplicate call');
+      return;
+    }
+
+    // Set protection flags
+    isUpdatingRef.current = true;
+    lastUpdateRef.current = currentTime;
+
     try {
+      console.log(`handleUpdateDocumentStatus: Starting update for ${doc.documentNum} to ${_documentStatus}`);
+      
+      // CRITICAL API CALL - This is the most important part
       const response = await api.put(`/api/Document/UpdateDocument${reviewType}Status/${doc.documentNum}`, {
         documentNum: doc.documentNum,
         documentStatus: _documentStatus,
@@ -129,11 +175,49 @@ const Review = ({ reviewType, prevDocumentStatus }) => {
         sapDocDate: sapDocDate ? sapDocDate : null,
         updatedBy: JSON.parse(localStorage.getItem('userLogin'))?.userId
       });
+
+      console.log('handleUpdateDocumentStatus: Update successful', response.data);
+      
+      // SAFETY: Reset page state immediately
       resetPage();
-      getAllDocuments();
       resetMyNote();
+      
+      // SAFETY: Force refresh with retry mechanism
+      const refreshWithRetry = async (attempts = 0) => {
+        if (attempts >= 3) {
+          console.error('handleUpdateDocumentStatus: Max refresh attempts reached');
+          isUpdatingRef.current = false; // Release lock
+          return;
+        }
+
+        try {
+          // Force refresh by temporarily resetting fetch flag
+          isFetchingRef.current = false;
+          await getAllDocuments();
+          isUpdatingRef.current = false; // Success - release lock
+        } catch (refreshError) {
+          console.warn(`handleUpdateDocumentStatus: Refresh attempt ${attempts + 1} failed, retrying...`);
+          setTimeout(() => refreshWithRetry(attempts + 1), 500);
+        }
+      };
+
+      // Start refresh after a short delay
+      setTimeout(() => {
+        console.log('handleUpdateDocumentStatus: Starting refresh with retry mechanism');
+        refreshWithRetry();
+      }, 300);
+      
     } catch (error) {
       console.error('Error updating document status', error);
+      
+      // SAFETY: Show user-friendly error message
+      const errorMessage = error.response?.data?.message || error.message || 'Unknown error occurred';
+      alert(`Failed to update document status: ${errorMessage}`);
+      
+      // SAFETY: Reset flags on error
+      isUpdatingRef.current = false;
+      
+      // SAFETY: Don't reset page state on error - let user retry
     }
   };
 
@@ -173,47 +257,47 @@ const Review = ({ reviewType, prevDocumentStatus }) => {
               <Tabs activeKey={activeTab} onSelect={handleTabSelect}>
                 {visibleTabs['Adjust-'] && (
                   <Tab eventKey="Adjust-" title="Adjust-">
-                    <ReviewDocType documentTypeDesc='Adjust-' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} />
+                    <ReviewDocType documentTypeDesc='Adjust-' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} isUpdating={isUpdatingRef} />
                   </Tab>
                 )}
                 {visibleTabs['Adjust+'] && (
                   <Tab eventKey="Adjust+" title="Adjust+">
-                    <ReviewDocType documentTypeDesc='Adjust+' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} />
+                    <ReviewDocType documentTypeDesc='Adjust+' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} isUpdating={isUpdatingRef} />
                   </Tab>
                 )}
                 {visibleTabs['P31'] && (
                   <Tab eventKey="P31" title="P31">
-                    <ReviewDocType documentTypeDesc='P31' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} />
+                    <ReviewDocType documentTypeDesc='P31' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} isUpdating={isUpdatingRef} />
                   </Tab>
                 )}
                 {visibleTabs['P32'] && (
                   <Tab eventKey="P32" title="P32">
-                    <ReviewDocType documentTypeDesc='P32' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} />
+                    <ReviewDocType documentTypeDesc='P32' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} isUpdating={isUpdatingRef} />
                   </Tab>
                 )}
                 {visibleTabs['P35'] && (
                   <Tab eventKey="P35" title="P35">
-                    <ReviewDocType documentTypeDesc='P35' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} />
+                    <ReviewDocType documentTypeDesc='P35' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} isUpdating={isUpdatingRef} />
                   </Tab>
                 )}
                 {visibleTabs['P36'] && (
                   <Tab eventKey="P36" title="P36">
-                    <ReviewDocType documentTypeDesc='P36' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} />
+                    <ReviewDocType documentTypeDesc='P36' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} isUpdating={isUpdatingRef} />
                   </Tab>
                 )}
                 {visibleTabs['P3-'] && (
                   <Tab eventKey="P3-" title="P3-">
-                    <ReviewDocType documentTypeDesc='P3-' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} />
+                    <ReviewDocType documentTypeDesc='P3-' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} isUpdating={isUpdatingRef} />
                   </Tab>
                 )}
                 {visibleTabs['P3+'] && (
                   <Tab eventKey="P3+" title="P3+">
-                    <ReviewDocType documentTypeDesc='P3+' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} />
+                    <ReviewDocType documentTypeDesc='P3+' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} isUpdating={isUpdatingRef} />
                   </Tab>
                 )}
                 {visibleTabs['B1+/-'] && (
                   <Tab eventKey="B1+/-" title="B1+/-">
-                    <ReviewDocType documentTypeDesc='B1+/-' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} />
+                    <ReviewDocType documentTypeDesc='B1+/-' documents={documents} adjustmentRequests={adjustmentRequests} selectedDocument={selectedDocument} reviewType={reviewType} handleSelectDocument={handleSelectDocument} handleUpdateDocumentStatus={handleUpdateDocumentStatus} isUpdating={isUpdatingRef} />
                   </Tab>
                 )}
               </Tabs>

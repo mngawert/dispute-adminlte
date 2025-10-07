@@ -43,9 +43,11 @@ const AdjustPlus = ({
     // State for adjustment type names
     const [adjustmentTypeNames, setAdjustmentTypeNames] = useState(initialAdjustmentTypeNames);
 
-    const handleSelectAccount = (account) => {
+    const handleSelectAccount = async (account) => {
         setSelectedAccount(account);
-        getServicesByAccountNum(account.accountNum);
+        const services = await getServicesByAccountNum(account.accountNum);
+        const sortedServices = services.sort((a, b) => a.serviceNum.localeCompare(b.serviceNum));
+        setServices(sortedServices);
 
         /** Fetch Adjustment types */
         getAdjustmentTypes(adjustmentTypeNames);
