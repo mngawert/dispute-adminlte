@@ -98,6 +98,78 @@ export default function Sidebar() {
               </a>
             </li>
 
+            {/* User Management */}
+            <li className="nav-item menu-is-opening menu-open">
+              <a href="#" className="nav-link">
+                <p>
+                  User Management
+                </p>
+              </a>
+              <ul className="nav nav-treeview">
+                <li className="nav-item">
+                  <a href="/NTAdjustor/MyAdj" className={`nav-link ${isActive('/MyAdj')}`}> {/* Add basepath */}
+                    <i className="far fa-circle nav-icon" />
+                    <p>My Adjustments</p>
+                  </a>
+                </li>                            
+                <li className="nav-item">
+                  <a href="/NTAdjustor/SearchAdj" className={`nav-link ${isActive('/SearchAdj')}`}> {/* Add basepath */}
+                    <i className="far fa-circle nav-icon" />
+                    <p>Search Adjustments</p>
+                  </a>
+                </li>                            
+                <li className="nav-item">
+                  <a href="/NTAdjustor/change-password" className={`nav-link ${isActive('/change-password')}`}> {/* Add basepath */}
+                    <i className="far fa-circle nav-icon" />
+                    <p>Change Password</p>
+                  </a>
+                </li>
+                {(userHasRole("Admin") || userHasRole("ApproverXX")) && 
+                  <li className="nav-item">
+                    <a href="/NTAdjustor/User" className={`nav-link ${isActive('/User')}`}> {/* Add basepath */}
+                      <i className="far fa-circle nav-icon" />
+                      <p>Users</p>
+                    </a>
+                  </li>                            
+                }
+                {(userHasRole("Admin") || userHasRole("ApproverXX")) && 
+                  <li className="nav-item">
+                    <a href="/NTAdjustor/Group" className={`nav-link ${isActive('/Group')}`}> {/* Add basepath */}
+                      <i className="far fa-circle nav-icon" />
+                      <p>Groups</p>
+                    </a>
+                  </li>                            
+                }
+                {(userHasRole("Admin") || userHasRole("ApproverXX")) && 
+                  <li className="nav-item">
+                    <a href="/NTAdjustor/AdjustmentTypeDetail" className={`nav-link ${isActive('/AdjustmentTypeDetail')}`}>
+                      <i className="far fa-circle nav-icon" />
+                      <p>Account Code Config</p>
+                    </a>
+                  </li>
+                }
+              </ul>
+            </li>
+
+            {/* Retry Tasks */}
+            {(userHasRole("Admin")) && 
+              <li className="nav-item menu-is-opening menu-open">
+                <a href="#" className="nav-link">
+                  <p>
+                  Retry Tasks
+                  </p>
+                </a>
+                <ul className="nav nav-treeview">
+                  <li className="nav-item">
+                    <a href="/NTAdjustor/Retry" className={`nav-link ${isActive('/Retry')}`}> {/* Add basepath */}
+                      <i className="far fa-circle nav-icon" />
+                      <p>Retry</p>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+            }
+
             {/* Creation Tasks */}
             {(userHasRole("Admin") || userHasRole("Creator") || 
               userHasRole("Creator_Adjust+") || userHasRole("Creator_Adjust-") || 
@@ -272,25 +344,6 @@ export default function Sidebar() {
               </li>
             }
 
-            {/* Retry Tasks */}
-            {(userHasRole("Admin")) && 
-              <li className="nav-item menu-is-opening menu-open">
-                <a href="#" className="nav-link">
-                  <p>
-                  Retry Tasks
-                  </p>
-                </a>
-                <ul className="nav nav-treeview">
-                  <li className="nav-item">
-                    <a href="/NTAdjustor/Retry" className={`nav-link ${isActive('/Retry')}`}> {/* Add basepath */}
-                      <i className="far fa-circle nav-icon" />
-                      <p>Retry</p>
-                    </a>
-                  </li>
-                </ul>
-              </li>
-            }
-
             {/* Reports section with new role-based access */}
             {(userHasRole("Admin") || userHasRole("Report") || 
               userHasRole("ReportAll") || userHasRole("ReportP3") || 
@@ -338,58 +391,6 @@ export default function Sidebar() {
               </li>
             }
 
-            {/* User Management */}
-            <li className="nav-item menu-is-opening menu-open">
-              <a href="#" className="nav-link">
-                <p>
-                  User Management
-                </p>
-              </a>
-              <ul className="nav nav-treeview">
-                <li className="nav-item">
-                  <a href="/NTAdjustor/MyAdj" className={`nav-link ${isActive('/MyAdj')}`}> {/* Add basepath */}
-                    <i className="far fa-circle nav-icon" />
-                    <p>My Adjustments</p>
-                  </a>
-                </li>                            
-                <li className="nav-item">
-                  <a href="/NTAdjustor/SearchAdj" className={`nav-link ${isActive('/SearchAdj')}`}> {/* Add basepath */}
-                    <i className="far fa-circle nav-icon" />
-                    <p>Search Adjustments</p>
-                  </a>
-                </li>                            
-                <li className="nav-item">
-                  <a href="/NTAdjustor/change-password" className={`nav-link ${isActive('/change-password')}`}> {/* Add basepath */}
-                    <i className="far fa-circle nav-icon" />
-                    <p>Change Password</p>
-                  </a>
-                </li>
-                {(userHasRole("Admin") || userHasRole("ApproverXX")) && 
-                  <li className="nav-item">
-                    <a href="/NTAdjustor/User" className={`nav-link ${isActive('/User')}`}> {/* Add basepath */}
-                      <i className="far fa-circle nav-icon" />
-                      <p>Users</p>
-                    </a>
-                  </li>                            
-                }
-                {(userHasRole("Admin") || userHasRole("ApproverXX")) && 
-                  <li className="nav-item">
-                    <a href="/NTAdjustor/Group" className={`nav-link ${isActive('/Group')}`}> {/* Add basepath */}
-                      <i className="far fa-circle nav-icon" />
-                      <p>Groups</p>
-                    </a>
-                  </li>                            
-                }
-                {(userHasRole("Admin") || userHasRole("ApproverXX")) && 
-                  <li className="nav-item">
-                    <a href="/NTAdjustor/AdjustmentTypeDetail" className={`nav-link ${isActive('/AdjustmentTypeDetail')}`}>
-                      <i className="far fa-circle nav-icon" />
-                      <p>Account Code Config</p>
-                    </a>
-                  </li>
-                }
-              </ul>
-            </li>
 
           </ul>
         </nav>
