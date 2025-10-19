@@ -55,7 +55,7 @@ const translations = {
     p36InvoiceDate: "ไม่อนุญาตให้ทำปรับปรุงหนี้ {documentType} สำหรับใบแจ้งหนี้ปีปัจจุบัน",
     p36AdjustmentDate: "ใบแจ้งหนี้ของเดือน พฤศจิกายน และ ธันวาคม {lastYear} ไม่สามารถสร้างการปรับปรุงหนี้ {documentType} ได้ในขณะนี้ โดยสามารถทำได้ตั้งแต่วันที่ 1 มีนาคม",
     adjustMinusInvoiceDate: "ไม่สามารถสร้างการปรับปรุงหนี้ได้ สำหรับ Adjustment(-) ใบแจ้งหนี้ที่เรียกเก็บจริงต้องอยู่ในปีปัจจุบัน",
-    noAccountsFound: "ไม่พบข้อมูลลูกค้า",
+    noAccountsFound: "ไม่มีสิทธิ์ในการปรับ Service Account นี้กรุณาติดต่อผู้ดูแลระบบ",
     noCostedEventsFound: "ไม่พบข้อมูล Costed Events",
     adjustmentRequestCreated: "สร้างคำขอปรับปรุงแล้ว",
     errorCreatingAdjustmentRequest: "เกิดข้อผิดพลาดในการสร้างคำขอปรับปรุง",
