@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api';
+import config from '../config';
 import { DOCUMENT_TYPE, DOCUMENT_TYPE_DESC } from './Constants';
 import { jwtDecode } from 'jwt-decode';
 import getTranslation from '../utils/getTranslation';
@@ -45,11 +46,44 @@ export const DocumentProvider = ({ children }) => {
                     accountNum: accountNum
                 }
             });
-            setAccounts(response.data);
 
             if (response.data.length === 0) {
                 alert(getTranslation('noAccountsFound', language));
+                setAccounts([]);
+                /** Clear states */
+                setSelectedAccount(null);
+                setServices([]); setSelectedService({}); 
+                setInvoices([]); setSelectedInvoice({}); 
+                setInvoiceDataServices([]); setInvoiceDataRC([]); setInvoiceDataUsage([]); setSelectedInvoiceDataService({}); setSelectedInvoiceDataRC({}); setSelectedInvoiceDataUsage({}); 
+                setCostedEvents([]); setSelectedCostedEvent({});
+                setAdjustmentTypes([]); setSelectedAdjustmentType({}); 
+                setAdjustmentNote('');
+                setAdjustmentAmount(0);
+                return [];
             }
+
+            // Check for restricted customer types (e.g., internal customers)
+            const restrictedCustomerTypeIds = config.adjustment?.restrictedCustomerTypeIds || [];
+            const hasRestrictedCustomer = response.data.some(account => 
+                restrictedCustomerTypeIds.includes(account.customerTypeId)
+            );
+            
+            if (hasRestrictedCustomer) {
+                alert(getTranslation('internalCustomerNotAllowed', language) || 'Cannot create adjustment for internal customer');
+                setAccounts([]);
+                /** Clear states */
+                setSelectedAccount(null);
+                setServices([]); setSelectedService({}); 
+                setInvoices([]); setSelectedInvoice({}); 
+                setInvoiceDataServices([]); setInvoiceDataRC([]); setInvoiceDataUsage([]); setSelectedInvoiceDataService({}); setSelectedInvoiceDataRC({}); setSelectedInvoiceDataUsage({}); 
+                setCostedEvents([]); setSelectedCostedEvent({});
+                setAdjustmentTypes([]); setSelectedAdjustmentType({}); 
+                setAdjustmentNote('');
+                setAdjustmentAmount(0);
+                return [];
+            }
+
+            setAccounts(response.data);
 
             /** Clear states */
             setSelectedAccount(null);
@@ -65,6 +99,7 @@ export const DocumentProvider = ({ children }) => {
             return response.data; // Return the accounts data for further processing if needed
         } catch (error) {
             console.error('Error fetching accounts:', error);
+            return [];
         }
     }
     
@@ -75,11 +110,44 @@ export const DocumentProvider = ({ children }) => {
                     serviceNum: serviceNum
                 }
             });
-            setAccounts(response.data);
 
             if (response.data.length === 0) {
                 alert(getTranslation('noAccountsFound', language));
+                setAccounts([]);
+                /** Clear states */
+                setSelectedAccount(null);
+                setServices([]); setSelectedService({}); 
+                setInvoices([]); setSelectedInvoice({}); 
+                setInvoiceDataServices([]); setInvoiceDataRC([]); setInvoiceDataUsage([]); setSelectedInvoiceDataService({}); setSelectedInvoiceDataRC({}); setSelectedInvoiceDataUsage({}); 
+                setCostedEvents([]); setSelectedCostedEvent({});
+                setAdjustmentTypes([]); setSelectedAdjustmentType({}); 
+                setAdjustmentNote('');
+                setAdjustmentAmount(0);
+                return [];
             }
+
+            // Check for restricted customer types (e.g., internal customers)
+            const restrictedCustomerTypeIds = config.adjustment?.restrictedCustomerTypeIds || [];
+            const hasRestrictedCustomer = response.data.some(account => 
+                restrictedCustomerTypeIds.includes(account.customerTypeId)
+            );
+            
+            if (hasRestrictedCustomer) {
+                alert(getTranslation('internalCustomerNotAllowed', language) || 'Cannot create adjustment for internal customer');
+                setAccounts([]);
+                /** Clear states */
+                setSelectedAccount(null);
+                setServices([]); setSelectedService({}); 
+                setInvoices([]); setSelectedInvoice({}); 
+                setInvoiceDataServices([]); setInvoiceDataRC([]); setInvoiceDataUsage([]); setSelectedInvoiceDataService({}); setSelectedInvoiceDataRC({}); setSelectedInvoiceDataUsage({}); 
+                setCostedEvents([]); setSelectedCostedEvent({});
+                setAdjustmentTypes([]); setSelectedAdjustmentType({}); 
+                setAdjustmentNote('');
+                setAdjustmentAmount(0);
+                return [];
+            }
+
+            setAccounts(response.data);
 
             /** Clear states */
             setSelectedAccount(null);
@@ -94,6 +162,7 @@ export const DocumentProvider = ({ children }) => {
             return response.data; // Return the accounts data for further processing if needed
         } catch (error) {
             console.error('Error fetching accounts:', error);
+            return [];
         }
     }
 
@@ -284,6 +353,11 @@ export const DocumentProvider = ({ children }) => {
         if (!selectedAccount || Object.keys(selectedAccount).length === 0) {
             return getTranslation('selectAccount', language);
         }
+        // Validation: Check for restricted customer types (e.g., internal customers)
+        const restrictedCustomerTypeIds = config.adjustment?.restrictedCustomerTypeIds || [];
+        if (restrictedCustomerTypeIds.includes(selectedAccount.customerTypeId)) {
+            return getTranslation('internalCustomerNotAllowed', language) || 'Cannot create adjustment for internal customer';
+        }
         if (!selectedInvoice || Object.keys(selectedInvoice).length === 0) {
             return getTranslation('selectInvoice', language);
         }
@@ -421,6 +495,11 @@ export const DocumentProvider = ({ children }) => {
         }
         if (!selectedAccount || Object.keys(selectedAccount).length === 0) {
             return getTranslation('selectAccount', language);
+        }
+        // Validation: Check for restricted customer types (e.g., internal customers)
+        const restrictedCustomerTypeIds = config.adjustment?.restrictedCustomerTypeIds || [];
+        if (restrictedCustomerTypeIds.includes(selectedAccount.customerTypeId)) {
+            return getTranslation('internalCustomerNotAllowed', language) || 'Cannot create adjustment for internal customer';
         }
         if (!selectedService || Object.keys(selectedService).length === 0) {
             return getTranslation('selectServiceNumber', language);

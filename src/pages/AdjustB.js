@@ -16,6 +16,7 @@ import ServiceSearch from '../components/ServiceSearch';
 import AccountInfo from '../components/AccountInfo';
 import { useState } from 'react';
 import api from '../api';
+import config from '../config';
 import getTranslation from '../utils/getTranslation';
 import { v4 as uuidv4 } from 'uuid'; // npm install uuid
 
@@ -84,6 +85,19 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
 
     const getAccountsByAccountNumLocalBMinus = async (accountNum) => {        
         const accounts = await getAccountsByAccountNum(accountNum);
+        
+        // Check for restricted customer types (e.g., internal customers)
+        const restrictedCustomerTypeIds = config.adjustment?.restrictedCustomerTypeIds || [];
+        const hasRestrictedCustomer = accounts.some(account => 
+            restrictedCustomerTypeIds.includes(account.customerTypeId)
+        );
+        if (hasRestrictedCustomer) {
+            alert(getTranslation('internalCustomerNotAllowed', language) || 'Cannot create adjustment for internal customer');
+            setAccountsBMinus([]);
+            setSelectedAccountBMinus(null);
+            return;
+        }
+        
         setAccountsBMinus(accounts);
     }
 
@@ -98,11 +112,25 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
                     bypassLocation: 'Y'
                 }
             });
-            setAccountsBPlus(response.data);
 
             if (response.data.length === 0) {
                 alert(getTranslation('noAccountsFound', language));
+                return;
             }
+
+            // Check for restricted customer types (e.g., internal customers)
+            const restrictedCustomerTypeIds = config.adjustment?.restrictedCustomerTypeIds || [];
+            const hasRestrictedCustomer = response.data.some(account => 
+                restrictedCustomerTypeIds.includes(account.customerTypeId)
+            );
+            if (hasRestrictedCustomer) {
+                alert(getTranslation('internalCustomerNotAllowed', language) || 'Cannot create adjustment for internal customer');
+                setAccountsBPlus([]);
+                setSelectedAccountBPlus(null);
+                return;
+            }
+
+            setAccountsBPlus(response.data);
 
         } catch (error) {
             console.error('Error fetching accounts:', error);
@@ -111,6 +139,19 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
 
     const getAccountsByServiceNumLocalBMinus = async (serviceNum) => {
         const accounts = await getAccountsByServiceNum(serviceNum);
+        
+        // Check for restricted customer types (e.g., internal customers)
+        const restrictedCustomerTypeIds = config.adjustment?.restrictedCustomerTypeIds || [];
+        const hasRestrictedCustomer = accounts.some(account => 
+            restrictedCustomerTypeIds.includes(account.customerTypeId)
+        );
+        if (hasRestrictedCustomer) {
+            alert(getTranslation('internalCustomerNotAllowed', language) || 'Cannot create adjustment for internal customer');
+            setAccountsBMinus([]);
+            setSelectedAccountBMinus(null);
+            return;
+        }
+        
         setAccountsBMinus(accounts);
     }
 
@@ -125,11 +166,25 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
                     bypassLocation: 'Y'
                 }
             });
-            setAccountsBPlus(response.data);
 
             if (response.data.length === 0) {
                 alert(getTranslation('noAccountsFound', language));
+                return;
             }
+
+            // Check for restricted customer types (e.g., internal customers)
+            const restrictedCustomerTypeIds = config.adjustment?.restrictedCustomerTypeIds || [];
+            const hasRestrictedCustomer = response.data.some(account => 
+                restrictedCustomerTypeIds.includes(account.customerTypeId)
+            );
+            if (hasRestrictedCustomer) {
+                alert(getTranslation('internalCustomerNotAllowed', language) || 'Cannot create adjustment for internal customer');
+                setAccountsBPlus([]);
+                setSelectedAccountBPlus(null);
+                return;
+            }
+
+            setAccountsBPlus(response.data);
 
         } catch (error) {
             console.error('Error fetching accounts:', error);
@@ -379,6 +434,12 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
         }
         if (!selectedAccountBMinus || Object.keys(selectedAccountBMinus).length === 0 || !selectedAccountBPlus || Object.keys(selectedAccountBPlus).length === 0) {
             return getTranslation('selectAccount', language);
+        }
+        // Validation: Check for restricted customer types (e.g., internal customers)
+        const restrictedCustomerTypeIds = config.adjustment?.restrictedCustomerTypeIds || [];
+        if (restrictedCustomerTypeIds.includes(selectedAccountBMinus.customerTypeId) || 
+            restrictedCustomerTypeIds.includes(selectedAccountBPlus.customerTypeId)) {
+            return getTranslation('internalCustomerNotAllowed', language) || 'Cannot create adjustment for internal customer';
         }
         // New validation: terminationDat must be null for both accounts
         if (selectedAccountBMinus.terminationDat !== null || selectedAccountBPlus.terminationDat !== null) {

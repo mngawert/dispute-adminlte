@@ -10,6 +10,13 @@ const config = {
     // URL to redirect to when session query parameter is missing
     intranetRedirectUrl: "https://intranet.ntplc.co.th"
   },
+
+  // Business rules for adjustments
+  adjustment: {
+    // Customer types that are not allowed to create adjustments
+    // 25 = Internal Customer
+    restrictedCustomerTypeIds: [25]
+  },
 };
 
 export default config;
