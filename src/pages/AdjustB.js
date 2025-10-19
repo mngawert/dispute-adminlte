@@ -387,7 +387,7 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
             reasonId: selectedReason
         });
 
-        clearStates(); // Clear states after creating adjustment request
+        //clearStates(); // Clear states after creating adjustment request
         
         console.log('Adjustment Request Created:', response.data);
 
