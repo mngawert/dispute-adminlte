@@ -273,7 +273,7 @@ export default function Sidebar() {
             }
 
             {/* Retry Tasks */}
-            {(userHasRole("Admin") || userHasRole("Finance")) && 
+            {(userHasRole("Admin")) && 
               <li className="nav-item menu-is-opening menu-open">
                 <a href="#" className="nav-link">
                   <p>

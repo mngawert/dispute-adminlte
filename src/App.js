@@ -62,7 +62,7 @@ function App() {
             <Route path="/Approve" element={ <PrivateRoute element={<Review reviewType="Approve" prevDocumentStatus='Review-Accept' />} allowedRoles={['Admin', 'Approver']} /> } />
             <Route path="/Finance" element={ <PrivateRoute element={<Review reviewType="Finance" prevDocumentStatus='Approve-Accept' />} allowedRoles={['Admin', 'Finance']} /> } />
             <Route path="/Cancel" element={ <PrivateRoute element={<Review reviewType="Cancel" prevDocumentStatus='CREATED_IN_RBM' />} allowedRoles={['Admin', 'Finance', 'Approver']} /> } />
-            <Route path="/Retry" element={ <PrivateRoute element={<Review reviewType="Retry" prevDocumentStatus='ERROR_IN_RBM,PARTIAL_ERROR' />} allowedRoles={['Admin', 'Approver', 'Finance']} /> } />
+            <Route path="/Retry" element={ <PrivateRoute element={<Review reviewType="Retry" prevDocumentStatus='ERROR_IN_RBM,PARTIAL_ERROR' />} allowedRoles={['Admin']} /> } />
             {/* <Route path="/reviewBak" element={<ReviewBak />} /> */}
             <Route path="/AdjustPlus" element={ <PrivateRoute element={<AdjustPlus />} allowedRoles={['Admin', 'Creator', 'Creator_Adjust+']} /> } />
             <Route path="/AdjustMinus" element={ <PrivateRoute element={<AdjustMinus />} allowedRoles={['Admin', 'Creator', 'Creator_Adjust-']} /> } />
