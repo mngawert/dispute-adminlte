@@ -83,6 +83,28 @@ export const DocumentProvider = ({ children }) => {
                 return [];
             }
 
+            // Check if account has services
+            const servicesResponse = await api.get('/api/Account/GetServicesByAccountNum', {
+                params: {
+                    accountNum: accountNum
+                }
+            });
+
+            if (servicesResponse.data.length === 0) {
+                alert(getTranslation('noServicesFound', language) || 'No services found for this account');
+                setAccounts([]);
+                /** Clear states */
+                setSelectedAccount(null);
+                setServices([]); setSelectedService({}); 
+                setInvoices([]); setSelectedInvoice({}); 
+                setInvoiceDataServices([]); setInvoiceDataRC([]); setInvoiceDataUsage([]); setSelectedInvoiceDataService({}); setSelectedInvoiceDataRC({}); setSelectedInvoiceDataUsage({}); 
+                setCostedEvents([]); setSelectedCostedEvent({});
+                setAdjustmentTypes([]); setSelectedAdjustmentType({}); 
+                setAdjustmentNote('');
+                setAdjustmentAmount(0);
+                return [];
+            }
+
             setAccounts(response.data);
 
             /** Clear states */

@@ -130,6 +130,20 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
                 return;
             }
 
+            // Check if account has services
+            const servicesResponse = await api.get('/api/Account/GetServicesByAccountNum', {
+                params: {
+                    accountNum: accountNum
+                }
+            });
+
+            if (servicesResponse.data.length === 0) {
+                alert(getTranslation('noServicesFound', language) || 'No services found for this account');
+                setAccountsBPlus([]);
+                setSelectedAccountBPlus(null);
+                return;
+            }
+
             setAccountsBPlus(response.data);
 
         } catch (error) {
@@ -179,6 +193,20 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
             );
             if (hasRestrictedCustomer) {
                 alert(getTranslation('internalCustomerNotAllowed', language) || 'Cannot create adjustment for internal customer');
+                setAccountsBPlus([]);
+                setSelectedAccountBPlus(null);
+                return;
+            }
+
+            // Check if account has services
+            const servicesResponse = await api.get('/api/Account/GetServicesByAccountNum', {
+                params: {
+                    accountNum: response.data[0]?.accountNum
+                }
+            });
+
+            if (servicesResponse.data.length === 0) {
+                alert(getTranslation('noServicesFound', language) || 'No services found for this account');
                 setAccountsBPlus([]);
                 setSelectedAccountBPlus(null);
                 return;
