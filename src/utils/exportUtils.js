@@ -92,16 +92,27 @@ export const exportAdjustmentRequestsToExcel = async (documentNums, fileName) =>
             allAdjustmentRequests.pop();
         }
 
+        // Apply absolute values to amount, vat, and total fields
+        const allAdjustmentRequestsWithAbsValues = allAdjustmentRequests.map(adj => {
+            if (Object.keys(adj).length === 0) return adj; // Keep empty rows as is
+            return {
+                ...adj,
+                amount: adj.amount !== null && adj.amount !== undefined ? Math.abs(adj.amount) : adj.amount,
+                vat: adj.vat !== null && adj.vat !== undefined ? Math.abs(adj.vat) : adj.vat,
+                total: adj.total !== null && adj.total !== undefined ? Math.abs(adj.total) : adj.total
+            };
+        });
+
         // Add an empty row before the total row
-        allAdjustmentRequests.push({});
+        allAdjustmentRequestsWithAbsValues.push({});
 
         // Convert headers
-        const convertedData = convertHeaders(allAdjustmentRequests);
+        const convertedData = convertHeaders(allAdjustmentRequestsWithAbsValues);
 
-        // Calculate totals
-        const totalAmount = allAdjustmentRequests.reduce((sum, adj) => sum + (adj.amount || 0), 0);
-        const totalVAT = allAdjustmentRequests.reduce((sum, adj) => sum + (adj.vat || 0), 0);
-        const totalOverall = allAdjustmentRequests.reduce((sum, adj) => sum + (adj.total || 0), 0);
+        // Calculate totals using absolute values
+        const totalAmount = allAdjustmentRequests.reduce((sum, adj) => sum + (adj.amount !== null && adj.amount !== undefined ? Math.abs(adj.amount) : 0), 0);
+        const totalVAT = allAdjustmentRequests.reduce((sum, adj) => sum + (adj.vat !== null && adj.vat !== undefined ? Math.abs(adj.vat) : 0), 0);
+        const totalOverall = allAdjustmentRequests.reduce((sum, adj) => sum + (adj.total !== null && adj.total !== undefined ? Math.abs(adj.total) : 0), 0);
 
         // Add totals row
         const allAdjustmentRequestsWithTotal = [
