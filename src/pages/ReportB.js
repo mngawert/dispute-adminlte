@@ -131,9 +131,9 @@ const ReportB = () => {
       'Customer Name (B+)': item.customerName2,
       'Invoicing Company (B+)': item.invoicingCoName2,
       'Service Number (B+)': item.serviceNum2,
-      'Amount': item.amount,
-      'VAT': item.vat,
-      'Total': item.total,
+      'Amount': item.amount !== null ? Math.abs(item.amount) : null,
+      'VAT': item.vat !== null ? Math.abs(item.vat) : null,
+      'Total': item.total !== null ? Math.abs(item.total) : null,
       'Created Date': formatDateForDisplay(item.createdDtm),
       'Created By': item.createdBy,
       'Reviewed Date': formatDateForDisplay(item.reviewedDtm),
@@ -383,9 +383,9 @@ const ReportB = () => {
                               <td>{item.customerName2}</td>
                               <td>{item.invoicingCoName2}</td>
                               <td>{item.serviceNum2}</td>
-                              <td align="right">{formatNumber(item.amount)}</td>
-                              <td align="right">{formatNumber(item.vat)}</td>
-                              <td align="right">{formatNumber(item.total)}</td>
+                              <td align="right">{item.amount !== null ? formatNumber(Math.abs(item.amount)) : ''}</td>
+                              <td align="right">{item.vat !== null ? formatNumber(Math.abs(item.vat)) : ''}</td>
+                              <td align="right">{item.total !== null ? formatNumber(Math.abs(item.total)) : ''}</td>
                               <td>{formatDateForDisplay(item.createdDtm)}</td>
                               <td>{item.createdBy}</td>
                               <td>{formatDateForDisplay(item.reviewedDtm)}</td>
