@@ -4,6 +4,7 @@ import { Tab, Tabs } from 'react-bootstrap';
 import ReviewDocType from './ReviewDocType';
 import ContentHeader from '../components/ContentHeader';
 import { loadReviewTabsConfig } from '../utils/configLoader';
+import { jwtDecode } from 'jwt-decode';
 
 const Review = ({ reviewType, prevDocumentStatus }) => {
 
@@ -51,6 +52,29 @@ const Review = ({ reviewType, prevDocumentStatus }) => {
       config.financeRestrictedTabs.forEach(tab => {
         calculatedVisibleTabs[tab] = false;
       });
+    }
+    
+    // For Cancel review, check user role
+    if (reviewType === 'Cancel') {
+      try {
+        const token = localStorage.getItem("authToken");
+        if (token) {
+          const decodedToken = jwtDecode(token);
+          const roles = decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] || [];
+          const userRoles = Array.isArray(roles) ? roles : [roles];
+          
+          // If user has Approver role (but not Admin), show only Adjust-, Adjust+, and B1+/-
+          if (userRoles.includes('Approver') && !userRoles.includes('Admin')) {
+            Object.keys(calculatedVisibleTabs).forEach(tab => {
+              if (!['Adjust-', 'Adjust+', 'B1+/-'].includes(tab)) {
+                calculatedVisibleTabs[tab] = false;
+              }
+            });
+          }
+        }
+      } catch (error) {
+        console.error("Error decoding token for role-based tab visibility:", error);
+      }
     }
     
     setVisibleTabs(calculatedVisibleTabs);
