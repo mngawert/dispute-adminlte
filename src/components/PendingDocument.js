@@ -36,10 +36,21 @@ const PendingDocument = ({ pendingDocument, adjustmentRequests, fetchPendingDocu
         return null;
     };
 
-    // Calculate totals
-    let totalAmount = adjustmentRequests.reduce((sum, adj) => sum + Math.abs(adj.disputeMny), 0);
-    let totalVAT = adjustmentRequests.reduce((sum, adj) => sum + Math.abs(adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100)), 0);
-    let total = adjustmentRequests.reduce((sum, adj) => sum + Math.abs(adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100)), 0);
+    // Calculate totals by summing the already-rounded individual values to avoid rounding discrepancies
+    let totalAmount = adjustmentRequests.reduce((sum, adj) => {
+        const roundedAmount = parseFloat(Math.abs(adj.disputeMny).toFixed(2));
+        return sum + roundedAmount;
+    }, 0);
+    
+    let totalVAT = adjustmentRequests.reduce((sum, adj) => {
+        const roundedVAT = parseFloat(Math.abs(adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100)).toFixed(2));
+        return sum + roundedVAT;
+    }, 0);
+    
+    let total = adjustmentRequests.reduce((sum, adj) => {
+        const roundedTotal = parseFloat(Math.abs(adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100)).toFixed(2));
+        return sum + roundedTotal;
+    }, 0);
 
     // No need to divide by 2 for B1+/- as rows already contain merged data
     

@@ -109,19 +109,39 @@ export const exportAdjustmentRequestsToExcel = async (documentNums, fileName) =>
         // Convert headers
         const convertedData = convertHeaders(allAdjustmentRequestsWithAbsValues);
 
-        // Calculate totals using absolute values
-        const totalAmount = allAdjustmentRequests.reduce((sum, adj) => sum + (adj.amount !== null && adj.amount !== undefined ? Math.abs(adj.amount) : 0), 0);
-        const totalVAT = allAdjustmentRequests.reduce((sum, adj) => sum + (adj.vat !== null && adj.vat !== undefined ? Math.abs(adj.vat) : 0), 0);
-        const totalOverall = allAdjustmentRequests.reduce((sum, adj) => sum + (adj.total !== null && adj.total !== undefined ? Math.abs(adj.total) : 0), 0);
+        // Calculate totals using absolute values with proper rounding to avoid discrepancies
+        const totalAmount = allAdjustmentRequests.reduce((sum, adj) => {
+            if (adj.amount !== null && adj.amount !== undefined) {
+                const roundedAmount = parseFloat(Math.abs(adj.amount).toFixed(2));
+                return sum + roundedAmount;
+            }
+            return sum;
+        }, 0);
+        
+        const totalVAT = allAdjustmentRequests.reduce((sum, adj) => {
+            if (adj.vat !== null && adj.vat !== undefined) {
+                const roundedVAT = parseFloat(Math.abs(adj.vat).toFixed(2));
+                return sum + roundedVAT;
+            }
+            return sum;
+        }, 0);
+        
+        const totalOverall = allAdjustmentRequests.reduce((sum, adj) => {
+            if (adj.total !== null && adj.total !== undefined) {
+                const roundedTotal = parseFloat(Math.abs(adj.total).toFixed(2));
+                return sum + roundedTotal;
+            }
+            return sum;
+        }, 0);
 
         // Add totals row
         const allAdjustmentRequestsWithTotal = [
             ...convertedData,
             {
                 'Adjustment Type': 'Summary',
-                'Amount': totalAmount,
-                'VAT': totalVAT,
-                'Total': totalOverall
+                'Amount': parseFloat(totalAmount.toFixed(2)),
+                'VAT': parseFloat(totalVAT.toFixed(2)),
+                'Total': parseFloat(totalOverall.toFixed(2))
             }
         ];
 
