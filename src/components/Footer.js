@@ -12,7 +12,7 @@ export default function Footer() {
       </strong>{" "}
       All rights reserved.
       <br />
-      Version 1.0
+      Version 1.01
     </footer>
   );
 }
