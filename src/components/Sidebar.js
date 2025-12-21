@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
+import { getUserRoles, userHasRole } from '../utils/utils';
 import { loadReviewTabsConfig } from '../utils/configLoader';
 
 export default function Sidebar() {
   const location = useLocation();
-  const token = localStorage.getItem('authToken');
   // Initialize with default config to show items immediately
   const [creationMenuConfig, setCreationMenuConfig] = useState({
     "Adjust-": true,
@@ -19,15 +18,8 @@ export default function Sidebar() {
     "B1+/-": true
   });
   
-  let decodedToken = null;
-  let roles = [];
-
-  if (token) {
-    decodedToken = jwtDecode(token);
-    // Handle both array and string formats
-    const roleData = decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
-    roles = Array.isArray(roleData) ? roleData : [roleData];
-  }
+  // Get roles from JWT token
+  const roles = getUserRoles();
 
   // Load creation menu configuration
   useEffect(() => {
@@ -45,12 +37,6 @@ export default function Sidebar() {
 
     loadConfig();
   }, []);
-
-  const userHasRole = (role) => {
-    if (!roles || roles.length === 0) return false;
-    // Exact match for role names - no partial matching
-    return roles.some(r => r === role);
-  };
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");
