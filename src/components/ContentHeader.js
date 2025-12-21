@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { jwtDecode } from 'jwt-decode';
 import './ContentHeader.css'; // We'll create this file for custom styling
 
 const ContentHeader = ({ title }) => {
@@ -14,10 +15,26 @@ const ContentHeader = ({ title }) => {
   const firstNameTh = userLogin?.firstNameTh || '';
   const lastNameTh = userLogin?.lastNameTh || '';
   
+  // Extract roles from JWT token
+  const token = localStorage.getItem('authToken');
+  let roles = [];
+  if (token) {
+    try {
+      const decodedToken = jwtDecode(token);
+      const roleData = decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+      roles = Array.isArray(roleData) ? roleData : (roleData ? [roleData] : []);
+    } catch (error) {
+      console.error('Error decoding token for roles:', error);
+    }
+  }
+  
   // Combine Thai name parts, only if at least one of them exists
   const thaiNameDisplay = (titleTh || firstNameTh || lastNameTh) ? 
     `${titleTh} ${firstNameTh} ${lastNameTh}` : '';
-    
+  
+  // Format roles display
+  const rolesDisplay = roles.length > 0 ? roles.join(', ') : '';
+
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -92,6 +109,12 @@ const ContentHeader = ({ title }) => {
                       <div className="user-detail-item">
                         <i className="nav-icon fas fa-id-card mr-2"></i>
                         <span>Name: {thaiNameDisplay}</span>
+                      </div>
+                    )}
+                    {rolesDisplay && (
+                      <div className="user-detail-item">
+                        <i className="nav-icon fas fa-user-tag mr-2"></i>
+                        <span>Roles: {rolesDisplay}</span>
                       </div>
                     )}
                     <div className="dropdown-divider"></div>
