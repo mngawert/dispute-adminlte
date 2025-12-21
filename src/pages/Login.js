@@ -10,6 +10,22 @@ const Login = () => {
   const [loading, setLoading] = useState(false); // Add loading state
 
   useEffect(() => {
+    // Check if user is already logged in with valid token
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      try {
+        // If already logged in, redirect to home
+        console.log("Login: User already authenticated, redirecting to home");
+        window.location.href = "/NTAdjustor";
+        return;
+      } catch (error) {
+        // Invalid token, clear it and continue to login
+        console.log("Login: Invalid token found, clearing...");
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("userLogin");
+      }
+    }
+
     // Load authentication config from the public config file
     const checkSessionParam = async () => {
       try {
@@ -30,6 +46,7 @@ const Login = () => {
           if (!sessionParam) {
             console.log("Login: No session parameter, redirecting to:", authConfig.auth.intranetRedirectUrl);
             window.location.href = authConfig.auth.intranetRedirectUrl;
+            return;
           } else {
             console.log("Login: Session parameter found, continuing to login page");
           }
@@ -45,6 +62,7 @@ const Login = () => {
           
           if (!sessionParam) {
             window.location.href = config.auth.intranetRedirectUrl;
+            return;
           }
         }
       }
@@ -60,6 +78,11 @@ const Login = () => {
       return;
     }
 
+    // Prevent double submission
+    if (loading) {
+      return;
+    }
+
     // Set loading to true when starting the request
     setLoading(true);
     setErrorMessage("");
@@ -71,22 +94,31 @@ const Login = () => {
         password,
       });
       console.log('response.data:', response.data);
+      
+      // Validate response data
+      if (!response.data || !response.data.token || !response.data.user) {
+        throw new Error("Invalid response from server");
+      }
+      
       localStorage.setItem("authToken", response.data.token);
       localStorage.setItem("userLogin", JSON.stringify(response.data.user));
 
       // Check if password has been changed
       if (response.data.user.pwdChanged !== "Y") {
         // Redirect to the change-password page
+        console.log("Login: Password not changed, redirecting to change password page");
         window.location.href = "/NTAdjustor/change-password";
         return;
       }
 
-      // Redirect to the earlier wanted URL or default to "/home"
-      const redirectUrl = '/NTAdjustor';
+      // Redirect to the earlier wanted URL or default to home
+      const redirectUrl = localStorage.getItem('redirectUrl') || '/NTAdjustor';
       localStorage.removeItem('redirectUrl');
-      window.location.href = redirectUrl;      
+      console.log("Login: Success, redirecting to:", redirectUrl);
+      window.location.href = redirectUrl;
+      // Note: loading state not reset because we're redirecting
     } catch (error) {
-      console.error("There was an error!", error);
+      console.error("Login error:", error);
       
       // Extract error message from API response if available
       let errorMsg = "Invalid username or password. Please try again.";
@@ -99,6 +131,8 @@ const Login = () => {
           // Some APIs return the error message directly as a string
           errorMsg = error.response.data;
         }
+      } else if (error.message) {
+        errorMsg = error.message;
       }
       
       setErrorMessage(errorMsg);
