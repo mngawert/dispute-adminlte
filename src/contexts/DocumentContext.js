@@ -245,6 +245,10 @@ export const DocumentProvider = ({ children }) => {
             });
             setInvoiceDataServices(response.data);
 
+            if (response.data.length === 0) {
+                alert(getTranslation('noInvoiceDataServicesFound', language));
+            }
+
             return response.data; // Return the invoice data services for further processing if needed
         } catch (error) {
             console.error('Error fetching invoice feed data services:', error);
