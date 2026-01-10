@@ -1,11 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { getUserRoles } from '../utils/utils';
+import api from '../api';
 import './ContentHeader.css'; // We'll create this file for custom styling
 
 const ContentHeader = ({ title }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [imageError, setImageError] = useState(false);
   const dropdownRef = useRef(null);
+  const [userDetails, setUserDetails] = useState(null);
+  const [loadingUserDetails, setLoadingUserDetails] = useState(false);
   
   const userLogin = JSON.parse(localStorage.getItem('userLogin'));
   const username = userLogin?.username;
@@ -14,6 +17,7 @@ const ContentHeader = ({ title }) => {
   const titleTh = userLogin?.titleTh || '';
   const firstNameTh = userLogin?.firstNameTh || '';
   const lastNameTh = userLogin?.lastNameTh || '';
+  const userId = userLogin?.userId;
   
   // Get roles from JWT token
   const roles = getUserRoles();
@@ -24,6 +28,44 @@ const ContentHeader = ({ title }) => {
   
   // Format roles display
   const rolesDisplay = roles.length > 0 ? roles.join(', ') : '';
+
+  // Helper function to get unique values from comma-separated string
+  const getUniqueValues = (str) => {
+    if (!str) return '';
+    const values = str.split(',').map(v => v.trim()).filter(v => v !== '');
+    const uniqueValues = [...new Set(values)];
+    return uniqueValues.join(', ');
+  };
+
+  // Fetch user details from ReportUser API
+  const fetchUserDetails = async () => {
+    if (!userId || userDetails) return; // Don't fetch if already loaded or no userId
+    
+    setLoadingUserDetails(true);
+    try {
+      const response = await api.get(`/api/Adjustment/ReportUser?userId=${userId}`);
+      if (response.data && response.data.length > 0) {
+        const data = response.data[0];
+        // Process the data to get unique values
+        setUserDetails({
+          ...data,
+          invoicingCompany: getUniqueValues(data.invoicingCompany),
+          locations: getUniqueValues(data.locations)
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching user details:', error);
+    } finally {
+      setLoadingUserDetails(false);
+    }
+  };
+
+  // Fetch user details when dropdown opens
+  useEffect(() => {
+    if (dropdownOpen && userId && !userDetails) {
+      fetchUserDetails();
+    }
+  }, [dropdownOpen, userId]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -105,6 +147,24 @@ const ContentHeader = ({ title }) => {
                       <div className="user-detail-item">
                         <i className="nav-icon fas fa-user-tag mr-2"></i>
                         <span>Roles: {rolesDisplay}</span>
+                      </div>
+                    )}
+                    {loadingUserDetails && (
+                      <div className="user-detail-item">
+                        <i className="nav-icon fas fa-spinner fa-spin mr-2"></i>
+                        <span>Loading...</span>
+                      </div>
+                    )}
+                    {userDetails && userDetails.invoicingCompany && (
+                      <div className="user-detail-item">
+                        <i className="nav-icon fas fa-building mr-2"></i>
+                        <span>ICOs: {userDetails.invoicingCompany}</span>
+                      </div>
+                    )}
+                    {userDetails && userDetails.locations && (
+                      <div className="user-detail-item">
+                        <i className="nav-icon fas fa-map-marked-alt mr-2"></i>
+                        <span>Available Locations: {userDetails.locations}</span>
                       </div>
                     )}
                     <div className="dropdown-divider"></div>
