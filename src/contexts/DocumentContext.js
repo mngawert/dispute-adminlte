@@ -243,13 +243,15 @@ export const DocumentProvider = ({ children }) => {
                     billSeq: invoice.billSeq
                 }
             });
-            setInvoiceDataServices(response.data);
+            
+            const sortedData = response.data.sort((a, b) => a.serviceNumber.localeCompare(b.serviceNumber));
+            setInvoiceDataServices(sortedData);
 
-            if (response.data.length === 0) {
+            if (sortedData.length === 0) {
                 alert(getTranslation('noInvoiceDataServicesFound', language));
             }
 
-            return response.data; // Return the invoice data services for further processing if needed
+            return sortedData; // Return the invoice data services for further processing if needed
         } catch (error) {
             console.error('Error fetching invoice feed data services:', error);
         }
