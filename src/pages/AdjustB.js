@@ -248,7 +248,7 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
         // Validate API response
         if (!invoiceDataServices || invoiceDataServices.length === 0) {
             console.error('No invoice data services returned for invoice:', invoice);
-            alert('No services found for this invoice.');
+            //alert('No services found for this invoice.');
             setServicesBMinus([]);
             setSelectedServiceBMinus(null);
             return;
