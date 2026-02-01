@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import config from "../config";
+import getTranslation from "../utils/getTranslation";
 import AccountInfo from "../components/AccountInfo";
 import Accounts from "../components/Accounts";
 import Services from "../components/Services";
@@ -40,10 +42,20 @@ const AdjustPlus = ({
         pendingDocument, adjustmentRequests, fetchPendingDocumentAndRequests, deleteAdjustmentRequest, updateDocumentStatus,
     } = useDocumentContext();
 
-    // State for adjustment type names
+    // State for adjustment type names and language
+    const [language, setLanguage] = useState('th'); // Default language
     const [adjustmentTypeNames, setAdjustmentTypeNames] = useState(initialAdjustmentTypeNames);
 
     const handleSelectAccount = async (account) => {
+        // Check for restricted customer types (e.g., internal customers)
+        const restrictedCustomerTypeIds = config.adjustment?.restrictedCustomerTypeIds || [];
+        if (restrictedCustomerTypeIds.includes(account.customerTypeId)) {
+            alert(getTranslation('internalCustomerNotAllowed', language) || 'Cannot create adjustment for internal customer');
+            setSelectedAccount(null);
+            setServices([]);
+            return;
+        }
+        
         setSelectedAccount(account);
         const services = await getServicesByAccountNum(account.accountNum);
         const sortedServices = services.sort((a, b) => a.serviceNum.localeCompare(b.serviceNum));

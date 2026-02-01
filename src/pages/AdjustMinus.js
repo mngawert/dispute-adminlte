@@ -1,5 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDocumentContext } from '../contexts/DocumentContext';
+import config from '../config';
+import getTranslation from '../utils/getTranslation';
 import PendingDocument from '../components/PendingDocument';
 import { DOCUMENT_TYPE } from '../contexts/Constants';
 import AccountSearch from '../components/AccountSearch';
@@ -47,6 +49,20 @@ const AdjustMinus = ({documentType=DOCUMENT_TYPE.ADJUST_MINUS, documentTypeName=
         costedEvents, setCostedEvents, getCostedEvents, selectedCostedEvent, setSelectedCostedEvent
 
     } = useDocumentContext();
+
+    const [language, setLanguage] = useState('th'); // Default language
+
+    const handleSelectAccount = (account) => {
+        // Check for restricted customer types (e.g., internal customers)
+        const restrictedCustomerTypeIds = config.adjustment?.restrictedCustomerTypeIds || [];
+        if (restrictedCustomerTypeIds.includes(account.customerTypeId)) {
+            alert(getTranslation('internalCustomerNotAllowed', language) || 'Cannot create adjustment for internal customer');
+            setSelectedAccount(null);
+            return;
+        }
+        
+        setSelectedAccount(account);
+    }
 
 
     const handleSelectInvoice = (invoice) => { 
@@ -132,7 +148,7 @@ const AdjustMinus = ({documentType=DOCUMENT_TYPE.ADJUST_MINUS, documentTypeName=
             <div className="col-12">
             {/* START CONTENT */}
 
-                <AccountSearch accountNum={accountNum} setAccountNum={setAccountNum} accounts={accounts} getAccountsByAccountNum={getAccountsByAccountNum} getAccountsByServiceNum={getAccountsByServiceNum} selectedAccount={selectedAccount} setSelectedAccount={setSelectedAccount} />
+                <AccountSearch accountNum={accountNum} setAccountNum={setAccountNum} accounts={accounts} getAccountsByAccountNum={getAccountsByAccountNum} getAccountsByServiceNum={getAccountsByServiceNum} selectedAccount={selectedAccount} setSelectedAccount={handleSelectAccount} />
 
                 <div className="card">
                     <div className="card-body">

@@ -62,27 +62,6 @@ export const DocumentProvider = ({ children }) => {
                 return [];
             }
 
-            // Check for restricted customer types (e.g., internal customers)
-            const restrictedCustomerTypeIds = config.adjustment?.restrictedCustomerTypeIds || [];
-            const hasRestrictedCustomer = response.data.some(account => 
-                restrictedCustomerTypeIds.includes(account.customerTypeId)
-            );
-            
-            if (hasRestrictedCustomer) {
-                alert(getTranslation('internalCustomerNotAllowed', language) || 'Cannot create adjustment for internal customer');
-                setAccounts([]);
-                /** Clear states */
-                setSelectedAccount(null);
-                setServices([]); setSelectedService({}); 
-                setInvoices([]); setSelectedInvoice({}); 
-                setInvoiceDataServices([]); setInvoiceDataRC([]); setInvoiceDataUsage([]); setSelectedInvoiceDataService({}); setSelectedInvoiceDataRC({}); setSelectedInvoiceDataUsage({}); 
-                setCostedEvents([]); setSelectedCostedEvent({});
-                setAdjustmentTypes([]); setSelectedAdjustmentType({}); 
-                setAdjustmentNote('');
-                setAdjustmentAmount(0);
-                return [];
-            }
-
             // Check if account has services
             const servicesResponse = await api.get('/api/Account/GetServicesByAccountNum', {
                 params: {
@@ -135,27 +114,6 @@ export const DocumentProvider = ({ children }) => {
 
             if (response.data.length === 0) {
                 alert(getTranslation('noAccountsFound', language));
-                setAccounts([]);
-                /** Clear states */
-                setSelectedAccount(null);
-                setServices([]); setSelectedService({}); 
-                setInvoices([]); setSelectedInvoice({}); 
-                setInvoiceDataServices([]); setInvoiceDataRC([]); setInvoiceDataUsage([]); setSelectedInvoiceDataService({}); setSelectedInvoiceDataRC({}); setSelectedInvoiceDataUsage({}); 
-                setCostedEvents([]); setSelectedCostedEvent({});
-                setAdjustmentTypes([]); setSelectedAdjustmentType({}); 
-                setAdjustmentNote('');
-                setAdjustmentAmount(0);
-                return [];
-            }
-
-            // Check for restricted customer types (e.g., internal customers)
-            const restrictedCustomerTypeIds = config.adjustment?.restrictedCustomerTypeIds || [];
-            const hasRestrictedCustomer = response.data.some(account => 
-                restrictedCustomerTypeIds.includes(account.customerTypeId)
-            );
-            
-            if (hasRestrictedCustomer) {
-                alert(getTranslation('internalCustomerNotAllowed', language) || 'Cannot create adjustment for internal customer');
                 setAccounts([]);
                 /** Clear states */
                 setSelectedAccount(null);

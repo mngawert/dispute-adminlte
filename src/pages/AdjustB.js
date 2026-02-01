@@ -85,19 +85,6 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
 
     const getAccountsByAccountNumLocalBMinus = async (accountNum) => {        
         const accounts = await getAccountsByAccountNum(accountNum);
-        
-        // Check for restricted customer types (e.g., internal customers)
-        const restrictedCustomerTypeIds = config.adjustment?.restrictedCustomerTypeIds || [];
-        const hasRestrictedCustomer = accounts.some(account => 
-            restrictedCustomerTypeIds.includes(account.customerTypeId)
-        );
-        if (hasRestrictedCustomer) {
-            alert(getTranslation('internalCustomerNotAllowed', language) || 'Cannot create adjustment for internal customer');
-            setAccountsBMinus([]);
-            setSelectedAccountBMinus(null);
-            return;
-        }
-        
         setAccountsBMinus(accounts);
     }
 
@@ -115,18 +102,6 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
 
             if (response.data.length === 0) {
                 alert(getTranslation('noAccountsFound', language));
-                return;
-            }
-
-            // Check for restricted customer types (e.g., internal customers)
-            const restrictedCustomerTypeIds = config.adjustment?.restrictedCustomerTypeIds || [];
-            const hasRestrictedCustomer = response.data.some(account => 
-                restrictedCustomerTypeIds.includes(account.customerTypeId)
-            );
-            if (hasRestrictedCustomer) {
-                alert(getTranslation('internalCustomerNotAllowed', language) || 'Cannot create adjustment for internal customer');
-                setAccountsBPlus([]);
-                setSelectedAccountBPlus(null);
                 return;
             }
 
@@ -153,19 +128,6 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
 
     const getAccountsByServiceNumLocalBMinus = async (serviceNum) => {
         const accounts = await getAccountsByServiceNum(serviceNum);
-        
-        // Check for restricted customer types (e.g., internal customers)
-        const restrictedCustomerTypeIds = config.adjustment?.restrictedCustomerTypeIds || [];
-        const hasRestrictedCustomer = accounts.some(account => 
-            restrictedCustomerTypeIds.includes(account.customerTypeId)
-        );
-        if (hasRestrictedCustomer) {
-            alert(getTranslation('internalCustomerNotAllowed', language) || 'Cannot create adjustment for internal customer');
-            setAccountsBMinus([]);
-            setSelectedAccountBMinus(null);
-            return;
-        }
-        
         setAccountsBMinus(accounts);
     }
 
@@ -183,18 +145,6 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
 
             if (response.data.length === 0) {
                 alert(getTranslation('noAccountsFound', language));
-                return;
-            }
-
-            // Check for restricted customer types (e.g., internal customers)
-            const restrictedCustomerTypeIds = config.adjustment?.restrictedCustomerTypeIds || [];
-            const hasRestrictedCustomer = response.data.some(account => 
-                restrictedCustomerTypeIds.includes(account.customerTypeId)
-            );
-            if (hasRestrictedCustomer) {
-                alert(getTranslation('internalCustomerNotAllowed', language) || 'Cannot create adjustment for internal customer');
-                setAccountsBPlus([]);
-                setSelectedAccountBPlus(null);
                 return;
             }
 
@@ -220,6 +170,15 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
     }
 
     const handleSelectAccountBMinus = async (account) => {
+        // Check for restricted customer types (e.g., internal customers)
+        const restrictedCustomerTypeIds = config.adjustment?.restrictedCustomerTypeIds || [];
+        if (restrictedCustomerTypeIds.includes(account.customerTypeId)) {
+            alert(getTranslation('internalCustomerNotAllowed', language) || 'Cannot create adjustment for internal customer');
+            setSelectedAccountBMinus(null);
+            setServicesBMinus([]);
+            return;
+        }
+        
         setSelectedAccountBMinus(account);
         
         // Clear previous selections when account changes
@@ -234,6 +193,15 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
     }
 
     const handleSelectAccountBPlus = async (account) => {
+        // Check for restricted customer types (e.g., internal customers)
+        const restrictedCustomerTypeIds = config.adjustment?.restrictedCustomerTypeIds || [];
+        if (restrictedCustomerTypeIds.includes(account.customerTypeId)) {
+            alert(getTranslation('internalCustomerNotAllowed', language) || 'Cannot create adjustment for internal customer');
+            setSelectedAccountBPlus(null);
+            setServicesBPlus([]);
+            return;
+        }
+        
         setSelectedAccountBPlus(account);
         const services = await getServicesByAccountNum(account.accountNum);
         const sortedServices = services.sort((a, b) => a.serviceNum.localeCompare(b.serviceNum));

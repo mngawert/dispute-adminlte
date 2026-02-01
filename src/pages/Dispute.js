@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import api from "../api";
+import config from "../config";
+import getTranslation from "../utils/getTranslation";
 import { event } from "jquery";
 import DisputeSearchAccount from "../components/DisputeSearchAccount";
 import DisputeBillSummary from "../components/DisputeBillSummary";
@@ -10,6 +12,7 @@ import CostedEvent from "../components/CostedEvent";
 import CreateDisputeForm from "../components/CreateDisputeForm";
 
 export default function Dispute() {
+  const [language, setLanguage] = useState('th'); // Default language
   const [accountNum, setAccountNum] = useState("");
   const [accounts, setAccounts] = useState([]);
   const [selectedAccount, setSelectedAccount] = useState(null);
@@ -63,6 +66,15 @@ export default function Dispute() {
   };
 
   const handleSelectAccount = async (account) => {
+    // Check for restricted customer types (e.g., internal customers)
+    const restrictedCustomerTypeIds = config.adjustment?.restrictedCustomerTypeIds || [];
+    if (restrictedCustomerTypeIds.includes(account.customerTypeId)) {
+        alert(getTranslation('internalCustomerNotAllowed', language) || 'Cannot create adjustment for internal customer');
+        setSelectedAccount(null);
+        setBillsummary([]);
+        return;
+    }
+    
     setSelectedAccount(account);
     console.log("selectedAccount:", selectedAccount);
     try {
