@@ -63,7 +63,7 @@ const User = () => {
 
     const fetchHomeLocationCodes = async () => {
         try {
-            const response = await api.get('/api/Group/GetHomeLocationCodes');
+            const response = await api.get('/api/Group/GetHomeLocationCodesIncludeX');
             setHomeLocationCodes(response.data);
         } catch (error) {
             console.error('Error fetching home location codes:', error);
