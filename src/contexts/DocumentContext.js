@@ -321,8 +321,9 @@ export const DocumentProvider = ({ children }) => {
 
     /** Validation */
 
-    const validateInputsAdjustMinus = (documentType) => {
+    const validateInputsAdjustMinus = (documentType, selectedReason) => {
         console.log('documentType:', documentType);
+        console.log('selectedReason:', selectedReason);
         console.log('adjustmentAmount:', adjustmentAmount);
         console.log('selectedInvoice:', selectedInvoice);
         console.log('selectedCostedEvent:', selectedCostedEvent);
@@ -387,7 +388,7 @@ export const DocumentProvider = ({ children }) => {
         }
 
 
-        if (documentType === DOCUMENT_TYPE.P35 || documentType === DOCUMENT_TYPE.P31) {
+        if ((documentType === DOCUMENT_TYPE.P35 || documentType === DOCUMENT_TYPE.P31) && selectedReason !== 'Q') {
             console.log('Validating P35 or P31 document type');
 
             console.log('process.env.REACT_APP_OVERRIDE_CURRENT_DATE_FLAG:', process.env.REACT_APP_OVERRIDE_CURRENT_DATE_FLAG);
@@ -426,7 +427,7 @@ export const DocumentProvider = ({ children }) => {
             // }
 
         }
-        if (documentType === DOCUMENT_TYPE.P36 || documentType === DOCUMENT_TYPE.P32) {
+        if ((documentType === DOCUMENT_TYPE.P36 || documentType === DOCUMENT_TYPE.P32) && selectedReason !== 'Q') {
             console.log('Validating P36 or P32 document type');
 
             const currentDate = process.env.REACT_APP_OVERRIDE_CURRENT_DATE_FLAG === 'Y' ? new Date(process.env.REACT_APP_OVERRIDE_CURRENT_DATE_VALUE) : new Date();
