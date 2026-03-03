@@ -60,8 +60,8 @@ const MakeAdjustment = ({ adjustmentTypes, selectedAdjustmentType, setSelectedAd
         }
     }
 
-    const vat = selectedAccount ? (adjustmentAmount * (CPS_MAP_HASH[selectedAccount.cpsId] / 100)).toFixed(2) : 0;
-    const total = selectedAccount ? (adjustmentAmount * (1 + CPS_MAP_HASH[selectedAccount.cpsId] / 100)).toFixed(2) : 0;
+    const vat = selectedAccount ? (parseFloat(adjustmentAmount || 0).toFixed(2) * (CPS_MAP_HASH[selectedAccount.cpsId] / 100)).toFixed(2) : 0;
+    const total = selectedAccount ? (parseFloat(adjustmentAmount || 0).toFixed(2) * (1 + CPS_MAP_HASH[selectedAccount.cpsId] / 100)).toFixed(2) : 0;
 
     return (
         <>
