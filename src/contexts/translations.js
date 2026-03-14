@@ -16,7 +16,7 @@ const translations = {
     p35InvoiceDate: "Cannot create this adjustment. For P35 the invoice actual billed must be between November and December of {lastYear}",
     p35AdjustmentDate: "Cannot create this adjustment. For P35 adjustment can be created between January and March of {startYear}",
     p36InvoiceDate: "Cannot create this adjustment. For P36 the invoice actual billed must be on or before December 31st of {lastYear}",
-    p36AdjustmentDate: "Cannot create this adjustment. For P36 adjustment can be created between January and February for invoice of November and December {lastYear}",
+    p36AdjustmentDate: "Cannot create this adjustment. For P36, adjustments for invoices of November and December {lastYear} can be created starting from March 1st",
     adjustMinusInvoiceDate: "Cannot create this adjustment. For Adjustment(-) the invoice actual billed must be in the current year",
     noAccountsFound: "No accounts found",
     noInvoiceDataServicesFound: "No invoice data services found",
