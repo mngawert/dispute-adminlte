@@ -440,7 +440,7 @@ export const DocumentProvider = ({ children }) => {
 
             const startNov = new Date(lastYear, 10, 1); // November 1st of last year
             const endDec = new Date(lastYear, 11, 31); // December 31st of last year
-            const startApril = new Date(currentYear, 3, 1); // March 1st of current year
+            const startMarch = new Date(currentYear, 2, 1); // March 1st of current year
 
 
             const endDate = new Date(lastYear, 11, 31); // December 31st of last year
@@ -455,7 +455,7 @@ export const DocumentProvider = ({ children }) => {
                 return getTranslation('p36InvoiceDate', language, { lastYear, documentType : DOCUMENT_TYPE_DESC[documentType] });
             }
 
-            if (startNov <= actualBillDtm && actualBillDtm <= endDate && currentDate < startApril) {
+            if (startNov <= actualBillDtm && actualBillDtm <= endDate && currentDate < startMarch) {
                 return getTranslation('p36AdjustmentDate', language, { lastYear, documentType : DOCUMENT_TYPE_DESC[documentType] });
             }
 
