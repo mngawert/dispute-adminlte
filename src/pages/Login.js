@@ -8,6 +8,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false); // Add loading state
+  const [showImage, setShowImage] = useState(false); // Track if image exists
 
   useEffect(() => {
     // Check if user is already logged in with valid token
@@ -227,7 +228,27 @@ const Login = () => {
         >
           แบบฟอร์มขอใช้งานระบบปรับปรุงบิล
         </a>
-      </div>       
+      </div>
+
+      {/* Hidden image to check if file exists */}
+      <img 
+        src="/NTAdjustor/files/adj_anno.jpg" 
+        alt="Announcement"
+        style={{ display: "none" }}
+        onLoad={() => setShowImage(true)}
+        onError={() => setShowImage(false)}
+      />
+
+      {/* Only show image div if image loaded successfully */}
+      {showImage && (
+        <div style={{ marginTop: "16px", textAlign: "center" }}>
+          <img 
+            src="/NTAdjustor/files/adj_anno.jpg" 
+            alt="Announcement" 
+            style={{ maxWidth: "100%", height: "auto" }}
+          />
+        </div>
+      )}       
     </div>
   );
 };
