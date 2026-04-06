@@ -1,5 +1,7 @@
 import * as XLSX from 'xlsx';
 import api from '../api';
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 const headers = {
     documentNum: 'Document Number',
@@ -227,26 +229,52 @@ const collectNotes = (doc, adjustmentRequests) => {
 
 // Export document details to PDF
 export async function exportDocumentToPDF(doc, adjustmentRequests) {
-    // Dynamic imports
-    const pdfMakeModule = await import('pdfmake/build/pdfmake');
-    const pdfFontsModule = await import('pdfmake/build/vfs_fonts');
     const { CPS_MAP_HASH } = await import('../contexts/Constants');
     
-    const pdfMake = pdfMakeModule.default || pdfMakeModule;
-    const pdfFonts = pdfFontsModule.default || pdfFontsModule;
-    
-    // Initialize pdfMake VFS with default fonts
-    pdfMake.vfs = pdfFonts.pdfMake?.vfs || pdfFonts.vfs || {};
-    pdfMake.fonts = {
-        Roboto: {
-            normal: 'Roboto-Regular.ttf',
-            bold: 'Roboto-Medium.ttf',
-            italics: 'Roboto-Italic.ttf',
-            bolditalics: 'Roboto-MediumItalic.ttf'
-        }
-    };
+    // Load Sarabun font
+    const basePath = process.env.PUBLIC_URL || '';
+    const toBase64 = (blob) => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            const base64 = reader.result.split(',')[1];
+            resolve(base64);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+    });
     
     try {
+        // Fetch Sarabun fonts
+        const [regularBlob, boldBlob] = await Promise.all([
+            fetch(`${basePath}/fonts/Sarabun-Regular.ttf`).then(r => r.blob()),
+            fetch(`${basePath}/fonts/Sarabun-Bold.ttf`).then(r => r.blob())
+        ]);
+        
+        const [regularB64, boldB64] = await Promise.all([
+            toBase64(regularBlob),
+            toBase64(boldBlob)
+        ]);
+        
+        // Create PDF in landscape A4
+        const pdfDoc = new jsPDF({
+            orientation: 'landscape',
+            unit: 'mm',
+            format: 'a4'
+        });
+        
+        // Add Sarabun font to jsPDF
+        pdfDoc.addFileToVFS('Sarabun-Regular.ttf', regularB64);
+        pdfDoc.addFont('Sarabun-Regular.ttf', 'Sarabun', 'normal');
+        pdfDoc.addFileToVFS('Sarabun-Bold.ttf', boldB64);
+        pdfDoc.addFont('Sarabun-Bold.ttf', 'Sarabun', 'bold');
+        
+        pdfDoc.setFont('Sarabun');
+        
+        // Debug: Check if autoTable is available
+        console.log('autoTable function:', typeof autoTable);
+        console.log('pdfDoc.autoTable method:', typeof pdfDoc.autoTable);
+        
+        // === Calculations ===
         const isB1PlusMinus = doc.documentTypeDesc === 'B1+/-';
         const printDate = formatDateForExport(new Date().toISOString());
 
@@ -260,240 +288,193 @@ export async function exportDocumentToPDF(doc, adjustmentRequests) {
             totalVAT += vat;
             totalAll += tot;
         });
-
-        // === Build adjustment table ===
-        const baseHeaders = [
-            { text: 'ลำดับ', style: 'tableHeader', alignment: 'center' },
-            { text: 'Account\nNumber', style: 'tableHeader', alignment: 'center' },
-            { text: 'Invoice\nNumber', style: 'tableHeader', alignment: 'center' },
-            { text: 'Service\nNumber', style: 'tableHeader', alignment: 'center' },
-            { text: 'Adjustment Type', style: 'tableHeader', alignment: 'center' },
-            { text: 'Status', style: 'tableHeader', alignment: 'center' },
-            { text: 'Error\nMessages', style: 'tableHeader', alignment: 'center' },
-            { text: 'Amount', style: 'tableHeader', alignment: 'center' },
-            { text: 'VAT', style: 'tableHeader', alignment: 'center' },
-            { text: 'Total', style: 'tableHeader', alignment: 'center' }
-        ];
-
-        if (isB1PlusMinus) {
-            baseHeaders[1].text = 'B1- Account\nNumber';
-            baseHeaders[2].text = 'B1- Invoice\nNumber';
-            baseHeaders[3].text = 'B1- Service\nNumber';
-            baseHeaders.splice(7, 0,
-                { text: 'B1+ Account\nNumber', style: 'tableHeader', alignment: 'center' },
-                { text: 'B1+ Service\nNumber', style: 'tableHeader', alignment: 'center' }
-            );
-        }
-
-        const tableBody = [baseHeaders];
-        const totalCols = baseHeaders.length;
-
-        adjustmentRequests.forEach((adj, idx) => {
+        
+        const notes = collectNotes(doc, adjustmentRequests);
+        
+        // Start PDF content at 15mm from top
+        let yPos = 15;
+        const pageWidth = pdfDoc.internal.pageSize.getWidth();
+        
+        // Title
+        pdfDoc.setFontSize(14);
+        pdfDoc.setFont('Sarabun', 'bold');
+        pdfDoc.text('รายงานข้อมูลการปรับปรุงค่าใช้บริการ', pageWidth / 2, yPos, { align: 'center' });
+        yPos += 10;
+        
+        // Document info
+        pdfDoc.setFontSize(10);
+        pdfDoc.text(`เลขที่เอกสารปรับปรุงบิล (Document Sequence) : ${doc.documentNum}`, 10, yPos);
+        yPos += 7;
+        pdfDoc.text(`ประเภทของการปรับปรุงบิล : ${doc.documentTypeDesc}     สร้างเมื่อ : ${formatDateTimeForExport(doc.createdDtm)}     Location : ${doc.homeLocationCode}`, 10, yPos);
+        yPos += 10;
+        
+        pdfDoc.setFont('Sarabun', 'normal');
+        pdfDoc.text(`รายละเอียด จำนวน ${adjustmentRequests.length} รายการ`, 10, yPos);
+        yPos += 5;
+        
+        // Build adjustment table data for autoTable
+        const tableHeaders = isB1PlusMinus
+            ? ['ลำดับ', 'B1- Account\nNumber', 'B1- Invoice\nNumber', 'B1- Service\nNumber', 'Adjustment Type', 'Status', 'B1+ Account\nNumber', 'B1+ Service\nNumber', 'Error\nMessages', 'Amount', 'VAT', 'Total']
+            : ['ลำดับ', 'Account\nNumber', 'Invoice\nNumber', 'Service\nNumber', 'Adjustment Type', 'Status', 'Error\nMessages', 'Amount', 'VAT', 'Total'];
+        
+        const tableRows = adjustmentRequests.map((adj, idx) => {
             const amount = Math.abs(adj.disputeMny);
             const vat = Math.abs(adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100));
             const tot = Math.abs(adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100));
-
+            
             const row = [
-                { text: String(idx + 1), alignment: 'center' },
+                String(idx + 1),
                 adj.accountNum || '',
                 adj.invoiceNum || '',
                 adj.serviceNum || '',
                 adj.adjustmentTypeName || '',
-                adj.requestStatus || ''
+              adj.requestStatus || ''
             ];
-
+            
             if (isB1PlusMinus) {
                 row.push(adj.accountNumBPlus || '', adj.serviceNumBPlus || '');
             }
-
+            
             row.push(
                 adj.errorMessages || '',
-                { text: formatNumberForExport(amount), alignment: 'right' },
-                { text: formatNumberForExport(vat), alignment: 'right' },
-                { text: formatNumberForExport(tot), alignment: 'right' }
+                formatNumberForExport(amount),
+                formatNumberForExport(vat),
+                formatNumberForExport(tot)
             );
-            tableBody.push(row);
+            return row;
         });
-
-        // Totals row
-        const summaryColSpan = totalCols - 3;
-        const totalsRow = [
-            { text: 'รวม', colSpan: summaryColSpan, alignment: 'right', bold: true }
-        ];
-        for (let i = 1; i < summaryColSpan; i++) totalsRow.push({});
-        totalsRow.push(
-            { text: formatNumberForExport(totalAmount), alignment: 'right', bold: true },
-            { text: formatNumberForExport(totalVAT), alignment: 'right', bold: true },
-            { text: formatNumberForExport(totalAll), alignment: 'right', bold: true }
-        );
-        tableBody.push(totalsRow);
-
-        const tableWidths = isB1PlusMinus
-            ? ['auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto']
-            : ['auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'];
-
-        // === Build notes ===
-        const notes = collectNotes(doc, adjustmentRequests);
-
-        // === Build approval table ===
-        const approvalRow1 = [
-            {
-                stack: [
-                    { text: '1)', bold: true },
-                    { text: '' },
-                    { text: ['Created by : ', doc.createdByName || '[Username]'] },
-                    { text: ['วันที่ : ', formatDateTimeForExport(doc.createdDtm) || 'dd/mm/yyyy hh:mm:ss'] }
-                ],
-                border: [true, true, true, true]
-            },
-            {
-                stack: [
-                    { text: '2)', bold: true },
-                    { text: '' },
-                    { text: ['Reviewed by : ', doc.reviewedByName || '[Username]'] },
-                    { text: ['วันที่ : ', formatDateTimeForExport(doc.reviewedDtm) || 'dd/mm/yyyy hh:mm:ss'] }
-                ],
-                border: [true, true, true, true]
-            },
-            {
-                stack: [
-                    { text: '3)', bold: true },
-                    { text: '' },
-                    { text: ['Approved by : ', doc.approvedByName || '[Username]'] },
-                    { text: ['วันที่ : ', formatDateTimeForExport(doc.approvedDtm) || 'dd/mm/yyyy hh:mm:ss'] }
-                ],
-                border: [true, true, true, true]
-            },
-            {
-                stack: [
-                    { text: '4)', bold: true },
-                    { text: '' },
-                    { text: ['Finance by : ', doc.financeReviewedByName || '[Username]'] },
-                    { text: ['วันที่ : ', formatDateTimeForExport(doc.financeReviewedDtm) || 'dd/mm/yyyy hh:mm:ss'] }
-                ],
-                border: [true, true, true, true]
-            }
-        ];
-
-        const approvalRow2 = [
-            { text: '', border: [false, false, false, false] },
-            {
-                stack: [
-                    { text: '' },
-                    { text: ['Rejected by : ', doc.rejectedByName || '[Username]'] },
-                    { text: ['วันที่ : ', formatDateTimeForExport(doc.rejectedDtm) || 'dd/mm/yyyy hh:mm:ss'] }
-                ],
-                border: [true, true, true, true]
-            },
-            {
-                stack: [
-                    { text: '' },
-                    { text: ['Retried by : ', doc.retriedByName || '[Username]'] },
-                    { text: ['วันที่ : ', formatDateTimeForExport(doc.retriedDtm) || 'dd/mm/yyyy hh:mm:ss'] }
-                ],
-                border: [true, true, true, true]
-            },
-            {
-                stack: [
-                    { text: '' },
-                    { text: ['Cancelled by : ', doc.canceledByName || '[Username]'] },
-                    { text: ['วันที่ : ', formatDateTimeForExport(doc.canceledDtm) || 'dd/mm/yyyy hh:mm:ss'] }
-                ],
-                border: [true, true, true, true]
-            }
-        ];
-
-        // === Assemble document definition ===
-        const docDefinition = {
-            pageOrientation: 'landscape',
-            pageMargins: [40, 40, 40, 50],
-            defaultStyle: {
-                font: 'Roboto'
-            },
-            footer: function(currentPage, pageCount) {
-                return {
-                    columns: [
-                        { text: `เอกสาร : DR01 (NT Adjustor)  จัดพิมพ์วันที่ : ${printDate}`, fontSize: 8, margin: [40, 0, 0, 0] },
-                        { text: `Page ${currentPage}/${pageCount}`, alignment: 'right', fontSize: 8, margin: [0, 0, 40, 0] }
-                    ]
-                };
-            },
-            content: [
-                { text: 'รายงานข้อมูลการปรับปรุงค่าใช้บริการ', style: 'header', alignment: 'center' },
-                { text: '\n' },
-                { text: ['เลขที่เอกสารปรับปรุงบิล (Document Sequence) : ', doc.documentNum], fontSize: 10, bold: true },
-                {
-                    columns: [
-                        { text: ['ประเภทของการปรับปรุงบิล : ', doc.documentTypeDesc], fontSize: 10, bold: true, width: '35%' },
-                        { text: ['สร้างเมื่อ : ', formatDateTimeForExport(doc.createdDtm)], fontSize: 10, bold: true, width: '35%' },
-                        { text: ['Location : ', doc.homeLocationCode], fontSize: 10, bold: true, width: '30%' }
-                    ]
-                },
-                { text: '\n' },
-                { text: `รายละเอียด จำนวน ${adjustmentRequests.length} รายการ`, fontSize: 10 },
-                {
-                    table: {
-                        headerRows: 1,
-                        widths: tableWidths,
-                        body: tableBody
-                    },
-                    layout: {
-                        fillColor: function (rowIndex) {
-                            return (rowIndex === 0) ? '#f0f0f0' : null;
-                        },
-                        hLineWidth: function() { return 0.5; },
-                        vLineWidth: function() { return 0.5; },
-                        hLineColor: function() { return '#cccccc'; },
-                        vLineColor: function() { return '#cccccc'; }
-                    },
-                    fontSize: 8
-                },
-                { text: '\n' },
-                ...(notes.length > 0 ? [
-                    { text: ['เหตุผล : ', notes.join(' | ')], fontSize: 9 }
-                ] : []),
-                { text: '\n' },
-                { text: 'ขั้นตอนการอนุมัติ', bold: true, fontSize: 10 },
-                { text: '\n' },
-                {
-                    table: {
-                        widths: ['25%', '25%', '25%', '25%'],
-                        body: [approvalRow1]
-                    },
-                    layout: {
-                        hLineWidth: function() { return 0.5; },
-                        vLineWidth: function() { return 0.5; },
-                        hLineColor: function() { return '#cccccc'; },
-                        vLineColor: function() { return '#cccccc'; }
-                    },
-                    fontSize: 9
-                },
-                { text: '\n' },
-                {
-                    table: {
-                        widths: ['25%', '25%', '25%', '25%'],
-                        body: [approvalRow2]
-                    },
-                    layout: {
-                        hLineWidth: function() { return 0.5; },
-                        vLineWidth: function() { return 0.5; },
-                        hLineColor: function() { return '#cccccc'; },
-                        vLineColor: function() { return '#cccccc'; }
-                    },
-                    fontSize: 9
-                }
-            ],
+        
+        // Add totals row
+        const totalRow = [...Array(tableHeaders.length - 3).fill(''), formatNumberForExport(totalAmount), formatNumberForExport(totalVAT), formatNumberForExport(totalAll)];
+        totalRow[tableHeaders.length - 4] = 'รวม';
+        tableRows.push(totalRow);
+        
+        // Create table
+        autoTable(pdfDoc, {
+            head: [tableHeaders],
+            body: tableRows,
+            startY: yPos,
             styles: {
-                header: { fontSize: 14, bold: true },
-                tableHeader: { bold: true, fontSize: 8, fillColor: '#f0f0f0' }
+                font: 'Sarabun',
+                fontSize: 7,
+                cellPadding: 1.5
+            },
+            headStyles: {
+                fillColor: [240, 240, 240],
+                textColor: [0, 0, 0],
+                fontStyle: 'bold',
+                halign: 'center'
+            },
+            columnStyles: {
+                0: { halign: 'center', cellWidth: 12 },
+                [tableHeaders.length - 3]: { halign: 'right' },
+                [tableHeaders.length - 2]: { halign: 'right' },
+                [tableHeaders.length - 1]: { halign: 'right' }
+            },
+            didParseCell: function(data) {
+                // Make totals row bold
+                if (data.row.index === tableRows.length - 1) {
+                    data.cell.styles.fontStyle = 'bold';
+                }
+                // Right align last row's summary column
+                if (data.row.index === tableRows.length - 1 && data.column.index === tableHeaders.length - 4) {
+                    data.cell.styles.halign = 'right';
+                }
+            },
+            theme: 'grid',
+            tableLineColor: [204, 204, 204],
+            tableLineWidth: 0.1
+        });
+        
+        yPos = pdfDoc.lastAutoTable.finalY + 7;
+        
+        // Notes section
+        if (notes.length > 0) {
+            pdfDoc.setFontSize(9);
+            pdfDoc.text(`เหตุผล : ${notes.join(' | ')}`, 10, yPos);
+            yPos += 7;
+        }
+        
+        // Approval workflow
+        pdfDoc.setFontSize(10);
+        pdfDoc.setFont('Sarabun', 'bold');
+        pdfDoc.text('ขั้นตอนการอนุมัติ', 10, yPos);
+        yPos += 5;
+        
+        const approvalRow1 = [
+            [`1)\n\nCreated by : ${doc.createdByName || '[Username]'}\nวันที่ : ${formatDateTimeForExport(doc.createdDtm) || 'dd/mm/yyyy hh:mm:ss'}`],
+            [`2)\n\nReviewed by : ${doc.reviewedByName || '[Username]'}\nวันที่ : ${formatDateTimeForExport(doc.reviewedDtm) || 'dd/mm/yyyy hh:mm:ss'}`],
+            [`3)\n\nApproved by : ${doc.approvedByName || '[Username]'}\nวันที่ : ${formatDateTimeForExport(doc.approvedDtm) || 'dd/mm/yyyy hh:mm:ss'}`],
+            [`4)\n\nFinance by : ${doc.financeReviewedByName || '[Username]'}\nวันที่ : ${formatDateTimeForExport(doc.financeReviewedDtm) || 'dd/mm/yyyy hh:mm:ss'}`]
+        ];
+        
+        autoTable(pdfDoc, {
+            body: [approvalRow1],
+            startY: yPos,
+            styles: {
+                font: 'Sarabun',
+                fontSize: 8,
+                cellPadding: 2
+            },
+            columnStyles: {
+                0: { cellWidth: (pageWidth - 20) / 4 },
+                1: { cellWidth: (pageWidth - 20) / 4 },
+                2: { cellWidth: (pageWidth - 20) / 4 },
+                3: { cellWidth: (pageWidth - 20) / 4 }
+            },
+            theme: 'grid',
+            tableLineColor: [204, 204, 204],
+            tableLineWidth: 0.1
+        });
+        
+        yPos = pdfDoc.lastAutoTable.finalY + 3;
+        
+        const approvalRow2 = [
+            [''],
+            [`\nRejected by : ${doc.rejectedByName || '[Username]'}\nวันที่ : ${formatDateTimeForExport(doc.rejectedDtm) || 'dd/mm/yyyy hh:mm:ss'}`],
+            [`\nRetried by : ${doc.retriedByName || '[Username]'}\nวันที่ : ${formatDateTimeForExport(doc.retriedDtm) || 'dd/mm/yyyy hh:mm:ss'}`],
+            [`\nCancelled by : ${doc.canceledByName || '[Username]'}\nวันที่ : ${formatDateTimeForExport(doc.canceledDtm) || 'dd/mm/yyyy hh:mm:ss'}`]
+        ];
+        
+        autoTable(pdfDoc, {
+            body: [approvalRow2],
+            startY: yPos,
+            styles: {
+                font: 'Sarabun',
+                fontSize: 8,
+                cellPadding: 2
+            },
+            columnStyles: {
+                0: { cellWidth: (pageWidth - 20) / 4 },
+                1: { cellWidth: (pageWidth - 20) / 4 },
+                2: { cellWidth: (pageWidth - 20) / 4 },
+                3: { cellWidth: (pageWidth - 20) / 4 }
+            },
+            theme: 'grid',
+            tableLineColor: [204, 204, 204],
+            tableLineWidth: 0.1,
+            didDrawCell: function(data) {
+                // Remove border from first cell
+                if (data.column.index === 0) {
+                    data.cell.styles.lineWidth = 0;
+                }
             }
-        };
-
+        });
+        
+        // Add footer to all pages
+        const pageCount = pdfDoc.internal.getNumberOfPages();
+        pdfDoc.setFontSize(8);
+        pdfDoc.setFont('Sarabun', 'normal');
+        for (let i = 1; i <= pageCount; i++) {
+            pdfDoc.setPage(i);
+            pdfDoc.text(`เอกสาร : DR01 (NT Adjustor)  จัดพิมพ์วันที่ : ${printDate}`, 10, pdfDoc.internal.pageSize.getHeight() - 10);
+            pdfDoc.text(`Page ${i}/${pageCount}`, pageWidth - 10, pdfDoc.internal.pageSize.getHeight() - 10, { align: 'right' });
+        }
+        
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
         const fileName = `Document_${doc.documentNum}_${timestamp}.pdf`;
+        pdfDoc.save(fileName);
         
-        // Create and download the PDF
-        pdfMake.createPdf(docDefinition).download(fileName);
     } catch (error) {
         console.error('Error exporting to PDF:', error);
         throw error;
