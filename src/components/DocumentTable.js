@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { formatNumber, formatDate } from '../utils/utils'; // Import the utility functions
 
 const DocumentTable = ({ documents, selectedDocument, handleSelectDocument }) => {
+    const navigate = useNavigate();
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
 
     const sortedDocuments = React.useMemo(() => {
@@ -48,6 +50,7 @@ const DocumentTable = ({ documents, selectedDocument, handleSelectDocument }) =>
                             <th className="sortable" onClick={() => requestSort('createdByName')}>Created by {getSortIndicator('createdByName')}</th>
                             <th className="sortable" onClick={() => requestSort('createdDtm')}>Created date {getSortIndicator('createdDtm')}</th>
                             <th className="sortable" onClick={() => requestSort('homeLocationCode')}>Location {getSortIndicator('homeLocationCode')}</th>
+                            <th style={{ width: '80px', textAlign: 'center' }}>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -63,6 +66,18 @@ const DocumentTable = ({ documents, selectedDocument, handleSelectDocument }) =>
                                 <td>{document.createdByName}</td>
                                 <td>{formatDate(document.createdDtm)}</td>
                                 <td>{document.homeLocationCode}</td>
+                                <td style={{ textAlign: 'center' }}>
+                                    <button 
+                                        className="btn btn-sm btn-info" 
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            navigate(`/document/${document.documentNum}`);
+                                        }}
+                                        title="View Details"
+                                    >
+                                        <i className="fas fa-eye"></i>
+                                    </button>
+                                </td>
                             </tr>
                         ))}
                     </tbody>

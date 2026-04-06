@@ -30,6 +30,7 @@ import AdjustB from "./pages/AdjustB";
 import AdjustB_Bak from "./pages/AdjustB_Bak";
 import User from "./pages/User";
 import Group from "./pages/Group";
+import DocumentDetail from "./pages/DocumentDetail";
 
 import { DocumentProvider } from "./contexts/DocumentContext";
 import SearchAdj from "./pages/SearchAdj";
@@ -78,6 +79,7 @@ function App() {
             <Route path="/AdjustB" element={ <PrivateRoute element={<AdjustB />} allowedRoles={['Admin', 'Creator', 'Creator_B1+/-']} /> } />
             <Route path="/MyAdj" element={ <PrivateRoute element={<SearchAdj myAdjust="Yes" title="My Adjustments" fetchDataAtStart="Yes" />} allowedRoles={['*']} /> } />
             <Route path="/SearchAdj" element={ <PrivateRoute element={<SearchAdj myAdjust="No" title="Search Adjustments" fetchDataAtStart="No" />} allowedRoles={['*']} /> } />
+            <Route path="/document/:documentNum" element={ <PrivateRoute element={<DocumentDetail />} allowedRoles={['*']} /> } />
             {/* <Route path="/MyAdj2" element={<SearchAdj myAdjust="Yes" title="My Adjustments" fetchDataAtStart="Yes" />} /> */}
             {/* <Route path="/SearchAdj2" element={<SearchAdj myAdjust="No" title="Search Adjustments" fetchDataAtStart="No" />} /> */}
             {/* <Route path="/UserBak" element={<UserBak />} /> */}
