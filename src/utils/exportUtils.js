@@ -184,15 +184,49 @@ const formatDateForExport = (dateString) => {
     }
 };
 
+// Helper function to format datetime for display
+const formatDateTimeForExport = (dateString) => {
+    if (!dateString) return '';
+    try {
+        const date = new Date(dateString);
+        if (!isNaN(date.getTime())) {
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            const seconds = String(date.getSeconds()).padStart(2, '0');
+            return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+        }
+        return '';
+    } catch (error) {
+        return '';
+    }
+};
+
 // Helper function to format number for display
 const formatNumberForExport = (num) => {
     if (num === null || num === undefined) return '0.00';
     return parseFloat(num).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 };
 
+// Collect all notes from document and adjustment requests
+const collectNotes = (doc, adjustmentRequests) => {
+    const notes = [];
+    adjustmentRequests.forEach(adj => {
+        if (adj.note) notes.push(`[Creator]: ${adj.note}`);
+    });
+    if (doc.reviewNote) notes.push(`[Reviewer]: ${doc.reviewNote}`);
+    if (doc.approveNote) notes.push(`[Approver]: ${doc.approveNote}`);
+    if (doc.financeNote) notes.push(`[Financial Reviewer]: ${doc.financeNote}`);
+    if (doc.retriedNote) notes.push(`[Retrier]: ${doc.retriedNote}`);
+    if (doc.cancelNote) notes.push(`[Canceller]: ${doc.cancelNote}`);
+    // Remove duplicates
+    return Array.from(new Set(notes));
+};
+
 // Export document details to PDF
-export async function exportDocumentToPDF(document, adjustmentRequests) {
-    // Import dependencies inside function to avoid circular dependency issues
+export async function exportDocumentToPDF(doc, adjustmentRequests) {
     const pdfMakeModule = await import('pdfmake/build/pdfmake');
     const pdfFontsModule = await import('pdfmake/build/vfs_fonts');
     const { CPS_MAP_HASH } = await import('../contexts/Constants');
@@ -200,7 +234,6 @@ export async function exportDocumentToPDF(document, adjustmentRequests) {
     const pdfMake = pdfMakeModule.default || pdfMakeModule;
     const pdfFonts = pdfFontsModule.default || pdfFontsModule;
     
-    // Initialize pdfMake fonts
     if (pdfFonts.pdfMake && pdfFonts.pdfMake.vfs) {
         pdfMake.vfs = pdfFonts.pdfMake.vfs;
     } else {
@@ -208,51 +241,54 @@ export async function exportDocumentToPDF(document, adjustmentRequests) {
     }
     
     try {
-        // Calculate totals
-        let totalAmount = 0;
-        let totalVAT = 0;
-        let total = 0;
+        const isB1PlusMinus = doc.documentTypeDesc === 'B1+/-';
+        const printDate = formatDateForExport(new Date().toISOString());
 
+        // Calculate totals
+        let totalAmount = 0, totalVAT = 0, totalAll = 0;
         adjustmentRequests.forEach(adj => {
-            const amount = Math.abs(adj.disputeMny);
-            const vat = Math.abs(adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100));
-            const totalAdj = Math.abs(adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100));
-            
-            totalAmount += parseFloat(amount.toFixed(2));
-            totalVAT += parseFloat(vat.toFixed(2));
-            total += parseFloat(totalAdj.toFixed(2));
+            const amount = parseFloat(Math.abs(adj.disputeMny).toFixed(2));
+            const vat = parseFloat(Math.abs(adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100)).toFixed(2));
+            const tot = parseFloat(Math.abs(adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100)).toFixed(2));
+            totalAmount += amount;
+            totalVAT += vat;
+            totalAll += tot;
         });
 
-        // Prepare table headers based on document type
-        const isB1PlusMinus = document.documentTypeDesc === 'B1+/-';
-        
-        const tableHeaders = [
-            { text: isB1PlusMinus ? 'B1- Account Number' : 'Account Number', style: 'tableHeader', bold: true },
-            { text: isB1PlusMinus ? 'B1- Invoice Number' : 'Invoice Number', style: 'tableHeader', bold: true },
-            { text: isB1PlusMinus ? 'B1- Service Number' : 'Service Number', style: 'tableHeader', bold: true },
-            { text: 'Adjustment Type', style: 'tableHeader', bold: true },
-            { text: 'Status', style: 'tableHeader', bold: true }
+        // === Build adjustment table ===
+        const baseHeaders = [
+            { text: 'ลำดับ', style: 'tableHeader', alignment: 'center' },
+            { text: 'Account\nNumber', style: 'tableHeader', alignment: 'center' },
+            { text: 'Invoice\nNumber', style: 'tableHeader', alignment: 'center' },
+            { text: 'Service\nNumber', style: 'tableHeader', alignment: 'center' },
+            { text: 'Adjustment Type', style: 'tableHeader', alignment: 'center' },
+            { text: 'Status', style: 'tableHeader', alignment: 'center' },
+            { text: 'Error\nMessages', style: 'tableHeader', alignment: 'center' },
+            { text: 'Amount', style: 'tableHeader', alignment: 'center' },
+            { text: 'VAT', style: 'tableHeader', alignment: 'center' },
+            { text: 'Total', style: 'tableHeader', alignment: 'center' }
         ];
 
         if (isB1PlusMinus) {
-            tableHeaders.push(
-                { text: 'B1+ Account Number', style: 'tableHeader', bold: true },
-                { text: 'B1+ Service Number', style: 'tableHeader', bold: true }
+            baseHeaders[1].text = 'B1- Account\nNumber';
+            baseHeaders[2].text = 'B1- Invoice\nNumber';
+            baseHeaders[3].text = 'B1- Service\nNumber';
+            baseHeaders.splice(7, 0,
+                { text: 'B1+ Account\nNumber', style: 'tableHeader', alignment: 'center' },
+                { text: 'B1+ Service\nNumber', style: 'tableHeader', alignment: 'center' }
             );
         }
 
-        tableHeaders.push(
-            { text: 'Error Messages', style: 'tableHeader', bold: true },
-            { text: 'Amount', style: 'tableHeader', bold: true },
-            { text: 'VAT', style: 'tableHeader', bold: true },
-            { text: 'Total', style: 'tableHeader', bold: true }
-        );
+        const tableBody = [baseHeaders];
+        const totalCols = baseHeaders.length;
 
-        // Prepare table rows
-        const tableBody = [tableHeaders];
+        adjustmentRequests.forEach((adj, idx) => {
+            const amount = Math.abs(adj.disputeMny);
+            const vat = Math.abs(adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100));
+            const tot = Math.abs(adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100));
 
-        adjustmentRequests.forEach(adj => {
             const row = [
+                { text: String(idx + 1), alignment: 'center' },
                 adj.accountNum || '',
                 adj.invoiceNum || '',
                 adj.serviceNum || '',
@@ -261,369 +297,382 @@ export async function exportDocumentToPDF(document, adjustmentRequests) {
             ];
 
             if (isB1PlusMinus) {
-                row.push(
-                    adj.accountNumBPlus || '',
-                    adj.serviceNumBPlus || ''
-                );
+                row.push(adj.accountNumBPlus || '', adj.serviceNumBPlus || '');
             }
 
-            const amount = Math.abs(adj.disputeMny);
-            const vat = Math.abs(adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100));
-            const totalAdj = Math.abs(adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100));
-
             row.push(
-                adj.errorMessages || '-',
+                adj.errorMessages || '',
                 { text: formatNumberForExport(amount), alignment: 'right' },
                 { text: formatNumberForExport(vat), alignment: 'right' },
-                { text: formatNumberForExport(totalAdj), alignment: 'right' }
+                { text: formatNumberForExport(tot), alignment: 'right' }
             );
-
             tableBody.push(row);
         });
 
-        // Add totals row
-        const totalsRow = [];
-        const colSpan = isB1PlusMinus ? 8 : 6;
-        totalsRow.push({ text: 'Total', colSpan: colSpan, alignment: 'right', bold: true });
-        for (let i = 1; i < colSpan; i++) {
-            totalsRow.push({});
-        }
+        // Totals row
+        const summaryColSpan = totalCols - 3;
+        const totalsRow = [
+            { text: 'รวม', colSpan: summaryColSpan, alignment: 'right', bold: true, color: '#dc3545' }
+        ];
+        for (let i = 1; i < summaryColSpan; i++) totalsRow.push({});
         totalsRow.push(
-            { text: formatNumberForExport(totalAmount), alignment: 'right', bold: true },
-            { text: formatNumberForExport(totalVAT), alignment: 'right', bold: true },
-            { text: formatNumberForExport(total), alignment: 'right', bold: true }
+            { text: formatNumberForExport(totalAmount), alignment: 'right', bold: true, color: '#dc3545' },
+            { text: formatNumberForExport(totalVAT), alignment: 'right', bold: true, color: '#dc3545' },
+            { text: formatNumberForExport(totalAll), alignment: 'right', bold: true, color: '#dc3545' }
         );
         tableBody.push(totalsRow);
 
-        // Create PDF document definition
+        const tableWidths = isB1PlusMinus
+            ? ['auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto']
+            : ['auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'];
+
+        // === Build notes ===
+        const notes = collectNotes(doc, adjustmentRequests);
+
+        // === Build approval table ===
+        const approvalRow1 = [
+            {
+                stack: [
+                    { text: '1)', bold: true },
+                    { text: '' },
+                    { text: [{ text: 'Created by : ', bold: false }, { text: doc.createdByName || '[Username]', color: '#dc3545' }] },
+                    { text: ['วันที่ : ', { text: formatDateTimeForExport(doc.createdDtm) || 'dd/mm/yyyy hh:mm:ss', color: '#dc3545' }] }
+                ],
+                border: [true, true, true, true]
+            },
+            {
+                stack: [
+                    { text: '2)', bold: true },
+                    { text: '' },
+                    { text: [{ text: 'Reviewed by : ' }, { text: doc.reviewedByName || '[Username]', color: '#dc3545' }] },
+                    { text: ['วันที่ : ', { text: formatDateTimeForExport(doc.reviewedDtm) || 'dd/mm/yyyy hh:mm:ss', color: '#dc3545' }] }
+                ],
+                border: [true, true, true, true]
+            },
+            {
+                stack: [
+                    { text: '3)', bold: true },
+                    { text: '' },
+                    { text: [{ text: 'Approved by : ' }, { text: doc.approvedByName || '[Username]', color: '#dc3545' }] },
+                    { text: ['วันที่ : ', { text: formatDateTimeForExport(doc.approvedDtm) || 'dd/mm/yyyy hh:mm:ss', color: '#dc3545' }] }
+                ],
+                border: [true, true, true, true]
+            },
+            {
+                stack: [
+                    { text: '4)', bold: true },
+                    { text: '' },
+                    { text: [{ text: 'Finance by : ' }, { text: doc.financeReviewedByName || '[Username]', color: '#dc3545' }] },
+                    { text: ['วันที่ : ', { text: formatDateTimeForExport(doc.financeReviewedDtm) || 'dd/mm/yyyy hh:mm:ss', color: '#dc3545' }] }
+                ],
+                border: [true, true, true, true]
+            }
+        ];
+
+        const approvalRow2 = [
+            { text: '', border: [false, false, false, false] },
+            {
+                stack: [
+                    { text: '' },
+                    { text: [{ text: 'Rejected by : ' }, { text: doc.rejectedByName || '[Username]', color: '#dc3545' }] },
+                    { text: ['วันที่ : ', { text: formatDateTimeForExport(doc.rejectedDtm) || 'dd/mm/yyyy hh:mm:ss', color: '#dc3545' }] }
+                ],
+                border: [true, true, true, true]
+            },
+            {
+                stack: [
+                    { text: '' },
+                    { text: [{ text: 'Retried by : ' }, { text: doc.retriedByName || '[Username]', color: '#dc3545' }] },
+                    { text: ['วันที่ : ', { text: formatDateTimeForExport(doc.retriedDtm) || 'dd/mm/yyyy hh:mm:ss', color: '#dc3545' }] }
+                ],
+                border: [true, true, true, true]
+            },
+            {
+                stack: [
+                    { text: '' },
+                    { text: [{ text: 'Cancelled by : ' }, { text: doc.canceledByName || '[Username]', color: '#dc3545' }] },
+                    { text: ['วันที่ : ', { text: formatDateTimeForExport(doc.canceledDtm) || 'dd/mm/yyyy hh:mm:ss', color: '#dc3545' }] }
+                ],
+                border: [true, true, true, true]
+            }
+        ];
+
+        // === Assemble document definition ===
         const docDefinition = {
+            pageOrientation: 'landscape',
+            pageMargins: [40, 40, 40, 50],
+            footer: function(currentPage, pageCount) {
+                return {
+                    columns: [
+                        { text: `เอกสาร : DR01 (NT Adjustor)  จัดพิมพ์วันที่ : ${printDate}`, fontSize: 8, margin: [40, 0, 0, 0] },
+                        { text: `Page ${currentPage}/${pageCount}`, alignment: 'right', fontSize: 8, margin: [0, 0, 40, 0] }
+                    ]
+                };
+            },
             content: [
-                { text: `Document Details - ${document.documentNum}`, style: 'header' },
+                { text: 'รายงานข้อมูลการปรับปรุงค่าใช้บริการ', style: 'header', alignment: 'center' },
                 { text: '\n' },
-                { text: 'Document Information', style: 'subheader' },
+                { text: [{ text: 'เลขที่เอกสารปรับปรุงบิล (Document Sequence) : ', bold: true }, { text: doc.documentNum, color: '#dc3545' }], fontSize: 10 },
                 {
                     columns: [
-                        {
-                            width: '50%',
-                            stack: [
-                                { text: [{ text: 'Document Sequence: ', bold: true }, document.documentNum] },
-                                { text: [{ text: 'Document Type: ', bold: true }, document.documentTypeDesc] },
-                                { text: [{ text: 'Total Amount: ', bold: true }, formatNumberForExport(document.documentTypeDesc === 'B1+/-' ? Math.abs(document.totalMny) / 2 : Math.abs(document.totalMny))] }
-                            ]
-                        },
-                        {
-                            width: '50%',
-                            stack: [
-                                { text: [{ text: 'Location: ', bold: true }, document.homeLocationCode] },
-                                { text: [{ text: 'Created by: ', bold: true }, document.createdByName] },
-                                { text: [{ text: 'Created date: ', bold: true }, formatDateForExport(document.createdDtm)] }
-                            ]
-                        }
+                        { text: [{ text: 'ประเภทของการปรับปรุงบิล : ', bold: true }, { text: doc.documentTypeDesc, color: '#dc3545' }], fontSize: 10, width: '35%' },
+                        { text: [{ text: 'สร้างเมื่อ : ', bold: true }, { text: formatDateTimeForExport(doc.createdDtm), color: '#dc3545' }], fontSize: 10, width: '35%' },
+                        { text: [{ text: 'Location : ', bold: true }, { text: doc.homeLocationCode, color: '#dc3545' }], fontSize: 10, width: '30%' }
                     ]
                 },
-                { text: '\n' }
+                { text: '\n' },
+                { text: `รายละเอียด จำนวน ${adjustmentRequests.length} รายการ`, fontSize: 10 },
+                {
+                    table: {
+                        headerRows: 1,
+                        widths: tableWidths,
+                        body: tableBody
+                    },
+                    layout: {
+                        fillColor: function (rowIndex) {
+                            return (rowIndex === 0) ? '#f0f0f0' : null;
+                        },
+                        hLineWidth: function() { return 0.5; },
+                        vLineWidth: function() { return 0.5; },
+                        hLineColor: function() { return '#cccccc'; },
+                        vLineColor: function() { return '#cccccc'; }
+                    },
+                    fontSize: 8
+                },
+                { text: '\n' },
+                ...(notes.length > 0 ? [
+                    { text: [{ text: 'เหตุผล : ', bold: true }, { text: notes.join(' | '), color: '#dc3545', fontSize: 9 }], fontSize: 10 }
+                ] : []),
+                { text: '\n' },
+                { text: 'ขั้นตอนการอนุมัติ', bold: true, fontSize: 10 },
+                { text: '\n' },
+                {
+                    table: {
+                        widths: ['25%', '25%', '25%', '25%'],
+                        body: [approvalRow1]
+                    },
+                    layout: {
+                        hLineWidth: function() { return 0.5; },
+                        vLineWidth: function() { return 0.5; },
+                        hLineColor: function() { return '#cccccc'; },
+                        vLineColor: function() { return '#cccccc'; }
+                    },
+                    fontSize: 9
+                },
+                { text: '\n' },
+                {
+                    table: {
+                        widths: ['25%', '25%', '25%', '25%'],
+                        body: [approvalRow2]
+                    },
+                    layout: {
+                        hLineWidth: function(i, node) {
+                            return 0.5;
+                        },
+                        vLineWidth: function(i, node) {
+                            return 0.5;
+                        },
+                        hLineColor: function() { return '#cccccc'; },
+                        vLineColor: function() { return '#cccccc'; }
+                    },
+                    fontSize: 9
+                }
             ],
             styles: {
-                header: {
-                    fontSize: 18,
-                    bold: true
-                },
-                subheader: {
-                    fontSize: 14,
-                    bold: true,
-                    margin: [0, 10, 0, 5]
-                },
-                tableHeader: {
-                    bold: true,
-                    fontSize: 10,
-                    color: 'black',
-                    fillColor: '#eeeeee'
-                }
-            },
-            pageOrientation: 'landscape',
-            pageMargins: [40, 60, 40, 60]
+                header: { fontSize: 14, bold: true },
+                tableHeader: { bold: true, fontSize: 8, fillColor: '#f0f0f0' }
+            }
         };
 
-        // Add notes section if available
-        if (document.reviewNote || document.approveNote || document.financeNote || document.cancelNote) {
-            docDefinition.content.push({ text: 'Notes:', style: 'subheader' });
-            const notesList = [];
-            if (document.reviewNote) notesList.push({ text: `[Reviewer]: ${document.reviewNote}` });
-            if (document.approveNote) notesList.push({ text: `[Approver]: ${document.approveNote}` });
-            if (document.financeNote) notesList.push({ text: `[Financial Reviewer]: ${document.financeNote}` });
-            if (document.cancelNote) notesList.push({ text: `[Canceller]: ${document.cancelNote}` });
-            docDefinition.content.push({ ul: notesList });
-            docDefinition.content.push({ text: '\n' });
-        }
-
-        // Add adjustment requests table
-        docDefinition.content.push({ text: 'Adjustment Requests:', style: 'subheader' });
-        docDefinition.content.push({
-            table: {
-                headerRows: 1,
-                widths: isB1PlusMinus ? ['auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'] : ['auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
-                body: tableBody
-            },
-            layout: {
-                fillColor: function (rowIndex, node, columnIndex) {
-                    return (rowIndex === 0) ? '#eeeeee' : null;
-                }
-            },
-            fontSize: 8
-        });
-
-        // Generate and download PDF
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
-        const fileName = `Document_${document.documentNum}_${timestamp}.pdf`;
-        
+        const fileName = `Document_${doc.documentNum}_${timestamp}.pdf`;
         pdfMake.createPdf(docDefinition).download(fileName);
     } catch (error) {
         console.error('Error exporting to PDF:', error);
         throw error;
     }
-};
+}
 
 // Export document details to DOCX
-export async function exportDocumentToDOCX(document, adjustmentRequests) {
-    // Import dependencies inside function to avoid circular dependency issues
-    const { Document, Packer, Paragraph, Table, TableRow, TableCell, WidthType, AlignmentType, TextRun, HeadingLevel } = await import('docx');
+export async function exportDocumentToDOCX(doc, adjustmentRequests) {
+    const { Document: DocxDocument, Packer, Paragraph, Table, TableRow, TableCell, WidthType, AlignmentType, TextRun, HeadingLevel, BorderStyle, PageOrientation, Footer, PageNumber } = await import('docx');
     const fileSaverModule = await import('file-saver');
     const saveAs = fileSaverModule.default || fileSaverModule.saveAs;
     const { CPS_MAP_HASH } = await import('../contexts/Constants');
     
     try {
-        // Calculate totals
-        let totalAmount = 0;
-        let totalVAT = 0;
-        let total = 0;
+        const isB1PlusMinus = doc.documentTypeDesc === 'B1+/-';
+        const printDate = formatDateForExport(new Date().toISOString());
 
+        // Calculate totals
+        let totalAmount = 0, totalVAT = 0, totalAll = 0;
         adjustmentRequests.forEach(adj => {
-            const amount = Math.abs(adj.disputeMny);
-            const vat = Math.abs(adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100));
-            const totalAdj = Math.abs(adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100));
-            
-            totalAmount += parseFloat(amount.toFixed(2));
-            totalVAT += parseFloat(vat.toFixed(2));
-            total += parseFloat(totalAdj.toFixed(2));
+            const amount = parseFloat(Math.abs(adj.disputeMny).toFixed(2));
+            const vat = parseFloat(Math.abs(adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100)).toFixed(2));
+            const tot = parseFloat(Math.abs(adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100)).toFixed(2));
+            totalAmount += amount;
+            totalVAT += vat;
+            totalAll += tot;
         });
 
-        const isB1PlusMinus = document.documentTypeDesc === 'B1+/-';
+        const thinBorder = {
+            top: { style: BorderStyle.SINGLE, size: 1, color: 'CCCCCC' },
+            bottom: { style: BorderStyle.SINGLE, size: 1, color: 'CCCCCC' },
+            left: { style: BorderStyle.SINGLE, size: 1, color: 'CCCCCC' },
+            right: { style: BorderStyle.SINGLE, size: 1, color: 'CCCCCC' }
+        };
 
-        // Create table headers
-        const headerCells = [
-            new TableCell({
-                children: [new Paragraph({ text: isB1PlusMinus ? 'B1- Account Number' : 'Account Number', bold: true })],
-                shading: { fill: "EEEEEE" }
-            }),
-            new TableCell({
-                children: [new Paragraph({ text: isB1PlusMinus ? 'B1- Invoice Number' : 'Invoice Number', bold: true })],
-                shading: { fill: "EEEEEE" }
-            }),
-            new TableCell({
-                children: [new Paragraph({ text: isB1PlusMinus ? 'B1- Service Number' : 'Service Number', bold: true })],
-                shading: { fill: "EEEEEE" }
-            }),
-            new TableCell({
-                children: [new Paragraph({ text: 'Adjustment Type', bold: true })],
-                shading: { fill: "EEEEEE" }
-            }),
-            new TableCell({
-                children: [new Paragraph({ text: 'Status', bold: true })],
-                shading: { fill: "EEEEEE" }
-            })
-        ];
+        const noBorder = {
+            top: { style: BorderStyle.NONE },
+            bottom: { style: BorderStyle.NONE },
+            left: { style: BorderStyle.NONE },
+            right: { style: BorderStyle.NONE }
+        };
 
-        if (isB1PlusMinus) {
-            headerCells.push(
-                new TableCell({
-                    children: [new Paragraph({ text: 'B1+ Account Number', bold: true })],
-                    shading: { fill: "EEEEEE" }
-                }),
-                new TableCell({
-                    children: [new Paragraph({ text: 'B1+ Service Number', bold: true })],
-                    shading: { fill: "EEEEEE" }
-                })
-            );
-        }
+        const redRun = (text) => new TextRun({ text: text || '', color: 'DC3545' });
+        const boldRun = (text) => new TextRun({ text, bold: true });
+        const normalRun = (text) => new TextRun({ text: text || '' });
 
-        headerCells.push(
-            new TableCell({
-                children: [new Paragraph({ text: 'Error Messages', bold: true })],
-                shading: { fill: "EEEEEE" }
-            }),
-            new TableCell({
-                children: [new Paragraph({ text: 'Amount', bold: true, alignment: AlignmentType.RIGHT })],
-                shading: { fill: "EEEEEE" }
-            }),
-            new TableCell({
-                children: [new Paragraph({ text: 'VAT', bold: true, alignment: AlignmentType.RIGHT })],
-                shading: { fill: "EEEEEE" }
-            }),
-            new TableCell({
-                children: [new Paragraph({ text: 'Total', bold: true, alignment: AlignmentType.RIGHT })],
-                shading: { fill: "EEEEEE" }
-            })
-        );
+        // === Adjustment Table ===
+        const headerTexts = isB1PlusMinus
+            ? ['ลำดับ', 'B1- Account\nNumber', 'B1- Invoice\nNumber', 'B1- Service\nNumber', 'Adjustment Type', 'Status', 'B1+ Account\nNumber', 'B1+ Service\nNumber', 'Error Messages', 'Amount', 'VAT', 'Total']
+            : ['ลำดับ', 'Account\nNumber', 'Invoice\nNumber', 'Service\nNumber', 'Adjustment Type', 'Status', 'Error Messages', 'Amount', 'VAT', 'Total'];
 
-        // Create table rows
-        const tableRows = [new TableRow({ children: headerCells })];
+        const headerRow = new TableRow({
+            children: headerTexts.map(h => new TableCell({
+                children: [new Paragraph({ children: [boldRun(h)], alignment: AlignmentType.CENTER })],
+                borders: thinBorder,
+                shading: { fill: 'F0F0F0' }
+            }))
+        });
 
-        adjustmentRequests.forEach(adj => {
+        const dataRows = adjustmentRequests.map((adj, idx) => {
+            const amount = Math.abs(adj.disputeMny);
+            const vat = Math.abs(adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100));
+            const tot = Math.abs(adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100));
+
             const cells = [
-                new TableCell({ children: [new Paragraph(adj.accountNum || '')] }),
-                new TableCell({ children: [new Paragraph(adj.invoiceNum || '')] }),
-                new TableCell({ children: [new Paragraph(adj.serviceNum || '')] }),
-                new TableCell({ children: [new Paragraph(adj.adjustmentTypeName || '')] }),
-                new TableCell({ children: [new Paragraph(adj.requestStatus || '')] })
+                new TableCell({ children: [new Paragraph({ text: String(idx + 1), alignment: AlignmentType.CENTER })], borders: thinBorder }),
+                new TableCell({ children: [new Paragraph(adj.accountNum || '')], borders: thinBorder }),
+                new TableCell({ children: [new Paragraph(adj.invoiceNum || '')], borders: thinBorder }),
+                new TableCell({ children: [new Paragraph(adj.serviceNum || '')], borders: thinBorder }),
+                new TableCell({ children: [new Paragraph(adj.adjustmentTypeName || '')], borders: thinBorder }),
+                new TableCell({ children: [new Paragraph(adj.requestStatus || '')], borders: thinBorder })
             ];
 
             if (isB1PlusMinus) {
                 cells.push(
-                    new TableCell({ children: [new Paragraph(adj.accountNumBPlus || '')] }),
-                    new TableCell({ children: [new Paragraph(adj.serviceNumBPlus || '')] })
+                    new TableCell({ children: [new Paragraph(adj.accountNumBPlus || '')], borders: thinBorder }),
+                    new TableCell({ children: [new Paragraph(adj.serviceNumBPlus || '')], borders: thinBorder })
                 );
             }
 
-            const amount = Math.abs(adj.disputeMny);
-            const vat = Math.abs(adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100));
-            const totalAdj = Math.abs(adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100));
-
             cells.push(
-                new TableCell({ children: [new Paragraph(adj.errorMessages || '-')] }),
-                new TableCell({ children: [new Paragraph({ text: formatNumberForExport(amount), alignment: AlignmentType.RIGHT })] }),
-                new TableCell({ children: [new Paragraph({ text: formatNumberForExport(vat), alignment: AlignmentType.RIGHT })] }),
-                new TableCell({ children: [new Paragraph({ text: formatNumberForExport(totalAdj), alignment: AlignmentType.RIGHT })] })
+                new TableCell({ children: [new Paragraph(adj.errorMessages || '')], borders: thinBorder }),
+                new TableCell({ children: [new Paragraph({ text: formatNumberForExport(amount), alignment: AlignmentType.RIGHT })], borders: thinBorder }),
+                new TableCell({ children: [new Paragraph({ text: formatNumberForExport(vat), alignment: AlignmentType.RIGHT })], borders: thinBorder }),
+                new TableCell({ children: [new Paragraph({ text: formatNumberForExport(tot), alignment: AlignmentType.RIGHT })], borders: thinBorder })
             );
 
-            tableRows.push(new TableRow({ children: cells }));
+            return new TableRow({ children: cells });
         });
 
-        // Add totals row
-        const totalCells = [];
-        const colSpan = isB1PlusMinus ? 8 : 6;
-        
-        totalCells.push(
+        // Totals row
+        const summaryColSpan = headerTexts.length - 3;
+        const totalRowCells = [
             new TableCell({
-                children: [new Paragraph({ text: 'Total', bold: true, alignment: AlignmentType.RIGHT })],
-                columnSpan: colSpan
-            })
-        );
-        
-        // Add empty cells for the column span
-        for (let i = 1; i < colSpan; i++) {
-            totalCells.push(new TableCell({ children: [] }));
-        }
-        
-        totalCells.push(
-            new TableCell({ children: [new Paragraph({ text: formatNumberForExport(totalAmount), bold: true, alignment: AlignmentType.RIGHT })] }),
-            new TableCell({ children: [new Paragraph({ text: formatNumberForExport(totalVAT), bold: true, alignment: AlignmentType.RIGHT })] }),
-            new TableCell({ children: [new Paragraph({ text: formatNumberForExport(total), bold: true, alignment: AlignmentType.RIGHT })] })
-        );
+                children: [new Paragraph({ children: [new TextRun({ text: 'รวม', bold: true, color: 'DC3545' })], alignment: AlignmentType.RIGHT })],
+                columnSpan: summaryColSpan,
+                borders: thinBorder
+            }),
+            new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: formatNumberForExport(totalAmount), bold: true, color: 'DC3545' })], alignment: AlignmentType.RIGHT })], borders: thinBorder }),
+            new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: formatNumberForExport(totalVAT), bold: true, color: 'DC3545' })], alignment: AlignmentType.RIGHT })], borders: thinBorder }),
+            new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: formatNumberForExport(totalAll), bold: true, color: 'DC3545' })], alignment: AlignmentType.RIGHT })], borders: thinBorder })
+        ];
 
-        tableRows.push(new TableRow({ children: totalCells }));
+        const adjTable = new Table({
+            rows: [headerRow, ...dataRows, new TableRow({ children: totalRowCells })],
+            width: { size: 100, type: WidthType.PERCENTAGE }
+        });
 
-        // Create document content
+        // === Notes ===
+        const notes = collectNotes(doc, adjustmentRequests);
+
+        // === Approval Table Row 1 ===
+        const makeApprovalCell = (label, name, dtm, numbered) => {
+            const children = [];
+            if (numbered) children.push(new Paragraph({ children: [boldRun(numbered)] }));
+            children.push(new Paragraph({ text: '' }));
+            children.push(new Paragraph({ children: [normalRun(`${label} : `), redRun(name || '[Username]')] }));
+            children.push(new Paragraph({ children: [normalRun('วันที่ : '), redRun(formatDateTimeForExport(dtm) || 'dd/mm/yyyy hh:mm:ss')] }));
+            return new TableCell({ children, borders: thinBorder });
+        };
+
+        const approvalTable1 = new Table({
+            rows: [new TableRow({
+                children: [
+                    makeApprovalCell('Created by', doc.createdByName, doc.createdDtm, '1)'),
+                    makeApprovalCell('Reviewed by', doc.reviewedByName, doc.reviewedDtm, '2)'),
+                    makeApprovalCell('Approved by', doc.approvedByName, doc.approvedDtm, '3)'),
+                    makeApprovalCell('Finance by', doc.financeReviewedByName, doc.financeReviewedDtm, '4)')
+                ]
+            })],
+            width: { size: 100, type: WidthType.PERCENTAGE }
+        });
+
+        const approvalTable2 = new Table({
+            rows: [new TableRow({
+                children: [
+                    new TableCell({ children: [new Paragraph('')], borders: noBorder }),
+                    makeApprovalCell('Rejected by', doc.rejectedByName, doc.rejectedDtm, null),
+                    makeApprovalCell('Retried by', doc.retriedByName, doc.retriedDtm, null),
+                    makeApprovalCell('Cancelled by', doc.canceledByName, doc.canceledDtm, null)
+                ]
+            })],
+            width: { size: 100, type: WidthType.PERCENTAGE }
+        });
+
+        // === Assemble document ===
         const docContent = [
+            new Paragraph({ children: [boldRun('รายงานข้อมูลการปรับปรุงค่าใช้บริการ')], alignment: AlignmentType.CENTER, spacing: { after: 200 } }),
+            new Paragraph({ text: '' }),
+            new Paragraph({ children: [boldRun('เลขที่เอกสารปรับปรุงบิล (Document Sequence) : '), redRun(doc.documentNum)] }),
             new Paragraph({
-                text: `Document Details - ${document.documentNum}`,
-                heading: HeadingLevel.HEADING_1
+                children: [
+                    boldRun('ประเภทของการปรับปรุงบิล : '), redRun(doc.documentTypeDesc),
+                    normalRun('                    '),
+                    boldRun('สร้างเมื่อ : '), redRun(formatDateTimeForExport(doc.createdDtm)),
+                    normalRun('                    '),
+                    boldRun('Location : '), redRun(doc.homeLocationCode)
+                ]
             }),
             new Paragraph({ text: '' }),
-            new Paragraph({
-                text: 'Document Information',
-                heading: HeadingLevel.HEADING_2
-            }),
-            new Paragraph({
-                children: [
-                    new TextRun({ text: 'Document Sequence: ', bold: true }),
-                    new TextRun(document.documentNum)
-                ]
-            }),
-            new Paragraph({
-                children: [
-                    new TextRun({ text: 'Document Type: ', bold: true }),
-                    new TextRun(document.documentTypeDesc)
-                ]
-            }),
-            new Paragraph({
-                children: [
-                    new TextRun({ text: 'Total Amount: ', bold: true }),
-                    new TextRun(formatNumberForExport(document.documentTypeDesc === 'B1+/-' ? Math.abs(document.totalMny) / 2 : Math.abs(document.totalMny)))
-                ]
-            }),
-            new Paragraph({
-                children: [
-                    new TextRun({ text: 'Location: ', bold: true }),
-                    new TextRun(document.homeLocationCode)
-                ]
-            }),
-            new Paragraph({
-                children: [
-                    new TextRun({ text: 'Created by: ', bold: true }),
-                    new TextRun(document.createdByName)
-                ]
-            }),
-            new Paragraph({
-                children: [
-                    new TextRun({ text: 'Created date: ', bold: true }),
-                    new TextRun(formatDateForExport(document.createdDtm))
-                ]
-            }),
+            new Paragraph({ children: [normalRun(`รายละเอียด จำนวน ${adjustmentRequests.length} รายการ`)] }),
+            adjTable,
             new Paragraph({ text: '' })
         ];
 
-        // Add notes section if available
-        if (document.reviewNote || document.approveNote || document.financeNote || document.cancelNote) {
-            docContent.push(
-                new Paragraph({
-                    text: 'Notes:',
-                    heading: HeadingLevel.HEADING_2
-                })
-            );
-            if (document.reviewNote) {
-                docContent.push(new Paragraph(`[Reviewer]: ${document.reviewNote}`));
-            }
-            if (document.approveNote) {
-                docContent.push(new Paragraph(`[Approver]: ${document.approveNote}`));
-            }
-            if (document.financeNote) {
-                docContent.push(new Paragraph(`[Financial Reviewer]: ${document.financeNote}`));
-            }
-            if (document.cancelNote) {
-                docContent.push(new Paragraph(`[Canceller]: ${document.cancelNote}`));
-            }
-            docContent.push(new Paragraph({ text: '' }));
+        if (notes.length > 0) {
+            docContent.push(new Paragraph({ children: [boldRun('เหตุผล : '), redRun(notes.join(' | '))] }));
         }
 
-        // Add adjustment requests table
         docContent.push(
-            new Paragraph({
-                text: 'Adjustment Requests:',
-                heading: HeadingLevel.HEADING_2
-            })
+            new Paragraph({ text: '' }),
+            new Paragraph({ children: [boldRun('ขั้นตอนการอนุมัติ')] }),
+            new Paragraph({ text: '' }),
+            approvalTable1,
+            new Paragraph({ text: '' }),
+            approvalTable2,
+            new Paragraph({ text: '' }),
+            new Paragraph({ children: [normalRun(`เอกสาร : DR01 (NT Adjustor)  จัดพิมพ์วันที่ : ${printDate}`)] })
         );
 
-        docContent.push(
-            new Table({
-                rows: tableRows,
-                width: {
-                    size: 100,
-                    type: WidthType.PERCENTAGE
-                }
-            })
-        );
-
-        // Create and download document
-        const doc = new Document({
+        const docxDoc = new DocxDocument({
             sections: [{
                 properties: {
                     page: {
-                        margin: {
-                            top: 720,
-                            right: 720,
-                            bottom: 720,
-                            left: 720
-                        }
+                        size: { orientation: PageOrientation.LANDSCAPE },
+                        margin: { top: 720, right: 720, bottom: 720, left: 720 }
                     }
                 },
                 children: docContent
@@ -631,9 +680,8 @@ export async function exportDocumentToDOCX(document, adjustmentRequests) {
         });
 
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
-        const fileName = `Document_${document.documentNum}_${timestamp}.docx`;
-
-        const blob = await Packer.toBlob(doc);
+        const fileName = `Document_${doc.documentNum}_${timestamp}.docx`;
+        const blob = await Packer.toBlob(docxDoc);
         saveAs(blob, fileName);
     } catch (error) {
         console.error('Error exporting to DOCX:', error);
