@@ -10,6 +10,7 @@ const MakeAdjustment = ({ adjustmentTypes, selectedAdjustmentType, setSelectedAd
     const [selectedReason, setSelectedReason] = useState('');
     const [isLoadingReasons, setIsLoadingReasons] = useState(false);
     const [reasonError, setReasonError] = useState('');
+    const [noteError, setNoteError] = useState('');
 
     // Fetch adjustment reasons on component mount
     useEffect(() => {
@@ -52,11 +53,24 @@ const MakeAdjustment = ({ adjustmentTypes, selectedAdjustmentType, setSelectedAd
 
     const handleAmountChange = (e) => {
         const value = e.target.value;
-        if (!isNaN(value)) {
+        const decimalPattern = /^\d*(\.\d{0,2})?$/;
+
+        if (value === '' || decimalPattern.test(value)) {
             setAdjustmentAmount(value);
 
             console.log("Adjustment Amount:", value);
             console.log("selectedAccount:", selectedAccount);
+        }
+    }
+
+    const handleAmountBlur = () => {
+        if (adjustmentAmount === '' || adjustmentAmount === null || adjustmentAmount === undefined) {
+            return;
+        }
+
+        const parsedAmount = parseFloat(adjustmentAmount);
+        if (!isNaN(parsedAmount)) {
+            setAdjustmentAmount(parsedAmount.toFixed(2));
         }
     }
 
@@ -114,14 +128,14 @@ const MakeAdjustment = ({ adjustmentTypes, selectedAdjustmentType, setSelectedAd
                         <label>Amount <small>Thai Baht (excl VAT).</small></label>
                         {/* Using flex layout with margin-top to perfectly align with dropdown */}
                         <div className="d-flex flex-column" style={{ flex: 1, justifyContent: 'flex-end' }}>
-                            <input type="number" className="form-control" value={adjustmentAmount} onChange={handleAmountChange} />
+                            <input type="number" className="form-control" value={adjustmentAmount} onChange={handleAmountChange} onBlur={handleAmountBlur} step="0.01" min="0" />
                         </div>
                     </div>
                 ) : (
                     // For other document types, use the existing layout
                     <div className="col-sm-3 form-group d-flex flex-column" style={{ justifyContent: 'flex-start' }}>
                         <label>Amount <small>Thai Baht (excl VAT).</small> </label>
-                        <input type="number" className="form-control" value={adjustmentAmount} onChange={handleAmountChange} />                    
+                        <input type="number" className="form-control" value={adjustmentAmount} onChange={handleAmountChange} onBlur={handleAmountBlur} step="0.01" min="0" />                    
                     </div>
                 )}
                 
@@ -198,24 +212,43 @@ const MakeAdjustment = ({ adjustmentTypes, selectedAdjustmentType, setSelectedAd
             </div>
             <div className="row">
                 <div className="col-sm-6 form-group">
-                    <label>Note</label>
+                    <label>Note <span className="text-danger">*</span></label>
                     <textarea 
-                        className="form-control" 
+                        className={`form-control ${noteError ? 'is-invalid' : ''}`}
                         rows={3} 
                         value={adjustmentNote} 
-                        onChange={(e) => setAdjustmentNote(e.target.value)} 
+                        onChange={(e) => {
+                            setAdjustmentNote(e.target.value);
+                            if (e.target.value.trim()) {
+                                setNoteError('');
+                            }
+                        }}
                         placeholder="Note will be automatically updated when a reason is selected. You can also edit it manually."
+                        required
                     />
+                    {noteError && <div className="invalid-feedback">{noteError}</div>}
                 </div>
                 <div className="col-sm-6 form-group d-flex" style={{ alignItems: 'flex-end' }}>
                     <button 
                         type="submit" 
                         className="btn btn-default" 
                         onClick={() => {
+                            let hasError = false;
+                            
                             if (!selectedReason) {
                                 setReasonError('Please select a reason to adjust');
+                                hasError = true;
+                            }
+                            
+                            if (!adjustmentNote || !adjustmentNote.trim()) {
+                                setNoteError('Note is required');
+                                hasError = true;
+                            }
+                            
+                            if (hasError) {
                                 return;
                             }
+                            
                             handleCreateAdjustmentRequest(documentType, selectedReason);
                         }} 
                         disabled={!selectedReason || isLoadingReasons}
