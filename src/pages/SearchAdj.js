@@ -159,7 +159,12 @@ const SearchAdj = ({ myAdjust, title, fetchDataAtStart }) => {
                                     </div>
                                     
                                     {/* Document table */}
-                                    <DocumentTable documents={documents} selectedDocument={selectedDocument} handleSelectDocument={handleSelectDocument} />
+                                    <DocumentTable
+                                        documents={documents}
+                                        selectedDocument={selectedDocument}
+                                        handleSelectDocument={handleSelectDocument}
+                                        showActions={false}
+                                    />
                                     
                                     {/* Total Records display moved below the document table */}
                                     <div className="mt-2 mb-3">
