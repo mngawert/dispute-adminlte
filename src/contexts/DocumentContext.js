@@ -289,6 +289,14 @@ export const DocumentProvider = ({ children }) => {
             setAdjustmentTypes(response.data);
             if (response.data.length > 0) {
                 setSelectedAdjustmentType(response.data[0]);
+            } else {
+                // Avoid keeping a stale selected type when new lookup returns no results.
+                setSelectedAdjustmentType({});
+                const requestInput = {
+                    productCode: invoiceData?.productCode ?? null,
+                    revenueCodeIds: invoiceData?.revenueCodeIds ?? null
+                };
+                alert(`No adjustment types found for the selected data. Input: ${JSON.stringify(requestInput)}`);
             }
         } catch (error) {
             console.error('Error fetching adjustment types:', error);
