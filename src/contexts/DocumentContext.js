@@ -316,6 +316,13 @@ export const DocumentProvider = ({ children }) => {
 
             if (response.data.length > 0) {
                 setSelectedAdjustmentType(response.data[0]);
+            } else {
+                // Avoid keeping a stale selected type when new lookup returns no results.
+                setSelectedAdjustmentType({});
+                const requestInput = {
+                    adjustmentTypeNames: adjustmentTypeNames ?? []
+                };
+                alert(`No adjustment types found for the selected data. Input: ${JSON.stringify(requestInput)}`);
             }
 
             return response.data; // Return the adjustment types for further processing if needed
