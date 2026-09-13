@@ -24,8 +24,19 @@ See the section about [running tests](https://facebook.github.io/create-react-ap
 Builds the app for production to the `build` folder.\
 It correctly bundles React in production mode and optimizes the build for the best performance.
 
+This project also runs a post-build prune step to reduce package size by removing:
+- `*.map` source map files
+- unused AdminLTE distribution variants under `dist/css/alt`
+- unused plugin folders in `build/plugins` (keeps only `bootstrap`, `fontawesome-free`, and `jquery`)
+
 The build is minified and the filenames include the hashes.\
 Your app is ready to be deployed!
+
+### `npm run build:slim`
+
+Builds the app and applies additional pruning for lightweight deployments.
+
+`build:slim` also removes `build/files`, which contains training manuals and videos. Use this mode only if those files are hosted externally or not required in the deployed package.
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 

@@ -31,7 +31,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && node scripts/prune-build-assets.js",
+    "build:slim": "react-scripts build && node scripts/prune-build-assets.js --slim",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
