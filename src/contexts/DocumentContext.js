@@ -243,8 +243,10 @@ export const DocumentProvider = ({ children }) => {
                 }
             });
             setInvoiceDataRC(response.data);
+            return response.data;
         } catch (error) {
             console.error('Error fetching invoice feed data RC:', error);
+            return [];
         }
     }
 
@@ -258,8 +260,10 @@ export const DocumentProvider = ({ children }) => {
                 }
             });
             setInvoiceDataUsage(response.data);
+            return response.data;
         } catch (error) {
             console.error('Error fetching invoice feed data Usage:', error);
+            return [];
         }
     }
 
@@ -283,8 +287,11 @@ export const DocumentProvider = ({ children }) => {
             if (response.data.length === 0) {
                 alert(getTranslation('noCostedEventsFound', language));
             }
+
+            return response.data;
         } catch (error) {
             console.error('Error fetching costed event:', error);
+            return [];
         }
     }
 
@@ -409,10 +416,35 @@ export const DocumentProvider = ({ children }) => {
 
         if (documentType === DOCUMENT_TYPE.ADJUST_MINUS || documentType === DOCUMENT_TYPE.P35 || documentType === DOCUMENT_TYPE.P36) {
 
+            const isRowFromCurrentService = (row) => {
+                if (!row || Object.keys(row).length === 0 || !selectedInvoiceDataService || Object.keys(selectedInvoiceDataService).length === 0) {
+                    return false;
+                }
+
+                return (
+                    String(row?.accountNum) === String(selectedInvoiceDataService?.accountNum) &&
+                    String(row?.billSeq) === String(selectedInvoiceDataService?.billSeq) &&
+                    String(row?.serviceNumber) === String(selectedInvoiceDataService?.serviceNumber)
+                );
+            };
+
+            const isSelectedRCValid = selectedInvoiceDataRC && Object.keys(selectedInvoiceDataRC).length > 0 && isRowFromCurrentService(selectedInvoiceDataRC);
+            const isSelectedUsageValid = selectedInvoiceDataUsage && Object.keys(selectedInvoiceDataUsage).length > 0 && isRowFromCurrentService(selectedInvoiceDataUsage);
+
+            // Guard against stale charge-level selections after data refresh/delete.
             if ((!selectedInvoiceDataRC || Object.keys(selectedInvoiceDataRC).length === 0) && (!selectedInvoiceDataUsage || Object.keys(selectedInvoiceDataUsage).length === 0)) {
                 return getTranslation('selectRCOrUsage', language);
             }
-            if (parseFloat(adjustmentAmount) > parseFloat(selectedInvoiceDataRC?.aggAmount ?? selectedInvoiceDataUsage?.aggAmount)) {
+
+            if (!isSelectedRCValid && !isSelectedUsageValid) {
+                return getTranslation('selectRCOrUsage', language);
+            }
+
+            const chargeAmountLimit = isSelectedRCValid
+                ? selectedInvoiceDataRC?.aggAmount
+                : selectedInvoiceDataUsage?.aggAmount;
+
+            if (parseFloat(adjustmentAmount) > parseFloat(chargeAmountLimit)) {
                 return getTranslation('adjustmentAmountLessThanCharge', language);
             }
             if (parseFloat(adjustmentAmount) > parseFloat(selectedCostedEvent?.eventCostMny)) {
@@ -677,7 +709,73 @@ export const DocumentProvider = ({ children }) => {
 
             /** Reload pending adjust amount in invoices and rebind selected invoice from fresh data. */
             const refreshAccountNum = selectedAccount?.accountNum || selectedInvoice?.accountNum;
-            await refreshInvoicesAndSelectedInvoice(refreshAccountNum, selectedInvoice);
+            const refreshedInvoices = await refreshInvoicesAndSelectedInvoice(refreshAccountNum, selectedInvoice);
+
+            /** Refresh charge-level tables (Invoice Data Services/RC/Usage) for current service selection. */
+            if (selectedInvoiceDataService && Object.keys(selectedInvoiceDataService).length > 0) {
+                const latestSelectedInvoice = findMatchingInvoice(refreshedInvoices, selectedInvoice) || selectedInvoice;
+
+                if (latestSelectedInvoice && Object.keys(latestSelectedInvoice).length > 0) {
+                    const latestInvoiceDataServices = await getInvoiceDataServices(latestSelectedInvoice);
+                    const matchedSelectedService = (latestInvoiceDataServices || []).find((service) =>
+                        String(service?.serviceNumber) === String(selectedInvoiceDataService?.serviceNumber)
+                    );
+
+                    if (matchedSelectedService) {
+                        setSelectedInvoiceDataService(matchedSelectedService);
+
+                        const latestRC = await getInvoiceDataRC(matchedSelectedService);
+                        const latestUsage = await getInvoiceDataUsage(matchedSelectedService);
+
+                        const matchedSelectedRC = (latestRC || []).find((row) =>
+                            String(row?.productSeq) === String(selectedInvoiceDataRC?.productSeq) &&
+                            String(row?.tariffName) === String(selectedInvoiceDataRC?.tariffName) &&
+                            String(row?.callType) === String(selectedInvoiceDataRC?.callType)
+                        );
+
+                        if (matchedSelectedRC) {
+                            setSelectedInvoiceDataRC(matchedSelectedRC);
+                        } else {
+                            setSelectedInvoiceDataRC({});
+                        }
+
+                        const matchedSelectedUsage = (latestUsage || []).find((row) =>
+                            String(row?.productSeq) === String(selectedInvoiceDataUsage?.productSeq) &&
+                            String(row?.tariffName) === String(selectedInvoiceDataUsage?.tariffName) &&
+                            String(row?.callType) === String(selectedInvoiceDataUsage?.callType)
+                        );
+
+                        if (matchedSelectedUsage) {
+                            setSelectedInvoiceDataUsage(matchedSelectedUsage);
+
+                            if (selectedCostedEvent && Object.keys(selectedCostedEvent).length > 0) {
+                                const latestCostedEvents = await getCostedEvents(matchedSelectedUsage);
+                                const matchedSelectedEvent = (latestCostedEvents || []).find((event) =>
+                                    String(event?.eventRef) === String(selectedCostedEvent?.eventRef)
+                                );
+
+                                if (matchedSelectedEvent) {
+                                    setSelectedCostedEvent(matchedSelectedEvent);
+                                } else {
+                                    setSelectedCostedEvent({});
+                                }
+                            }
+                        } else {
+                            setSelectedInvoiceDataUsage({});
+                            setCostedEvents([]);
+                            setSelectedCostedEvent({});
+                        }
+                    } else {
+                        setSelectedInvoiceDataService({});
+                        setInvoiceDataRC([]);
+                        setInvoiceDataUsage([]);
+                        setSelectedInvoiceDataRC({});
+                        setSelectedInvoiceDataUsage({});
+                        setCostedEvents([]);
+                        setSelectedCostedEvent({});
+                    }
+                }
+            }
         } catch (error) {
             console.error('Error deleting adjustment request:', error);
         }
