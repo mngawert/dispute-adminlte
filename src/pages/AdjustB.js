@@ -36,6 +36,7 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
 
         /** Invoice */
         invoices, getInvoicesByAccountNum, selectedInvoice, setSelectedInvoice,
+        findMatchingInvoice, getRemainingInvoiceAmount,
 
         /** Invoice Data Services */
         invoiceDataServices, setInvoiceDataServices, getInvoiceDataServices,
@@ -82,32 +83,6 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
     const [selectedAccountBPlus, setSelectedAccountBPlus] = useState(null);
     const [servicesBPlus, setServicesBPlus] = useState([]);
     const [selectedServiceBPlus, setSelectedServiceBPlus] = useState(null);
-
-    const findMatchingInvoiceBMinus = (invoiceList, currentInvoice) => {
-        if (!currentInvoice) {
-            return null;
-        }
-
-        const list = invoiceList || [];
-        const currentBillSeq = currentInvoice?.billSeq;
-        const currentInvoiceNum = currentInvoice?.invoiceNum;
-
-        if (currentBillSeq !== undefined && currentBillSeq !== null) {
-            const byBillSeq = list.find((invoice) => String(invoice?.billSeq) === String(currentBillSeq));
-            if (byBillSeq) {
-                return byBillSeq;
-            }
-        }
-
-        if (currentInvoiceNum !== undefined && currentInvoiceNum !== null) {
-            const byInvoiceNum = list.find((invoice) => String(invoice?.invoiceNum) === String(currentInvoiceNum));
-            if (byInvoiceNum) {
-                return byInvoiceNum;
-            }
-        }
-
-        return null;
-    }
 
     const getAccountsByAccountNumLocalBMinus = async (accountNum) => {        
         const accounts = await getAccountsByAccountNum(accountNum);
@@ -357,7 +332,7 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
         setInvoicesBMinus(updatedInvoices || []);
 
         if (selectedInvoiceBMinus) {
-            const updatedSelectedInvoiceBMinus = findMatchingInvoiceBMinus(updatedInvoices, selectedInvoiceBMinus);
+            const updatedSelectedInvoiceBMinus = findMatchingInvoice(updatedInvoices, selectedInvoiceBMinus);
 
             if (updatedSelectedInvoiceBMinus) {
                 setSelectedInvoiceBMinus(updatedSelectedInvoiceBMinus);
@@ -380,7 +355,7 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
         setInvoicesBMinus(updatedInvoices || []);
 
         if (selectedInvoiceBMinus) {
-            const updatedSelectedInvoiceBMinus = findMatchingInvoiceBMinus(updatedInvoices, selectedInvoiceBMinus);
+            const updatedSelectedInvoiceBMinus = findMatchingInvoice(updatedInvoices, selectedInvoiceBMinus);
 
             if (updatedSelectedInvoiceBMinus) {
                 setSelectedInvoiceBMinus(updatedSelectedInvoiceBMinus);
@@ -527,10 +502,7 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
         if (parseFloat(adjustmentAmount) > creditLimit) {
             return getTranslation('adjustmentAmountLessThanOrEqualToCreditLimit', language, { creditLimit });
         }
-        const invoiceNetAmount = Number(selectedInvoiceBMinus?.invoiceNetMny ?? 0);
-        const adjustedAmount = Number(selectedInvoiceBMinus?.adjustedMny ?? 0);
-        const pendingAdjustmentAmount = Number(selectedInvoiceBMinus?.pendingAdjustmentMny ?? 0);
-        const remainingAmount = invoiceNetAmount - adjustedAmount - pendingAdjustmentAmount;
+        const remainingAmount = getRemainingInvoiceAmount(selectedInvoiceBMinus);
 
         if (parseFloat(adjustmentAmount) > remainingAmount) {
             return getTranslation('adjustmentAmountLessThanInvoice', language);
