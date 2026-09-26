@@ -548,12 +548,35 @@ export const DocumentProvider = ({ children }) => {
         const disputeAmount = isSelectedInvoiceValid ? parseFloat(adjustmentAmount) : parseFloat(adjustmentAmount) * -1; 
 
         try {
+            // Re-check against latest invoice state to catch updates from other sessions before submit.
+            let latestSelectedInvoice = selectedInvoice;
+            if (isSelectedInvoiceValid && selectedAccount?.accountNum) {
+                const latestInvoices = await getInvoicesByAccountNum(selectedAccount.accountNum);
+                const matchedLatestInvoice = findMatchingInvoice(latestInvoices, selectedInvoice);
+                latestSelectedInvoice = matchedLatestInvoice || selectedInvoice;
+
+                if (matchedLatestInvoice) {
+                    setSelectedInvoice(matchedLatestInvoice);
+                }
+
+                const latestRemainingAmount = getRemainingInvoiceAmount(latestSelectedInvoice);
+                if (parseFloat(adjustmentAmount) > latestRemainingAmount) {
+                    alert(getTranslation('adjustmentAmountLessThanInvoice', language));
+                    return;
+                }
+
+                if (parseFloat(latestSelectedInvoice?.writeOffMny) > 0) {
+                    alert(getTranslation('invoiceWrittenOff', language));
+                    return;
+                }
+            }
+
             const response = await api.post('/api/Adjustment/CreateAdjustmentRequest', {
                 documentType: documentType,
                 createdBy: JSON.parse(localStorage.getItem('userLogin'))?.userId,
                 accountNum: selectedAccount.accountNum,
                 disputeDtm: new Date().toISOString(),
-                billSeq: selectedInvoice?.billSeq,
+                billSeq: latestSelectedInvoice?.billSeq,
                 disputeMny: disputeAmount,
                 productId: selectedInvoiceDataRC?.productId ?? selectedInvoiceDataUsage?.productId ?? selectedInvoiceDataService?.productId,
                 tariffId: selectedInvoiceDataRC?.tariffId ?? selectedInvoiceDataUsage?.tariffId,
@@ -564,7 +587,7 @@ export const DocumentProvider = ({ children }) => {
                 eventTypeId: selectedCostedEvent?.eventTypeId ?? selectedInvoiceDataUsage?.eventTypeId,
                 adjustmentTypeId: selectedAdjustmentType.adjustmentTypeId,
                 serviceNum: selectedInvoiceDataService?.serviceNumber || selectedService?.serviceNum,
-                invoiceNum: selectedInvoice?.invoiceNum,
+                invoiceNum: latestSelectedInvoice?.invoiceNum,
                 disputeSeq: null,
                 adjustmentSeq: null,
                 requestStatus: "Create-Pending",

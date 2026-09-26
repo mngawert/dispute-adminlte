@@ -317,7 +317,21 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
     }
 
     const handleCreateAdjustmentRequest = async (documentType, selectedReason) => {
-        const validationError = validateInputsAdjustB(documentType);
+        let latestSelectedInvoiceBMinus = selectedInvoiceBMinus;
+
+        // Re-check with latest invoice state before submit to catch concurrent updates from other sessions.
+        if (selectedAccountBMinus?.accountNum && selectedInvoiceBMinus) {
+            const latestInvoices = await getInvoicesByAccountNum(selectedAccountBMinus.accountNum);
+            setInvoicesBMinus(latestInvoices || []);
+
+            const matchedLatestInvoice = findMatchingInvoice(latestInvoices, selectedInvoiceBMinus);
+            if (matchedLatestInvoice) {
+                latestSelectedInvoiceBMinus = matchedLatestInvoice;
+                setSelectedInvoiceBMinus(matchedLatestInvoice);
+            }
+        }
+
+        const validationError = validateInputsAdjustB(documentType, latestSelectedInvoiceBMinus);
         if(validationError) {
             alert(validationError);
             return;
@@ -325,7 +339,7 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
 
         const pairKey = uuidv4(); // Generate a unique key for this pair
 
-        await createAdjustmentRequestLocal(documentType, selectedInvoiceBMinus, adjustmentAmount, selectedAccountBMinus, selectedServiceBMinus?.productId, null, null, selectedServiceBMinus?.productSeq, null, null, 6, selectedServiceBMinus?.serviceNum, adjustmentNote, pairKey, selectedServiceBMinus?.serviceLocationCode, selectedReason);
+        await createAdjustmentRequestLocal(documentType, latestSelectedInvoiceBMinus, adjustmentAmount, selectedAccountBMinus, selectedServiceBMinus?.productId, null, null, selectedServiceBMinus?.productSeq, null, null, 6, selectedServiceBMinus?.serviceNum, adjustmentNote, pairKey, selectedServiceBMinus?.serviceLocationCode, selectedReason);
         await createAdjustmentRequestLocal(documentType, null, adjustmentAmount, selectedAccountBPlus, null, null, null, null, null, null, 5, selectedServiceBPlus?.serviceNum, adjustmentNote, pairKey, selectedServiceBPlus?.serviceLocationCode, selectedReason);
 
         const updatedInvoices = await getInvoicesByAccountNum(selectedAccountBMinus.accountNum);
@@ -445,7 +459,7 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
 
     /** Validation */
 
-    const validateInputsAdjustB = (documentType) => {
+    const validateInputsAdjustB = (documentType, invoiceSnapshot = selectedInvoiceBMinus) => {
         console.log('documentType:', documentType);
         console.log('adjustmentAmount:', adjustmentAmount);
         console.log('selectedInvoice:', selectedInvoice);
@@ -480,7 +494,7 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
         if (selectedAccountBMinus.cpsId !== selectedAccountBPlus.cpsId) {
             return getTranslation('cpsIdMustMatch', language) || 'Both accounts must belong to the same VAT Rate (CPS ID)';
         }
-        if (!selectedInvoiceBMinus || Object.keys(selectedInvoiceBMinus).length === 0) {
+        if (!invoiceSnapshot || Object.keys(invoiceSnapshot).length === 0) {
             return getTranslation('selectInvoice', language);
         }
         if (!selectedServiceBMinus || Object.keys(selectedServiceBMinus).length === 0 || !selectedServiceBPlus || Object.keys(selectedServiceBPlus).length === 0) {
@@ -502,12 +516,12 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
         if (parseFloat(adjustmentAmount) > creditLimit) {
             return getTranslation('adjustmentAmountLessThanOrEqualToCreditLimit', language, { creditLimit });
         }
-        const remainingAmount = getRemainingInvoiceAmount(selectedInvoiceBMinus);
+        const remainingAmount = getRemainingInvoiceAmount(invoiceSnapshot);
 
         if (parseFloat(adjustmentAmount) > remainingAmount) {
             return getTranslation('adjustmentAmountLessThanInvoice', language);
         }
-        if (parseFloat(selectedInvoiceBMinus?.writeOffMny) > 0) {
+        if (parseFloat(invoiceSnapshot?.writeOffMny) > 0) {
             return getTranslation('invoiceWrittenOff', language);
         }
 
