@@ -171,6 +171,41 @@ export const DocumentProvider = ({ children }) => {
     const [invoices, setInvoices] = useState([]);
     const [selectedInvoice, setSelectedInvoice] = useState({});
 
+    const findMatchingInvoice = (invoiceList, currentInvoice) => {
+        if (!currentInvoice || Object.keys(currentInvoice).length === 0) {
+            return null;
+        }
+
+        const list = invoiceList || [];
+        const currentBillSeq = currentInvoice?.billSeq;
+        const currentInvoiceNum = currentInvoice?.invoiceNum;
+        const currentAccountNum = currentInvoice?.accountNum;
+
+        if (currentBillSeq !== undefined && currentBillSeq !== null) {
+            const byBillSeq = list.find((invoice) => String(invoice?.billSeq) === String(currentBillSeq));
+            if (byBillSeq) {
+                return byBillSeq;
+            }
+        }
+
+        if (currentInvoiceNum !== undefined && currentInvoiceNum !== null) {
+            const byInvoiceNumAndAccount = list.find((invoice) =>
+                String(invoice?.invoiceNum) === String(currentInvoiceNum) &&
+                String(invoice?.accountNum) === String(currentAccountNum)
+            );
+            if (byInvoiceNumAndAccount) {
+                return byInvoiceNumAndAccount;
+            }
+
+            const byInvoiceNum = list.find((invoice) => String(invoice?.invoiceNum) === String(currentInvoiceNum));
+            if (byInvoiceNum) {
+                return byInvoiceNum;
+            }
+        }
+
+        return null;
+    };
+
     const getInvoicesByAccountNum = async (accountNum) => {
         try {
             const response = await api.get('/api/BillSummary/GetBillSummaryByAccountNum', {
@@ -343,7 +378,10 @@ export const DocumentProvider = ({ children }) => {
         console.log('selectedInvoice:', selectedInvoice);
         console.log('selectedCostedEvent:', selectedCostedEvent);
     
-        let remainingAmount = (parseFloat(selectedInvoice?.invoiceNetMny) - parseFloat(selectedInvoice?.adjustedMny) - parseFloat(selectedInvoice?.pendingAdjustmentMny));
+        const invoiceNetAmount = Number(selectedInvoice?.invoiceNetMny ?? 0);
+        const adjustedAmount = Number(selectedInvoice?.adjustedMny ?? 0);
+        const pendingAdjustmentAmount = Number(selectedInvoice?.pendingAdjustmentMny ?? 0);
+        let remainingAmount = invoiceNetAmount - adjustedAmount - pendingAdjustmentAmount;
         console.log('remainingAmount:', remainingAmount);
     
         const userLogin = JSON.parse(localStorage.getItem('userLogin'));
@@ -381,7 +419,7 @@ export const DocumentProvider = ({ children }) => {
         if (parseFloat(adjustmentAmount) > creditLimit) {
             return getTranslation('adjustmentAmountLessThanOrEqualToCreditLimit', language, { creditLimit });
         }
-        if (parseFloat(adjustmentAmount) > (parseFloat(selectedInvoice?.invoiceNetMny) - parseFloat(selectedInvoice?.adjustedMny) - parseFloat(selectedInvoice?.pendingAdjustmentMny))) {
+        if (parseFloat(adjustmentAmount) > remainingAmount) {
             return getTranslation('adjustmentAmountLessThanInvoice', language);
         }
         if (parseFloat(selectedInvoice?.writeOffMny) > 0) {
@@ -565,15 +603,16 @@ export const DocumentProvider = ({ children }) => {
             // setInvoices([]); 
 
             /** Reload pending adjust amount in Invoices */
-            await getInvoicesByAccountNum(selectedAccount.accountNum);
+            const updatedInvoices = await getInvoicesByAccountNum(selectedAccount.accountNum);
 
             //console.log('Invoices after adjustment request:', invoices);
 
             /** Update selectedInvoice based on the updated data */
             if (selectedInvoice && Object.keys(selectedInvoice).length > 0) {
-                //setSelectedInvoice({}); 
-                const updatedInvoice = invoices.find(invoice => invoice.billSeq === selectedInvoice?.billSeq && invoice.invoiceNum === selectedInvoice?.invoiceNum);
-                setSelectedInvoice(updatedInvoice);
+                const updatedInvoice = findMatchingInvoice(updatedInvoices, selectedInvoice);
+                if (updatedInvoice) {
+                    setSelectedInvoice(updatedInvoice);
+                }
             }
 
             if (selectedInvoiceDataService && Object.keys(selectedInvoiceDataService).length > 0) {
@@ -641,9 +680,21 @@ export const DocumentProvider = ({ children }) => {
                     documentSeq: documentSeq
                 }
             });
-            setAdjustmentRequests(adjustmentRequests.filter(request => request.documentSeq !== documentSeq));
-            /** Reload pending adjust amount in Invoices */
-            getInvoicesByAccountNum(selectedAccount.accountNum);
+            setAdjustmentRequests((prevRequests) => prevRequests.filter(request => request.documentSeq !== documentSeq));
+
+            /** Reload pending adjust amount in invoices and rebind selected invoice from fresh data. */
+            const refreshAccountNum = selectedAccount?.accountNum || selectedInvoice?.accountNum;
+            if (refreshAccountNum) {
+                const updatedInvoices = await getInvoicesByAccountNum(refreshAccountNum);
+
+                if (selectedInvoice && Object.keys(selectedInvoice).length > 0) {
+                    const updatedSelectedInvoice = findMatchingInvoice(updatedInvoices, selectedInvoice);
+
+                    if (updatedSelectedInvoice) {
+                        setSelectedInvoice(updatedSelectedInvoice);
+                    }
+                }
+            }
         } catch (error) {
             console.error('Error deleting adjustment request:', error);
         }

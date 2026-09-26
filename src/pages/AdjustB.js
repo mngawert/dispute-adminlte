@@ -83,6 +83,32 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
     const [servicesBPlus, setServicesBPlus] = useState([]);
     const [selectedServiceBPlus, setSelectedServiceBPlus] = useState(null);
 
+    const findMatchingInvoiceBMinus = (invoiceList, currentInvoice) => {
+        if (!currentInvoice) {
+            return null;
+        }
+
+        const list = invoiceList || [];
+        const currentBillSeq = currentInvoice?.billSeq;
+        const currentInvoiceNum = currentInvoice?.invoiceNum;
+
+        if (currentBillSeq !== undefined && currentBillSeq !== null) {
+            const byBillSeq = list.find((invoice) => String(invoice?.billSeq) === String(currentBillSeq));
+            if (byBillSeq) {
+                return byBillSeq;
+            }
+        }
+
+        if (currentInvoiceNum !== undefined && currentInvoiceNum !== null) {
+            const byInvoiceNum = list.find((invoice) => String(invoice?.invoiceNum) === String(currentInvoiceNum));
+            if (byInvoiceNum) {
+                return byInvoiceNum;
+            }
+        }
+
+        return null;
+    }
+
     const getAccountsByAccountNumLocalBMinus = async (accountNum) => {        
         const accounts = await getAccountsByAccountNum(accountNum);
         setAccountsBMinus(accounts);
@@ -327,8 +353,39 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
         await createAdjustmentRequestLocal(documentType, selectedInvoiceBMinus, adjustmentAmount, selectedAccountBMinus, selectedServiceBMinus?.productId, null, null, selectedServiceBMinus?.productSeq, null, null, 6, selectedServiceBMinus?.serviceNum, adjustmentNote, pairKey, selectedServiceBMinus?.serviceLocationCode, selectedReason);
         await createAdjustmentRequestLocal(documentType, null, adjustmentAmount, selectedAccountBPlus, null, null, null, null, null, null, 5, selectedServiceBPlus?.serviceNum, adjustmentNote, pairKey, selectedServiceBPlus?.serviceLocationCode, selectedReason);
 
+        const updatedInvoices = await getInvoicesByAccountNum(selectedAccountBMinus.accountNum);
+        setInvoicesBMinus(updatedInvoices || []);
+
+        if (selectedInvoiceBMinus) {
+            const updatedSelectedInvoiceBMinus = findMatchingInvoiceBMinus(updatedInvoices, selectedInvoiceBMinus);
+
+            if (updatedSelectedInvoiceBMinus) {
+                setSelectedInvoiceBMinus(updatedSelectedInvoiceBMinus);
+            }
+        }
+
         alert(getTranslation('adjustmentRequestCreated', 'th'));
         await fetchPendingDocumentAndRequests(documentType);
+    }
+
+    const handleDeleteAdjustmentRequest = async (documentSeq) => {
+        await deleteAdjustmentRequest(documentSeq);
+
+        const refreshAccountNum = selectedAccountBMinus?.accountNum || selectedInvoiceBMinus?.accountNum;
+        if (!refreshAccountNum) {
+            return;
+        }
+
+        const updatedInvoices = await getInvoicesByAccountNum(refreshAccountNum);
+        setInvoicesBMinus(updatedInvoices || []);
+
+        if (selectedInvoiceBMinus) {
+            const updatedSelectedInvoiceBMinus = findMatchingInvoiceBMinus(updatedInvoices, selectedInvoiceBMinus);
+
+            if (updatedSelectedInvoiceBMinus) {
+                setSelectedInvoiceBMinus(updatedSelectedInvoiceBMinus);
+            }
+        }
     }
 
     const createAdjustmentRequestLocal = async (
@@ -470,7 +527,12 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
         if (parseFloat(adjustmentAmount) > creditLimit) {
             return getTranslation('adjustmentAmountLessThanOrEqualToCreditLimit', language, { creditLimit });
         }
-        if (parseFloat(adjustmentAmount) > (parseFloat(selectedInvoiceBMinus?.invoiceNetMny) - parseFloat(selectedInvoiceBMinus?.adjustedMny) - parseFloat(selectedInvoiceBMinus?.pendingAdjustmentMny))) {
+        const invoiceNetAmount = Number(selectedInvoiceBMinus?.invoiceNetMny ?? 0);
+        const adjustedAmount = Number(selectedInvoiceBMinus?.adjustedMny ?? 0);
+        const pendingAdjustmentAmount = Number(selectedInvoiceBMinus?.pendingAdjustmentMny ?? 0);
+        const remainingAmount = invoiceNetAmount - adjustedAmount - pendingAdjustmentAmount;
+
+        if (parseFloat(adjustmentAmount) > remainingAmount) {
             return getTranslation('adjustmentAmountLessThanInvoice', language);
         }
         if (parseFloat(selectedInvoiceBMinus?.writeOffMny) > 0) {
@@ -646,7 +708,7 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
                       </div>
                   </div>
 
-                  <PendingDocument pendingDocument={pendingDocument} adjustmentRequests={adjustmentRequests} fetchPendingDocumentAndRequests={fetchPendingDocumentAndRequests} deleteAdjustmentRequest={deleteAdjustmentRequest} updateDocumentStatus={updateDocumentStatus} />
+                  <PendingDocument pendingDocument={pendingDocument} adjustmentRequests={adjustmentRequests} fetchPendingDocumentAndRequests={fetchPendingDocumentAndRequests} deleteAdjustmentRequest={handleDeleteAdjustmentRequest} updateDocumentStatus={updateDocumentStatus} />
                   
                 </div>
             </div>

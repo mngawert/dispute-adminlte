@@ -119,7 +119,7 @@ const PendingDocument = ({ pendingDocument, adjustmentRequests, fetchPendingDocu
                                     <td align='center'>{formatNumber(Math.abs(adj.disputeMny * (CPS_MAP_HASH[adj.cpsId] / 100)).toFixed(2))}</td>
                                     <td align='center'>{formatNumber(Math.abs(adj.disputeMny * (1 + CPS_MAP_HASH[adj.cpsId] / 100)).toFixed(2))}</td>
                                     <td>
-                                        <button className="btn btn-sm" onClick={() => deleteAdjustmentRequest(adj.documentSeq)}>
+                                        <button className="btn btn-sm" onClick={async () => await deleteAdjustmentRequest(adj.documentSeq)}>
                                             <i className="fas fa-trash-alt"></i>
                                         </button>
                                     </td>
