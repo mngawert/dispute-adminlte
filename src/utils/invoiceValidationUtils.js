@@ -1,5 +1,9 @@
 export const toAmount = (value) => Number(value ?? 0);
 
+export const toMinorUnits = (value) => Math.round((toAmount(value) + Number.EPSILON) * 100);
+
+export const isAmountGreaterThan = (leftAmount, rightAmount) => toMinorUnits(leftAmount) > toMinorUnits(rightAmount);
+
 export const getRemainingInvoiceAmount = (invoice) => {
   const invoiceNetAmount = toAmount(invoice?.invoiceNetMny);
   const adjustedAmount = toAmount(invoice?.adjustedMny);

@@ -4,7 +4,7 @@ import config from '../config';
 import { DOCUMENT_TYPE, DOCUMENT_TYPE_DESC } from './Constants';
 import { jwtDecode } from 'jwt-decode';
 import getTranslation from '../utils/getTranslation';
-import { findMatchingInvoice, getRemainingInvoiceAmount } from '../utils/invoiceValidationUtils';
+import { findMatchingInvoice, getRemainingInvoiceAmount, isAmountGreaterThan } from '../utils/invoiceValidationUtils';
 import { get } from 'jquery';
 
 const DocumentContext = React.createContext();
@@ -406,7 +406,7 @@ export const DocumentProvider = ({ children }) => {
         if (parseFloat(adjustmentAmount) > creditLimit) {
             return getTranslation('adjustmentAmountLessThanOrEqualToCreditLimit', language, { creditLimit });
         }
-        if (parseFloat(adjustmentAmount) > remainingAmount) {
+        if (isAmountGreaterThan(adjustmentAmount, remainingAmount)) {
             return getTranslation('adjustmentAmountLessThanInvoice', language);
         }
         if (parseFloat(selectedInvoice?.writeOffMny) > 0) {
@@ -592,7 +592,7 @@ export const DocumentProvider = ({ children }) => {
                 }
 
                 const latestRemainingAmount = getRemainingInvoiceAmount(latestSelectedInvoice);
-                if (parseFloat(adjustmentAmount) > latestRemainingAmount) {
+                if (isAmountGreaterThan(adjustmentAmount, latestRemainingAmount)) {
                     alert(getTranslation('adjustmentAmountLessThanInvoice', language));
                     return;
                 }

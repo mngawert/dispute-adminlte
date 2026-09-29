@@ -18,6 +18,7 @@ import { useState } from 'react';
 import api from '../api';
 import config from '../config';
 import getTranslation from '../utils/getTranslation';
+import { isAmountGreaterThan } from '../utils/invoiceValidationUtils';
 import { v4 as uuidv4 } from 'uuid'; // npm install uuid
 
 const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjustmentTypeNames=['B1']}) => {
@@ -518,7 +519,7 @@ const AdjustB = ({documentType=DOCUMENT_TYPE.B, documentTypeName='B1+/-', adjust
         }
         const remainingAmount = getRemainingInvoiceAmount(invoiceSnapshot);
 
-        if (parseFloat(adjustmentAmount) > remainingAmount) {
+        if (isAmountGreaterThan(adjustmentAmount, remainingAmount)) {
             return getTranslation('adjustmentAmountLessThanInvoice', language);
         }
         if (parseFloat(invoiceSnapshot?.writeOffMny) > 0) {

@@ -1,4 +1,4 @@
-import { findMatchingInvoice, getRemainingInvoiceAmount, toAmount } from './invoiceValidationUtils';
+import { findMatchingInvoice, getRemainingInvoiceAmount, isAmountGreaterThan, toAmount, toMinorUnits } from './invoiceValidationUtils';
 
 describe('invoiceValidationUtils', () => {
   test('toAmount returns 0 for nullish and parses numeric values', () => {
@@ -16,6 +16,16 @@ describe('invoiceValidationUtils', () => {
     };
 
     expect(getRemainingInvoiceAmount(invoice)).toBeCloseTo(50, 8);
+  });
+
+  test('toMinorUnits normalizes decimal precision to cents', () => {
+    expect(toMinorUnits(9.619999999999999)).toBe(962);
+    expect(toMinorUnits('9.62')).toBe(962);
+  });
+
+  test('isAmountGreaterThan compares money values by cents', () => {
+    expect(isAmountGreaterThan('9.62', 9.619999999999999)).toBe(false);
+    expect(isAmountGreaterThan('9.63', 9.619999999999999)).toBe(true);
   });
 
   test('findMatchingInvoice matches by billSeq first', () => {
